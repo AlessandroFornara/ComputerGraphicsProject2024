@@ -3,6 +3,32 @@
 #include "modules/Starter.hpp"
 #include "modules/TextMaker.hpp"
 
+std::vector<SingleText> outText = {
+	{2, {"City", "","",""}, 0, 0} };
+
+struct GlobalUniformBufferObject {
+	alignas(16) glm::vec3 lightDir;
+	alignas(16) glm::vec4 lightColor;
+	alignas(16) glm::vec3 eyePos;
+};
+
+struct Asset {
+	const std::string ObjPath;
+	const std::string TexturePath;
+	const glm::vec3 pos;
+	const glm::vec3 scale;
+	const glm::vec3 rot;
+	Model model;
+	Texture texture;
+	DescriptorSet DS;
+};
+
+struct Vertex {
+	glm::vec3 pos;
+	glm::vec3 norm;
+	glm::vec2 UV;
+};
+
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
 
