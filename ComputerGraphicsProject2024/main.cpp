@@ -29,9 +29,15 @@ struct Vertex {
 };
 
 std::vector<Component> ComponentVector = {
-  {"models/park_002.mgcg", "textures/Textures_City.png", glm::vec3(20.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)}
+  {"models/park_002.mgcg", "textures/Textures_City.png", glm::vec3(20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  { "models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", glm::vec3(1*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  { "models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(2*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  { "models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", glm::vec3(3*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", glm::vec3(4*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", glm::vec3(-12.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)}
 };
+
 
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
@@ -85,7 +91,8 @@ protected:
     
 
     //DA CAMBIARE
-    DPSZs.uniformBlocksInPool = 2;
+//    DPSZs.uniformBlocksInPool = 3;
+    DPSZs.uniformBlocksInPool = ComponentVector.size();
     DPSZs.texturesInPool = ComponentVector.size();
     DPSZs.setsInPool = ComponentVector.size();
 
@@ -105,7 +112,8 @@ protected:
     Pip.create();
 
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
-    for (int i = 0; i < ComponentVector.size(); i++) {
+    int sizeCV = ComponentVector.size();
+    for (int i = 0; i < sizeCV; i++) {
       ComponentVector[i].DS.init(this, &DSL, {&ComponentVector[i].texture});
     }
 
@@ -158,7 +166,7 @@ protected:
     getSixAxis(deltaT, m, r, fire);
 
     const float ROT_SPEED = glm::radians(120.0f);
-    const float MOVE_SPEED = 2.0f;
+    const float MOVE_SPEED = 4.0f;
 
     // The Fly model update proc.
     ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.x * deltaT,
