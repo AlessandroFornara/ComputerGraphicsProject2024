@@ -17,6 +17,7 @@ struct Component {
   const glm::vec3 pos;
   const glm::vec3 scale;
   const glm::vec3 rot;
+  const float angle;
   Model model;
   Texture texture;
   DescriptorSet DS;
@@ -29,15 +30,34 @@ struct Vertex {
 };
 
 std::vector<Component> ComponentVector = {
-  {"models/park_002.mgcg", "textures/Textures_City.png", glm::vec3(20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  { "models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", glm::vec3(1*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  { "models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(2*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  { "models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", glm::vec3(3*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", glm::vec3(4*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", glm::vec3(-12.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)}
+//  {"models/park_002.mgcg", "textures/Textures_City.png", glm::vec3(20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
+  {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  { "models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", glm::vec3(1*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  { "models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(2*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  { "models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", glm::vec3(3*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", glm::vec3(4*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", glm::vec3(-12.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_008.mgcg", "textures/Textures_City.png", glm::vec3(16.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(8.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(24.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(32.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(40.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(48.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(56.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f},
+  {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f},
+  {"models/store_003.mgcg", "textures/Textures_City.png", glm::vec3(8.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png", glm::vec3(4+5*8.0f, 0.0f, 3.5f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", glm::vec3(4+5*8.0f, 0.0f, -18.0f), glm::vec3(0.9f, 1.0f, 0.9f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", glm::vec3(18+5*8.0f, 0.0f, 1.5f), glm::vec3(0.9f, 1.0f, 0.9f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f},
+  {"models/landscape_entertainments_010.mgcg", "textures/Textures_City.png", glm::vec3(18+5*8.0f, 0.0f, -18.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f},
+  {"models/apartment_008.mgcg", "textures/Textures_City.png", glm::vec3(24.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/apartment_012.mgcg", "textures/Textures_City.png", glm::vec3(32.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", glm::vec3(2*8.0f, 0.0f, -2*8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f},
+  {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png", glm::vec3(4+2*8.0f, 0.0f, -4-3*8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
+  {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", glm::vec3(4.0f, 0.0f, -4-3*8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f}
 };
-
+//TODO: add tile_river;
 
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
@@ -166,7 +186,7 @@ protected:
     getSixAxis(deltaT, m, r, fire);
 
     const float ROT_SPEED = glm::radians(120.0f);
-    const float MOVE_SPEED = 4.0f;
+    const float MOVE_SPEED = 5.0f;
 
     // The Fly model update proc.
     ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.x * deltaT,
@@ -196,8 +216,15 @@ protected:
     // objects
     UniformBufferObject Ubo{};
     for (int i = 0; i < ComponentVector.size(); i++) {
+     
+      //TODO: do we perform the rotation before or after the other movement?
+
       glm::mat4 Transform = glm::translate(glm::mat4(1), ComponentVector[i].pos);
       Transform = glm::scale(Transform, ComponentVector[i].scale);
+      if (ComponentVector[i].angle != 0.0f) {
+        Transform = glm::rotate(Transform, glm::radians(ComponentVector[i].angle), ComponentVector[i].rot);
+      }
+      
       Ubo.mMat = Transform;
       Ubo.mvpMat = ViewPrj * Ubo.mMat;
       Ubo.nMat = glm::inverse(glm::transpose(Ubo.mMat));
