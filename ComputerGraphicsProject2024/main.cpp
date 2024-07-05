@@ -197,50 +197,27 @@ protected:
 
     glm::mat4 Mv;
 
+    CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
+    CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
+    CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
+
+
+    vec3 ux = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(1, 0, 0, 1);
+    vec3 uz = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(0, 0, -1, 1);
+    vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
+    CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
+    CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
     if (spectatorMode) {
-
-        //The Fly model update proc.
-        ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.x * deltaT,
-            glm::vec3(1, 0, 0)) * ViewMatrix;
-        ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.y * deltaT,
-            glm::vec3(0, 1, 0)) * ViewMatrix;
-        ViewMatrix = glm::rotate(glm::mat4(1), -ROT_SPEED * r.z * deltaT,
-            glm::vec3(0, 0, 1)) * ViewMatrix;
-        ViewMatrix = glm::translate(glm::mat4(1), -glm::vec3(
-            MOVE_SPEED * m.x * deltaT, MOVE_SPEED * m.y * deltaT, MOVE_SPEED * m.z * deltaT))
-            * ViewMatrix;
-
-        Mv = ViewMatrix;
+        CamPos = CamPos - MOVE_SPEED * m.y * uy * deltaT;
     }
     else {
-
-        /*_______________________________________________________________________________________________________________________________________________*/
-            //CREAZIONE WALK MODE + GESTIONE CAMERA PER SELEZIONE 
-
-        //Motimenti rotatori, alpha su e gi�, beta destra e sinistra
-        //Nel caso dei motimenti a destra e sinistra metto un blocco
-        CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
-        CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
-        CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
-
-        //Movimento del posizionamento. I primi due parametri sono utili per la "direzione" del movimento
-        //Se non guardo avanti mi muovo storto
-        vec3 ux = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(1, 0, 0, 1);
-        vec3 uz = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(0, 0, -1, 1);
-        CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
-        CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
-
-        /*Occhio a overflow, non così impossibile*/
-        cameraPosition = CamPos;
-        cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / 6.28382; //angolo in gradi 
-        //cout << cameraAngle << '\n';
-        //cout << CamAlpha << '\n';
-        Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) *
-            rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) *
-            translate(mat4(1.0), -CamPos);
-
-        /*_______________________________________________________________________________________________________________________________________________*/
+        CamPos.y = vec3(0, 1, 0).y;
     }
+    cameraPosition = CamPos;
+    cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
+    Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
+
+    
 
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -295,7 +272,7 @@ protected:
     * Ecco spiegato il motivo di "modelRotation", mi serve per raddrizzare
     */
   bool checkInteraction(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z, vec3 modelRotation) {
-      makeRight(cameraPosition, modelRotation, z); //CI STO LAVORANDO
+      //makeRight(cameraPosition, modelRotation, z); //CI STO LAVORANDO
       const float minDistance = 5;
       float distance, alpha, center, beta, halfSide, left, right;
       center = (x2 + x1) / 2;
@@ -323,7 +300,7 @@ protected:
   }
 
   void makeRight(vec3 cameraPosition, vec3 modelRotation, float z) {
-
+      //DA FARE PIù AVANTI SE C'è TEMPO
   }
 
   void printCordinates(float cameraAngle){
