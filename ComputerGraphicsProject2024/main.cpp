@@ -4,61 +4,67 @@
 using namespace std;
 using namespace glm;
 
-/*std::vector<SingleText> outText = {
+/*vector<SingleText> outText = {
   {2, {"City", "","",""}, 0, 0} };*/
 
 struct UniformBufferObject {
-  alignas(16) glm::mat4 mvpMat;
-  alignas(16) glm::mat4 mMat;
-  alignas(16) glm::mat4 nMat;
+  alignas(16) mat4 mvpMat;
+  alignas(16) mat4 mMat;
+  alignas(16) mat4 nMat;
 };
 
 struct Component {
-  const std::string ObjPath;
-  const std::string TexturePath;
-  const glm::vec3 pos;
-  const glm::vec3 scale;
-  const glm::vec3 rot;
-  const float angle;
+  const string ObjPath;
+  const string TexturePath;
+  const vec3 pos;
+  const vec3 scale;
+  const std::vector<vec3> rot;
+  const std::vector<float> angle;
   Model model;
   Texture texture;
   DescriptorSet DS;
 };
 
 struct Vertex {
-  glm::vec3 pos;
-  glm::vec3 norm;
-  glm::vec2 UV;
+  vec3 pos;
+  vec3 norm;
+  vec2 UV;
 };
 
 std::vector<Component> ComponentVector = {
-//  {"models/park_002.mgcg", "textures/Textures_City.png", glm::vec3(20.0f, 0.0f, -20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)},
-  {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  { "models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", glm::vec3(1*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  { "models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(2*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  { "models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", glm::vec3(3*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", glm::vec3(4*8.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", glm::vec3(-12.0f, 0.0f, -4.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_008.mgcg", "textures/Textures_City.png", glm::vec3(16.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(8.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(24.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(32.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(40.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", glm::vec3(48.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(56.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f},
-  {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, -8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f},
-  {"models/store_003.mgcg", "textures/Textures_City.png", glm::vec3(8.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", glm::vec3(0.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png", glm::vec3(4+5*8.0f, 0.0f, 3.5f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", glm::vec3(4+5*8.0f, 0.0f, -18.0f), glm::vec3(0.9f, 1.0f, 0.9f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", glm::vec3(18+5*8.0f, 0.0f, 1.5f), glm::vec3(0.9f, 1.0f, 0.9f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f},
-  {"models/landscape_entertainments_010.mgcg", "textures/Textures_City.png", glm::vec3(18+5*8.0f, 0.0f, -18.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f},
-  {"models/apartment_008.mgcg", "textures/Textures_City.png", glm::vec3(24.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/apartment_012.mgcg", "textures/Textures_City.png", glm::vec3(32.0f, 0.0f, -16.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", glm::vec3(2*8.0f, 0.0f, -2*8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f},
-  {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png", glm::vec3(4+2*8.0f, 0.0f, -4-3*8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f},
-  {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", glm::vec3(4.0f, 0.0f, -4-3*8.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f}
+    // {"models/park_002.mgcg", "textures/Textures_City.png", {20.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 0.0f}}, {0.0f}},
+    {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {16.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {24.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", {32.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", {-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_008.mgcg", "textures/Textures_City.png", {16.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {24.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {32.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {40.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {48.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", {56.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}, 
+    {{0.0f, 1.0f, 0.0f}}, {-90.0f}},
+    {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}, 
+    { {0.0f, 1.0f, 0.0f} }, {90.0f}},
+    {"models/store_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png", {44.0f, 0.0f, 3.5f}, {1.0f, 1.0f, 1.0f}},
+    {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", {44.0f, 0.0f, -18.0f}, {0.9f, 1.0f, 0.9f}},
+    {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", {58.0f, 0.0f, 1.5f}, {0.9f, 1.0f, 0.9f}, 
+    { {0.0f, 1.0f, 0.0f} }, {-90.0f}},
+    {"models/landscape_entertainments_010.mgcg", "textures/Textures_City.png", {58.0f, 0.0f, -18.0f}, {1.0f, 1.0f, 1.0f}, 
+    { {0.0f, 1.0f, 0.0f} }, {90.0f}},
+    {"models/apartment_008.mgcg", "textures/Textures_City.png", {24.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/apartment_012.mgcg", "textures/Textures_City.png", {32.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", {16.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}, 
+    { {0.0f, 1.0f, 0.0f} }, {90.0f}},
+    {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png", {20.0f, 0.0f, -28.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -28.0f}, {1.0f, 1.0f, 1.0f}}
 };
+
 //TODO: add tile_river;
 
 class ComputerGraphicsProject2024 : public BaseProject {
@@ -71,9 +77,9 @@ protected:
   VertexDescriptor VDVertex;
   TextMaker txt;
 
-  glm::vec3 CamPos = glm::vec3(0.0, 1.0, -8.0);
+  vec3 CamPos = vec3(0.0, 1.0, -8.0);
   float CamAlpha = 0.0f, CamBeta = 0.0f;
-  glm::mat4 ViewMatrix;
+  mat4 ViewMatrix;
 
   bool spectatorMode = false;
 
@@ -90,7 +96,7 @@ protected:
 
   // What to do when the window changes size
   void onWindowResize(int w, int h) {
-    std::cout << "Window resized to: " << w << " x " << h << "\n";
+    cout << "Window resized to: " << w << " x " << h << "\n";
     Ar = (float)w / (float)h;
   }
 
@@ -101,9 +107,9 @@ protected:
         {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
 
     VDVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
-        {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(glm::vec3), POSITION},
-        {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(glm::vec3), NORMAL},
-        {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(glm::vec2), UV}
+        {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
+        {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
+        {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
       });
 
     Pip.init(this, &VDVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL });
@@ -121,15 +127,15 @@ protected:
     DPSZs.texturesInPool = ComponentVector.size();
     DPSZs.setsInPool = ComponentVector.size();
 
-    std::cout << "Initializing text\n";
+    cout << "Initializing text\n";
     //txt.init(this, &outText);
 
-    std::cout << "Initialization completed!\n";
-    std::cout << "Uniform Blocks in the Pool  : " << DPSZs.uniformBlocksInPool << "\n";
-    std::cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
-    std::cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
+    cout << "Initialization completed!\n";
+    cout << "Uniform Blocks in the Pool  : " << DPSZs.uniformBlocksInPool << "\n";
+    cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
+    cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
 
-    ViewMatrix = glm::translate(glm::mat4(1), -CamPos);
+    ViewMatrix = translate(mat4(1), -CamPos);
   }
 
   void pipelinesAndDescriptorSetsInit() {
@@ -187,23 +193,23 @@ protected:
 
     
     float deltaT, cameraAngle = 0.0;;
-    glm::vec3 m = glm::vec3(0.0f), r = glm::vec3(0.0f), cameraPosition = {0.0,0.0,0.0};
+    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = {0.0,0.0,0.0};
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
 
-    const float ROT_SPEED = glm::radians(120.0f);
+    const float ROT_SPEED = radians(120.0f);
     const float MOVE_SPEED = 5.0f;
 
-    glm::mat4 Mv;
+    mat4 Mv;
 
     CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
     CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
     CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
 
 
-    vec3 ux = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(1, 0, 0, 1);
-    vec3 uz = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(0, 0, -1, 1);
+    vec3 ux = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(1, 0, 0, 1);
+    vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
     vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
     CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
     CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
@@ -237,11 +243,11 @@ protected:
     }
 
     // Here is where you actually update your uniforms
-    glm::mat4 M = glm::perspective(glm::radians(45.0f), Ar, 0.1f, 160.0f);
+    mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
 
-    glm::mat4 ViewPrj = M * Mv;
-    glm::mat4 baseTr = glm::mat4(1.0f);
+    mat4 ViewPrj = M * Mv;
+    mat4 baseTr = mat4(1.0f);
 
     // objects
     UniformBufferObject Ubo{};
@@ -249,15 +255,17 @@ protected:
      
       //TODO: do we perform the rotation before or after the other movement? leggi le slide
 
-      glm::mat4 Transform = glm::translate(glm::mat4(1), ComponentVector[i].pos);
-      Transform = glm::scale(Transform, ComponentVector[i].scale);
-      if (ComponentVector[i].angle != 0.0f) {
-        Transform = glm::rotate(Transform, glm::radians(ComponentVector[i].angle), ComponentVector[i].rot);
+      mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
+      Transform = scale(Transform, ComponentVector[i].scale);
+      if (!ComponentVector[i].rot.empty()) {
+          for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
+              Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
+          }
       }
       
       Ubo.mMat = Transform;
       Ubo.mvpMat = ViewPrj * Ubo.mMat;
-      Ubo.nMat = glm::inverse(glm::transpose(Ubo.mMat));
+      Ubo.nMat = inverse(transpose(Ubo.mMat));
 
       ComponentVector[i].DS.map(currentImage, &Ubo, 0);
 
@@ -317,8 +325,8 @@ int main() {
 
     try {
         app.run();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
+    } catch (const exception& e) {
+        cerr << e.what() << endl;
         return EXIT_FAILURE;
     }
 
