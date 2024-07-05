@@ -35,37 +35,68 @@ std::vector<Component> ComponentVector = {
     // {"models/park_002.mgcg", "textures/Textures_City.png", {20.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 0.0f}}, {0.0f}},
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {16.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {24.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", {32.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", {-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_008.mgcg", "textures/Textures_City.png", {16.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    
+    {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png", {10.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png", {20.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
+    
+    {"models/road_tile_1x1_008.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {24.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {32.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {40.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {48.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", {56.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}, 
-    {{0.0f, 1.0f, 0.0f}}, {-90.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {5*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {6*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {7*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", {8*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}, 
+        {{0.0f, 1.0f, 0.0f}}, {-90.0f}},
     {"models/road_tile_1x1_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}, 
-    { {0.0f, 1.0f, 0.0f} }, {90.0f}},
-    {"models/store_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png", {44.0f, 0.0f, 3.5f}, {1.0f, 1.0f, 1.0f}},
-    {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", {44.0f, 0.0f, -18.0f}, {0.9f, 1.0f, 0.9f}},
-    {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", {58.0f, 0.0f, 1.5f}, {0.9f, 1.0f, 0.9f}, 
-    { {0.0f, 1.0f, 0.0f} }, {-90.0f}},
-    {"models/landscape_entertainments_010.mgcg", "textures/Textures_City.png", {58.0f, 0.0f, -18.0f}, {1.0f, 1.0f, 1.0f}, 
-    { {0.0f, 1.0f, 0.0f} }, {90.0f}},
-    {"models/apartment_008.mgcg", "textures/Textures_City.png", {24.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/apartment_012.mgcg", "textures/Textures_City.png", {32.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", {16.0f, 0.0f, -16.0f}, {1.0f, 1.0f, 1.0f}, 
-    { {0.0f, 1.0f, 0.0f} }, {90.0f}},
-    {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png", {20.0f, 0.0f, -28.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -28.0f}, {1.0f, 1.0f, 1.0f}}
-};
+        { {0.0f, 1.0f, 0.0f} }, {90.0f}},
+    
+    {"models/store_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    
+    {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png", {4+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
+    {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", {4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
+    {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", {20+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}, 
+        { {0.0f, 1.0f, 0.0f} }, {-90.0f}}, //foot
+    {"models/landscape_entertainments_010.mgcg", "textures/Textures_City.png", {20+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}, 
+        { {0.0f, 1.0f, 0.0f} }, {90.0f}}, //basket
+    
+    {"models/apartment_008.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/apartment_008.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
+        { {0.0f, 1.0f, 0.0f} }, {180.0f}},
+    {"models/apartment_012.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/apartment_012.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
+        { {0.0f, 1.0f, 0.0f} }, {180.0f}},
+    
+    {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}, 
+        { {0.0f, 1.0f, 0.0f} }, {90.0f}},
+    {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f}, 
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}},
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -6*8.0f}, {1.0f, 1.0f, 1.0f}, 
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
 
-//TODO: add tile_river;
+    {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png", {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, 
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4+4*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4+5*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_2x2_003.mgcg", "textures/Textures_City.png", {4+7*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {270.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4+7*8.0f, 0.0f, -4-6*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/road_tile_2x2_003.mgcg", "textures/Textures_City.png", {-4-1*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {180.0f}},
+
+    {"models/apartment_1_002.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/apartment_1_004.mgcg", "textures/Textures_City.png", {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/apartment_1_003.mgcg", "textures/Textures_City.png", {5+5*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}, //001 or 003;
+};
+//    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
+
+//TODO: add tile_river, non urgente;
 
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
@@ -199,7 +230,7 @@ protected:
     getSixAxis(deltaT, m, r, fire);
 
     const float ROT_SPEED = radians(120.0f);
-    const float MOVE_SPEED = 5.0f;
+    const float MOVE_SPEED = 8.0f;
 
     mat4 Mv;
 
@@ -222,8 +253,6 @@ protected:
     cameraPosition = CamPos;
     cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
     Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
-
-    
 
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -253,10 +282,9 @@ protected:
     UniformBufferObject Ubo{};
     for (int i = 0; i < ComponentVector.size(); i++) {
      
-      //TODO: do we perform the rotation before or after the other movement? leggi le slide
-
       mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
       Transform = scale(Transform, ComponentVector[i].scale);
+
       if (!ComponentVector[i].rot.empty()) {
           for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
               Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
