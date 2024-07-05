@@ -72,8 +72,10 @@ protected:
   TextMaker txt;
 
   glm::vec3 CamPos = glm::vec3(0.0, 1.0, -8.0);
-  float CamAlpha, CamBeta;
+  float CamAlpha = 0.0f, CamBeta = 0.0f;
   glm::mat4 ViewMatrix;
+
+  bool spectatorMode = false;
 
 
   void setWindowParameters() {
@@ -183,9 +185,9 @@ protected:
 
   void updateUniformBuffer(uint32_t currentImage) {
 
-    /*
-    float deltaT;
-    glm::vec3 m = glm::vec3(0.0f), r = glm::vec3(0.0f);
+    
+    float deltaT, cameraAngle = 0.0;;
+    glm::vec3 m = glm::vec3(0.0f), r = glm::vec3(0.0f), cameraPosition = {0.0,0.0,0.0};
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
@@ -193,67 +195,73 @@ protected:
     const float ROT_SPEED = glm::radians(120.0f);
     const float MOVE_SPEED = 5.0f;
 
-    The Fly model update proc.
-    
-    HO TOLTO LA FLY MODE PERCHè NON SI POTRà VOLARE 
-    ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.x * deltaT,
-      glm::vec3(1, 0, 0)) * ViewMatrix;
-    ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.y * deltaT,
-      glm::vec3(0, 1, 0)) * ViewMatrix;
-    ViewMatrix = glm::rotate(glm::mat4(1), -ROT_SPEED * r.z * deltaT,
-      glm::vec3(0, 0, 1)) * ViewMatrix;
-    ViewMatrix = glm::translate(glm::mat4(1), -glm::vec3(
-      MOVE_SPEED * m.x * deltaT, 0, MOVE_SPEED * m.z * deltaT))
-      * ViewMatrix;
-      * 
-      * */
+    glm::mat4 Mv;
 
-      /*_______________________________________________________________________________________________________________________________________________*/
-          //CREAZIONE WALK MODE + GESTIONE CAMERA PER SELEZIONE 
+    if (spectatorMode) {
 
-    float deltaTime, cameraAngle = 0.0;
-    vec3 motion = vec3(0.0f), rotation = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 };
-    bool fire_Space = false;
-    getSixAxis(deltaTime, motion, rotation, fire_Space);
+        //The Fly model update proc.
+        ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.x * deltaT,
+            glm::vec3(1, 0, 0)) * ViewMatrix;
+        ViewMatrix = glm::rotate(glm::mat4(1), ROT_SPEED * r.y * deltaT,
+            glm::vec3(0, 1, 0)) * ViewMatrix;
+        ViewMatrix = glm::rotate(glm::mat4(1), -ROT_SPEED * r.z * deltaT,
+            glm::vec3(0, 0, 1)) * ViewMatrix;
+        ViewMatrix = glm::translate(glm::mat4(1), -glm::vec3(
+            MOVE_SPEED * m.x * deltaT, MOVE_SPEED * m.y * deltaT, MOVE_SPEED * m.z * deltaT))
+            * ViewMatrix;
 
-    //Velocità impostate anche dal prof
-    const float ROT_SPEED = radians(120.0f);
-    const float MOVE_SPEED = 10.0f;
+        Mv = ViewMatrix;
+    }
+    else {
 
-    //Motimenti rotatori, alpha su e gi�, beta destra e sinistra
-    //Nel caso dei motimenti a destra e sinistra metto un blocco
-    CamAlpha = CamAlpha - ROT_SPEED * deltaTime * rotation.y;
-    CamBeta = CamBeta - ROT_SPEED * deltaTime * rotation.x;
-    CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
+        /*_______________________________________________________________________________________________________________________________________________*/
+            //CREAZIONE WALK MODE + GESTIONE CAMERA PER SELEZIONE 
 
-    //Movimento del posizionamento. I primi due parametri sono utili per la "direzione" del movimento
-    //Se non guardo avanti mi muovo storto
-    vec3 ux = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(1, 0, 0, 1);
-    vec3 uz = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(0, 0, -1, 1);
-    CamPos = CamPos + MOVE_SPEED * motion.x * ux * deltaTime;
-    CamPos = CamPos - MOVE_SPEED * motion.z * uz * deltaTime;
+        //Motimenti rotatori, alpha su e gi�, beta destra e sinistra
+        //Nel caso dei motimenti a destra e sinistra metto un blocco
+        CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
+        CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
+        CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
 
-    /*Occhio a overflow, non così impossibile*/
-    cameraPosition = CamPos;
-    cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / 6.28382; //angolo in gradi 
-    //cout << cameraAngle << '\n';
-    //cout << CamAlpha << '\n';
+        //Movimento del posizionamento. I primi due parametri sono utili per la "direzione" del movimento
+        //Se non guardo avanti mi muovo storto
+        vec3 ux = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(1, 0, 0, 1);
+        vec3 uz = rotate(glm::mat4(1.0f), CamAlpha, glm::vec3(0, 1, 0)) * glm::vec4(0, 0, -1, 1);
+        CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
+        CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
 
-    /*_______________________________________________________________________________________________________________________________________________*/
+        /*Occhio a overflow, non così impossibile*/
+        cameraPosition = CamPos;
+        cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / 6.28382; //angolo in gradi 
+        //cout << cameraAngle << '\n';
+        //cout << CamAlpha << '\n';
+        Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) *
+            rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) *
+            translate(mat4(1.0), -CamPos);
 
+        /*_______________________________________________________________________________________________________________________________________________*/
+    }
 
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
       glfwSetWindowShouldClose(window, GL_TRUE);
     }
 
+    if (glfwGetKey(window, GLFW_KEY_L)) {
+        printCordinates(cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_P)) {
+        spectatorMode = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_O)) {
+        spectatorMode = false;
+    }
+
     // Here is where you actually update your uniforms
     glm::mat4 M = glm::perspective(glm::radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
-
-    glm::mat4 Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) *
-        rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) *
-        translate(mat4(1.0), -CamPos);
 
     glm::mat4 ViewPrj = M * Mv;
     glm::mat4 baseTr = glm::mat4(1.0f);
@@ -275,10 +283,6 @@ protected:
       Ubo.nMat = glm::inverse(glm::transpose(Ubo.mMat));
 
       ComponentVector[i].DS.map(currentImage, &Ubo, 0);
-
-      if (glfwGetKey(window, GLFW_KEY_L)) {
-          printCordinates(cameraAngle - 360.0 * floor(cameraAngle / 360.0));
-      }
 
     }
   }
