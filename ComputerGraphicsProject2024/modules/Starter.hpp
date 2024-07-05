@@ -1873,7 +1873,7 @@ std::cout << "Starting createInstance()\n"  << std::flush;
 			m.z = -1.0f;
 		}
 		if(glfwGetKey(window, GLFW_KEY_R)) {
-			m.y = 1.0f;
+			//m.y = 1.0f;
 		}
 		if(glfwGetKey(window, GLFW_KEY_F)) {
 			m.y = -1.0f;
@@ -3117,7 +3117,7 @@ void Pipeline::create() {
 	rasterizer.rasterizerDiscardEnable = VK_FALSE;
 	rasterizer.polygonMode = polyModel;
 	rasterizer.lineWidth = 1.0f;
-	rasterizer.cullMode = CM;
+	rasterizer.cullMode = VK_CULL_MODE_NONE;
 	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 	rasterizer.depthBiasConstantFactor = 0.0f; // Optional
