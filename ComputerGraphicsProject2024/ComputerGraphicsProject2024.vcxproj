@@ -74,12 +74,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\figio\Desktop\ComputerGraphicsProject2024\ComputerGraphicsProject2024\headers;C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\include;C:\Users\figio\Desktop\VulkanProj\Libraries\glm-master\glm;C:\VulkanSDK\1.3.275.0\Include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\lib-vc2022;C:\VulkanSDK\1.3.275.0\Lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,30 +92,34 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\figio\Desktop\ComputerGraphicsProject2024\ComputerGraphicsProject2024\headers;C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\include;C:\Users\figio\Desktop\VulkanProj\Libraries\glm-master\glm;C:\VulkanSDK\1.3.275.0\Include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\lib-vc2022;C:\VulkanSDK\1.3.275.0\Lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)headers;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glm;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64\include;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;C:\VulkanSDK\1.3.275.0;C:\Users\alefo\source\repos\A10\A10\headers;C:\VulkanSDK\1.3.275.0\Include;C:\VulkanSDK\Libraries\glm;C:\VulkanSDK\Libraries\glfw-3.3.9.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\figio\Desktop\ComputerGraphicsProject2024\ComputerGraphicsProject2024\headers;C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\include;C:\Users\figio\Desktop\VulkanProj\Libraries\glm-master\glm;C:\VulkanSDK\1.3.275.0\Include;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glm;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;C:\VulkanSDK\1.3.275.0;C:\Users\alefo\source\repos\A10\A10\headers;C:\VulkanSDK\1.3.275.0\Include;C:\VulkanSDK\Libraries\glm;C:\VulkanSDK\Libraries\glfw-3.3.9.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.275.0\Lib;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64\lib-vc2022;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\lib-vc2022;C:\VulkanSDK\1.3.275.0\Lib;C:\VulkanSDK\1.3.275.0\Lib;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -120,18 +128,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)headers;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glm;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64\include;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;C:\VulkanSDK\1.3.275.0;C:\Users\alefo\source\repos\A01\A01\headers;C:\VulkanSDK\1.3.275.0\Include;C:\VulkanSDK\Libraries\glm;C:\VulkanSDK\Libraries\glfw-3.3.9.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\figio\Desktop\ComputerGraphicsProject2024\ComputerGraphicsProject2024\headers;C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\include;C:\Users\figio\Desktop\VulkanProj\Libraries\glm-master\glm;C:\VulkanSDK\1.3.275.0\Include;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glm;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;C:\VulkanSDK\1.3.275.0;C:\Users\alefo\source\repos\A01\A01\headers;C:\VulkanSDK\1.3.275.0\Include;C:\VulkanSDK\Libraries\glm;C:\VulkanSDK\Libraries\glfw-3.3.9.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.275.0\Lib;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64\lib-vc2022;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\figio\Desktop\VulkanProj\Libraries\glfw-3.3.9.bin.WIN64\lib-vc2022;C:\VulkanSDK\1.3.275.0\Lib;C:\VulkanSDK\1.3.275.0\Lib;C:\Users\donat\Documents\Visual Studio 2022\Libraries\glfw-3.3.9.bin.WIN64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
