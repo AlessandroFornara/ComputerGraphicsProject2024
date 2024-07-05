@@ -208,7 +208,7 @@ protected:
     CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
     CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
     if (spectatorMode) {
-        CamPos = CamPos - MOVE_SPEED * m.y * uy * deltaT;
+        CamPos = CamPos + MOVE_SPEED * m.y * uy * deltaT;
     }
     else {
         CamPos.y = vec3(0, 1, 0).y;
