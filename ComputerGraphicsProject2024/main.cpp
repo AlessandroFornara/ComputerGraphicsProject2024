@@ -254,14 +254,23 @@ protected:
     cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
     Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
 
+
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-      glfwSetWindowShouldClose(window, GL_TRUE);
+        glfwSetWindowShouldClose(window, GL_TRUE);
     }
 
+    float tmp;
     if (glfwGetKey(window, GLFW_KEY_L)) {
-        printCordinates(cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+        if (cameraAngle > 0) {
+            printCordinates(cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+        }
+        else {
+            tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
+            printCordinates(360.0 - tmp);
+        }
     }
+
 
     if (glfwGetKey(window, GLFW_KEY_P)) {
         spectatorMode = true;
@@ -269,6 +278,15 @@ protected:
 
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
+    }
+    if (glfwGetKey(window, GLFW_KEY_K)) {
+        if (cameraAngle > 0) {
+            checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+        }
+        else {
+            tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
+            checkDoors(cameraPosition, 360.0 + tmp);
+        }
     }
 
     // Here is where you actually update your uniforms
@@ -300,40 +318,51 @@ protected:
     }
   }
 
+  void checkDoors(vec3 cameraPosition, float cameraAngle) {
+      //DA CAMBIARE IN UN FOR O QUALCOSA DI SIMILE SE DIVENTANO TANTI OGGETTI
+
+      //Check porta negozio 
+      if (checkSingleDoor(cameraPosition, cameraAngle, 7.5, 8.8, -12.8404))
+          goToShop();
+  }
+
+  void goToShop() {
+      CamPos = { 100.0, 1.0, 100.0 };
+      //DA AGGIUNGERI I LIMITI DELLO SHOP
+  }
+
   /*
     * Deve essere passato in ingresso la variabile "cameraPosition" e "cameraAngle" che sono presenti nella funzione updateUniformBuffer.
-    * Le variabili x1,x2,z invece sono rispettivamente la coordinita più a sinistra dell'oggetto, più a destra (dimensioni del modello) e la sua profondità (posizione 
+    * Le variabili x1,x2,z invece sono rispettivamente la coordinita più a sinistra dell'oggetto, più a destra (dimensioni del modello) e la sua profondità (posizione
     * in cui è rispetto asse Z).
     * Per avviare questo metodo devi immaginarti l'oggetto dritto, senza alcuna rotazione, prima di effettuare effettivamente il check infatti raddrizzo tutto.
     * Ecco spiegato il motivo di "modelRotation", mi serve per raddrizzare
     */
-  bool checkInteraction(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z, vec3 modelRotation) {
+  bool checkSingleDoor(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z) {
       //makeRight(cameraPosition, modelRotation, z); //CI STO LAVORANDO
-      const float minDistance = 5;
+      const float minDistance = 3;
       float distance, alpha, center, beta, halfSide, left, right;
       center = (x2 + x1) / 2;
       halfSide = (x2 - x1) / 2;
-      distance = sqrt(pow(((x2 - x1) - cameraPosition.x), 2) + pow(z - cameraPosition.z, 2));
+      distance = sqrt(pow(center - cameraPosition.x, 2) + pow(z - cameraPosition.z, 2));
       if (distance < minDistance && cameraPosition.x >= x1 && cameraPosition.x <= x2 && z < cameraPosition.z) {
           alpha = 60 - (cameraPosition.z - z) / minDistance * 60;
           if (center < cameraPosition.x) {
               beta = alpha * (cameraPosition.x - center) / halfSide; //Zero se sono pefettamente al centro
               left = alpha + beta;
-              right = alpha - beta;
+              right = alpha - beta / 2;
           }
           else {
               beta = alpha * (-cameraPosition.x + center) / halfSide;
               left = alpha - beta;
-              right = alpha + beta;
+              right = alpha + beta / 2;
           }
-          /*
-          cout << "Camera angle must be between: " << left << " - " << 360.0 - right << '\n';
-          cout << "Camera angle: " << cameraAngle << '\n';
-          */
           return ((cameraAngle < left && cameraAngle >= 0) || (cameraAngle <= 360 && cameraAngle > (360 - right)));
       }
       return false;
   }
+
+
 
   void makeRight(vec3 cameraPosition, vec3 modelRotation, float z) {
       //DA FARE PIù AVANTI SE C'è TEMPO
