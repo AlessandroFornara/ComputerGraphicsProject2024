@@ -230,7 +230,14 @@ protected:
     getSixAxis(deltaT, m, r, fire);
 
     const float ROT_SPEED = radians(120.0f);
-    const float MOVE_SPEED = 8.0f;
+    const float WALK_SPEED = 8.0f;
+    const float RUN_SPEED = WALK_SPEED * 2;
+
+    float MOVE_SPEED = WALK_SPEED;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
+        MOVE_SPEED = RUN_SPEED;
+    }
 
     mat4 Mv;
 
