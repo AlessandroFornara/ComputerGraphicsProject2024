@@ -31,9 +31,59 @@ struct Vertex {
   vec2 UV;
 };
 
+enum Scene { CITY, SHOP };
+
+
+//SHOP
+vector<Component> Shop = {
+    //PAVIMENTO
+    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", {100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", {104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", {100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", {104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+
+    //MURI
+    //ALTO SINISTRA
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {98.0f, 1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {100.0f, 1.0f, 106.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+    //ALTO DESTRA
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {106.0f, 1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {104.0f, 1.0f, 106.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+    //BASSO DESTRA
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {104.0f, 1.0f, 98.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {106.0f, 1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    //BASSO SINISTRA
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {98.0f, 1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", {100.0f, 1.0f, 98.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+
+    //TETTO
+    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", {100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", {104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", {104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+
+    //ACCESSORI
+    {"models/Shop/shop_003_Mesh.4875.mgcg", "textures/Textures.png", {105.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/shop_003_Mesh.4875.mgcg", "textures/Textures.png", {103.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/shop_004_Mesh.4923.mgcg", "textures/Textures.png", {100.0f, 0.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/shop_002_Mesh.5167.mgcg", "textures/Textures.png", {104.0f, 0.0f, 105.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+    {"models/Shop/door_011_Mesh.116.mgcg", "textures/Textures.png", {101.0f, -1.0f, 106.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", {106.0f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", {98.0f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+
+    //LAMPADE 
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}}
+};
+
+
+
 std::vector<Component> ComponentVector = {
     // {"models/park_002.mgcg", "textures/Textures_City.png", {20.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 0.0f}}, {0.0f}},
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+   
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -93,6 +143,7 @@ std::vector<Component> ComponentVector = {
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png", {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_003.mgcg", "textures/Textures_City.png", {5+5*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}, //001 or 003;
+    
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
 
@@ -101,6 +152,8 @@ std::vector<Component> ComponentVector = {
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
 
+    Scene currentScene = CITY;
+
   float Ar;
 
   DescriptorSetLayout DSL;
@@ -108,7 +161,13 @@ protected:
   VertexDescriptor VDVertex;
   TextMaker txt;
 
-  vec3 CamPos = vec3(0.0, 1.0, -8.0);
+  //SHOP
+  DescriptorSetLayout DSLshop;
+  Pipeline Pipshop;
+  VertexDescriptor VDshop;
+
+
+  vec3 CamPos = vec3(1.0, 1.0, -8.0);
   float CamAlpha = 0.0f, CamBeta = 0.0f;
   mat4 ViewMatrix;
 
@@ -133,61 +192,84 @@ protected:
 
   void localInit() {
 
-    DSL.init(this, {
-        {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
-        {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
+      DSL.init(this, {
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
+          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
+      DSLshop.init(this, {
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
+          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
 
-    VDVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
-        {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
-        {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
-        {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
-      });
+      VDVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
+             {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
+             {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
+             {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
+          });
+      VDshop.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
+          {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
+          {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
+          {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
+          });
 
-    Pip.init(this, &VDVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL });
 
-    //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
-    for (int i = 0; i < ComponentVector.size(); i++) {
-      ComponentVector[i].model.init(this, &VDVertex, ComponentVector[i].ObjPath, MGCG);
-      ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
-    }
-    
+      Pip.init(this, &VDVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL });
+      Pipshop.init(this, &VDshop, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLshop });
 
-    //DA CAMBIARE
-//    DPSZs.uniformBlocksInPool = 3;
-    DPSZs.uniformBlocksInPool = ComponentVector.size();
-    DPSZs.texturesInPool = ComponentVector.size();
-    DPSZs.setsInPool = ComponentVector.size();
+      //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
+      for (int i = 0; i < ComponentVector.size(); i++) {
+          ComponentVector[i].model.init(this, &VDVertex, ComponentVector[i].ObjPath, MGCG);
+          ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
+      }
+      
+      for (int i = 0; i < Shop.size(); i++) {
+          Shop[i].model.init(this, &VDVertex, Shop[i].ObjPath, MGCG);
+          Shop[i].texture.init(this, Shop[i].TexturePath);
+      }
 
-    cout << "Initializing text\n";
-    //txt.init(this, &outText);
 
-    cout << "Initialization completed!\n";
-    cout << "Uniform Blocks in the Pool  : " << DPSZs.uniformBlocksInPool << "\n";
-    cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
-    cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
+      //DA CAMBIARE
+  //    DPSZs.uniformBlocksInPool = 3;
+      DPSZs.uniformBlocksInPool = ComponentVector.size() + Shop.size();
+      DPSZs.texturesInPool = ComponentVector.size() + Shop.size();
+      DPSZs.setsInPool = ComponentVector.size() + Shop.size();
 
-    ViewMatrix = translate(mat4(1), -CamPos);
+      cout << "Initializing text\n";
+      //txt.init(this, &outText);
+
+      cout << "Initialization completed!\n";
+      cout << "Uniform Blocks in the Pool  : " << DPSZs.uniformBlocksInPool << "\n";
+      cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
+      cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
+
+      ViewMatrix = translate(mat4(1), -CamPos);
   }
 
   void pipelinesAndDescriptorSetsInit() {
 
     Pip.create();
+    Pipshop.create();
 
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
     int sizeCV = ComponentVector.size();
     for (int i = 0; i < sizeCV; i++) {
       ComponentVector[i].DS.init(this, &DSL, {&ComponentVector[i].texture});
     }
-
+    int sizeSHOP;
+    for (int i = 0; i < Shop.size(); i++) {
+        Shop[i].DS.init(this, &DSLshop, { &Shop[i].texture });
+    }
   }
 
   void pipelinesAndDescriptorSetsCleanup() {
 
     Pip.cleanup();
+    Pipshop.cleanup();
 
     //CLEAN UP DI TUTTI I DESCRIPTOR SET
     for (int i = 0; i < ComponentVector.size(); i++) {
       ComponentVector[i].DS.cleanup();
+    }
+    for (int i = 0; i < Shop.size(); i++) {
+        Shop[i].DS.cleanup();
     }
 
   }
@@ -199,15 +281,20 @@ protected:
       ComponentVector[i].model.cleanup();
       ComponentVector[i].texture.cleanup();
     }
-
+    for (int i = 0; i < Shop.size(); i++) {
+        Shop[i].model.cleanup();
+        Shop[i].texture.cleanup();
+    }
+    DSLshop.cleanup();
     DSL.cleanup();
     Pip.destroy();
+    Pipshop.destroy();
   }
 
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
 
     Pip.bind(commandBuffer);
-
+    
     for (int i = 0; i < ComponentVector.size(); i++) {
 
       ComponentVector[i].model.bind(commandBuffer);
@@ -217,14 +304,19 @@ protected:
       vkCmdDrawIndexed(commandBuffer,
         static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
     }
-
+    Pipshop.bind(commandBuffer);
+    for (int i = 0; i < Shop.size(); i++) {
+        Shop[i].model.bind(commandBuffer);
+        Shop[i].DS.bind(commandBuffer, Pipshop, 0, currentImage);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[i].model.indices.size()), 1, 0, 0, 0);
+    }
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
 
     
-    float deltaT, cameraAngle = 0.0;;
-    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = {0.0,0.0,0.0};
+    float deltaT, cameraAngle = 0.0, movX, movZ;
+    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld;
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
@@ -249,8 +341,15 @@ protected:
     vec3 ux = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(1, 0, 0, 1);
     vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
     vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
+    
+    CamPosOld = CamPos;
     CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
     CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
+
+    if (!checkLimits(CamPos)) {
+        CamPos = CamPosOld;
+    }
+
     if (spectatorMode) {
         CamPos = CamPos + MOVE_SPEED * m.y * uy * deltaT;
     }
@@ -323,19 +422,51 @@ protected:
       ComponentVector[i].DS.map(currentImage, &Ubo, 0);
 
     }
+
+    for (int i = 0; i < Shop.size(); i++) {
+        mat4 Transform = translate(mat4(1), Shop[i].pos);
+        Transform = scale(Transform, Shop[i].scale);
+        if (!Shop[i].rot.empty()) {
+            for (int j = 0; j < Shop[i].rot.size(); j++) {
+                Transform = rotate(Transform, radians(Shop[i].angle[j]), Shop[i].rot[j]);
+            }
+        }
+        Ubo.mMat = Transform;
+        Ubo.mvpMat = ViewPrj * Ubo.mMat;
+        Ubo.nMat = inverse(transpose(Ubo.mMat));
+        Shop[i].DS.map(currentImage, &Ubo, 0);
+    }
+
+  }
+
+  bool checkLimits(vec3 newCamPos) {
+      bool result;
+      if (currentScene == SHOP) {
+          result = (newCamPos.z > 100.1 && newCamPos.z <= 105.5 && newCamPos.x < 105 && newCamPos.x >= 98.60);
+          result = result && !(newCamPos.x > 102 && newCamPos.x < 105 && newCamPos.z > 104 && newCamPos.z < 105.5);
+          return result;
+      }
+      return true;
   }
 
   void checkDoors(vec3 cameraPosition, float cameraAngle) {
       //DA CAMBIARE IN UN FOR O QUALCOSA DI SIMILE SE DIVENTANO TANTI OGGETTI
 
       //Check porta negozio 
-      if (checkSingleDoor(cameraPosition, cameraAngle, 7.5, 8.8, -12.8404))
+      if (checkSingleDoor(cameraPosition, cameraAngle, 7.5, 8.8, -12.8404, true))
           goToShop();
+      if (checkSingleDoor(cameraPosition, cameraAngle, 99.63, 100.86, 105, false))
+          exitShop();
   }
 
   void goToShop() {
-      CamPos = { 100.0, 1.0, 100.0 };
-      //DA AGGIUNGERI I LIMITI DELLO SHOP
+      CamPos = { 100.0, 1.0, 104.0 };
+      currentScene = SHOP;
+  }
+
+  void exitShop() {
+      CamPos = { 7.0, 1.0, -12.0 };
+      currentScene = CITY;
   }
 
   /*
@@ -345,17 +476,31 @@ protected:
     * Per avviare questo metodo devi immaginarti l'oggetto dritto, senza alcuna rotazione, prima di effettuare effettivamente il check infatti raddrizzo tutto.
     * Ecco spiegato il motivo di "modelRotation", mi serve per raddrizzare
     */
-  bool checkSingleDoor(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z) {
-      //makeRight(cameraPosition, modelRotation, z); //CI STO LAVORANDO
+  bool checkSingleDoor(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z, bool switchView) {
+      //makeRight(cameraPosition, modelRotation, z); //DA FARE PIù AVANTI
+      float Zmax, Zmin;
+      if (switchView) {
+          Zmax = cameraPosition.z;
+          Zmin = z;
+      }
+      else {
+          Zmax = z;
+          Zmin = cameraPosition.z;
+          if (cameraAngle > 180.0)
+              cameraAngle = cameraAngle - 180.0;
+          else
+              cameraAngle = 360 + (cameraAngle - 180.0);
+      }
       const float minDistance = 3;
       float distance, alpha, center, beta, halfSide, left, right;
       center = (x2 + x1) / 2;
       halfSide = (x2 - x1) / 2;
-      distance = sqrt(pow(center - cameraPosition.x, 2) + pow(z - cameraPosition.z, 2));
-      if (distance < minDistance && cameraPosition.x >= x1 && cameraPosition.x <= x2 && z < cameraPosition.z) {
-          alpha = 60 - (cameraPosition.z - z) / minDistance * 60;
+      distance = sqrt(pow(center - cameraPosition.x, 2) + pow(Zmin - Zmax, 2));
+      if (distance < minDistance && cameraPosition.x >= x1 && cameraPosition.x <= x2 && Zmin < Zmax) {
+          alpha = 60 - (Zmax - Zmin) / minDistance * 60;
+          cout << "ALPHA: " << alpha <<'\n';
           if (center < cameraPosition.x) {
-              beta = alpha * (cameraPosition.x - center) / halfSide; //Zero se sono pefettamente al centro
+              beta = alpha * (cameraPosition.x - center) / halfSide;
               left = alpha + beta;
               right = alpha - beta / 2;
           }
@@ -364,6 +509,7 @@ protected:
               left = alpha - beta;
               right = alpha + beta / 2;
           }
+          cout << "ANGOLO VA TRA: " << left << " - " << 360 - right << ", Angolo attuale: " << cameraAngle << '\n';
           return ((cameraAngle < left && cameraAngle >= 0) || (cameraAngle <= 360 && cameraAngle > (360 - right)));
       }
       return false;
