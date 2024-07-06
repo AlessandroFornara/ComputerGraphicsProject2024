@@ -81,13 +81,19 @@ vector<Component> Shop = {
 
 
 std::vector<Component> ComponentVector = {
-    // {"models/park_002.mgcg", "textures/Textures_City.png", {20.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 0.0f}}, {0.0f}},
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-   
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_002.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, 8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
+    {"models/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
+    {"models/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", {-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
     
     {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png", {10.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
@@ -128,6 +134,12 @@ std::vector<Component> ComponentVector = {
         {{0.0f, 1.0f, 0.0f} }, {90.0f}},
     {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -6*8.0f}, {1.0f, 1.0f, 1.0f}, 
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -7*8.0f}, {1.0f, 1.0f, 1.0f}, 
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -8*8.0f}, {1.0f, 1.0f, 1.0f}, 
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+    {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, -9*8.0f}, {1.0f, 1.0f, 1.0f}, 
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
 
     {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png", {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, 
@@ -140,14 +152,32 @@ std::vector<Component> ComponentVector = {
     {"models/road_tile_2x2_003.mgcg", "textures/Textures_City.png", {-4-1*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {180.0f}},
 
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4+7*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {-4-1*8.0f, 0.0f, -4-6*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {-4-1*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
+
+    {"models/road_tile_2x2_003.mgcg", "textures/Textures_City.png", {-4-1*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f},
+        { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/road_tile_2x2_003.mgcg", "textures/Textures_City.png", {4+7*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+
+    {"models/road_tile_2x2_002.mgcg", "textures/Textures_City.png", {4+2*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", {4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png", {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_003.mgcg", "textures/Textures_City.png", {5+5*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}, //001 or 003;
+
     
+    {"models/park_002.mgcg", "textures/Textures_City.png", {2+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}}
+
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
 
-//TODO: add tile_river, non urgente;
 
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
