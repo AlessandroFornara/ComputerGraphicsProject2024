@@ -183,6 +183,16 @@ std::vector<Component> ComponentVector = {
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
 
 
+struct spotLightUBO {
+    alignas(16) vec3 lightDir[4];
+    alignas(16) vec3 lightPos[4];
+    alignas(16) vec3 lightColor[4];
+    alignas(4) float cosIn;
+    alignas(4) float cosOut;
+    alignas(16) vec3 eyePos;
+};
+
+
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
 
@@ -231,7 +241,8 @@ protected:
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
       DSLshop.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
-          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
+          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
+          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO)} });
 
       VDVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
              {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
@@ -246,7 +257,7 @@ protected:
 
 
       Pip.init(this, &VDVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL });
-      Pipshop.init(this, &VDshop, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLshop });
+      Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLshop });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
       for (int i = 0; i < ComponentVector.size(); i++) {
@@ -419,6 +430,7 @@ protected:
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
+
     if (glfwGetKey(window, GLFW_KEY_K)) {
         if (cameraAngle > 0) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
@@ -470,6 +482,33 @@ protected:
         Ubo.nMat = inverse(transpose(Ubo.mMat));
         Shop[i].DS.map(currentImage, &Ubo, 0);
     }
+
+    //SHOP 
+    spotLightUBO subo{};
+    for (int i = 0; i < 4; i++) {
+        subo.lightPos[i] = Shop[23 + i].pos;
+        subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
+        subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
+    }
+    subo.cosIn = 0.45;
+    subo.cosOut = 0.50;
+    subo.eyePos = CamPos;
+
+    for (int i = 0; i < Shop.size(); i++) {
+        mat4 Transform = translate(mat4(1), Shop[i].pos);
+        Transform = scale(Transform, Shop[i].scale);
+        if (!Shop[i].rot.empty()) {
+            for (int j = 0; j < Shop[i].rot.size(); j++) {
+                Transform = rotate(Transform, radians(Shop[i].angle[j]), Shop[i].rot[j]);
+            }
+        }
+        Ubo.mMat = Transform;
+        Ubo.mvpMat = ViewPrj * Ubo.mMat;
+        Ubo.nMat = inverse(transpose(Ubo.mMat));
+        Shop[i].DS.map(currentImage, &Ubo, 0);
+        Shop[i].DS.map(currentImage, &subo, 2);
+    }
+
 
   }
 
