@@ -112,7 +112,10 @@ std::vector<Component> ComponentVector = {
         { {0.0f, 1.0f, 0.0f} }, {90.0f}},
     
     {"models/store_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", {4.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", {-12.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     
     {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png", {4+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
     {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", {4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
@@ -124,6 +127,7 @@ std::vector<Component> ComponentVector = {
     {"models/apartment_008.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_008.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {180.0f}},
+    {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", {28.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_012.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_012.mgcg", "textures/Textures_City.png", {4*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {180.0f}},
