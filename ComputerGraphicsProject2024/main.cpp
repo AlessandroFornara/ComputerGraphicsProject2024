@@ -75,13 +75,21 @@ vector<Component> Shop = {
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}}
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", {104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+
+    //LAMPADINE
+    {"models/Shop/Sphere.obj", "textures/Lamp.png", {100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", "textures/Lamp.png", {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", "textures/Lamp.png", {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", "textures/Lamp.png", {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+
 };
 
 
 
 std::vector<Component> ComponentVector = {
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    /*
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -178,6 +186,7 @@ std::vector<Component> ComponentVector = {
 
     
     {"models/park_002.mgcg", "textures/Textures_City.png", {2+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}}
+    */
 
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
@@ -192,6 +201,14 @@ struct spotLightUBO {
     alignas(16) vec3 eyePos;
 };
 
+struct EmissionUniformBufferObject {
+    alignas(16) mat4 mvpMat;
+};
+
+struct EmissionVertex {
+    glm::vec3 pos;
+    glm::vec2 UV;
+};
 
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
@@ -210,8 +227,12 @@ protected:
   Pipeline Pipshop;
   VertexDescriptor VDshop;
 
+  //ONLY EMISSION
+  DescriptorSetLayout DSLemission;
+  Pipeline PipEmission;
+  VertexDescriptor VDemission;
 
-  vec3 CamPos = vec3(1.0, 1.0, -8.0);
+  vec3 CamPos = vec3(100.0, 1.0, 100.0);
   float CamAlpha = 0.0f, CamBeta = 0.0f;
   mat4 ViewMatrix;
 
@@ -242,7 +263,12 @@ protected:
       DSLshop.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
-          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(spotLightUBO), 1}});
+          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(spotLightUBO), 1} });
+      DSLemission.init(this, {
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(EmissionUniformBufferObject), 1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
+          });
+
 
       VDVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
              {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
@@ -254,10 +280,15 @@ protected:
           {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
           {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
           });
+      VDemission.init(this, { {0, sizeof(EmissionVertex),VK_VERTEX_INPUT_RATE_VERTEX} }, {
+          { 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(EmissionVertex, pos),sizeof(vec3), POSITION },
+          { 0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(EmissionVertex, UV), sizeof(vec2), UV } }
+          );
 
 
       Pip.init(this, &VDVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL });
       Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLshop });
+      PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
       for (int i = 0; i < ComponentVector.size(); i++) {
@@ -265,15 +296,21 @@ protected:
           ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
       }
       
-      for (int i = 0; i < Shop.size(); i++) {
-          Shop[i].model.init(this, &VDVertex, Shop[i].ObjPath, MGCG);
-          Shop[i].texture.init(this, Shop[i].TexturePath);
+      //SHOP
+      int j;
+      for (j = 0; j < Shop.size()-4; j++) {
+          Shop[j].model.init(this, &VDVertex, Shop[j].ObjPath, MGCG);
+          Shop[j].texture.init(this, Shop[j].TexturePath);
+      }
+      for (; j < Shop.size(); j++) {
+          Shop[j].model.init(this, &VDemission, Shop[j].ObjPath, OBJ);
+          Shop[j].texture.init(this, Shop[j].TexturePath);
       }
 
 
       //DA CAMBIARE
   //    DPSZs.uniformBlocksInPool = 3;
-      DPSZs.uniformBlocksInPool = ComponentVector.size() + Shop.size();
+      DPSZs.uniformBlocksInPool = ComponentVector.size() + Shop.size()*2;
       DPSZs.texturesInPool = ComponentVector.size() + Shop.size();
       DPSZs.setsInPool = ComponentVector.size() + Shop.size();
 
@@ -292,15 +329,19 @@ protected:
 
     Pip.create();
     Pipshop.create();
+    PipEmission.create();
 
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
     int sizeCV = ComponentVector.size();
     for (int i = 0; i < sizeCV; i++) {
       ComponentVector[i].DS.init(this, &DSL, {&ComponentVector[i].texture});
     }
-    int sizeSHOP;
-    for (int i = 0; i < Shop.size(); i++) {
-        Shop[i].DS.init(this, &DSLshop, { &Shop[i].texture });
+    int sizeSHOP, j;
+    for (j = 0; j < Shop.size()-4; j++) {
+        Shop[j].DS.init(this, &DSLshop, { &Shop[j].texture });
+    }
+    for (; j < Shop.size(); j++) {
+        Shop[j].DS.init(this, &DSLemission, { &Shop[j].texture });
     }
   }
 
@@ -308,6 +349,7 @@ protected:
 
     Pip.cleanup();
     Pipshop.cleanup();
+    PipEmission.cleanup();
 
     //CLEAN UP DI TUTTI I DESCRIPTOR SET
     for (int i = 0; i < ComponentVector.size(); i++) {
@@ -330,8 +372,12 @@ protected:
         Shop[i].model.cleanup();
         Shop[i].texture.cleanup();
     }
+
+    DSLemission.cleanup();
     DSLshop.cleanup();
     DSL.cleanup();
+
+    PipEmission.destroy();
     Pip.destroy();
     Pipshop.destroy();
   }
@@ -349,11 +395,19 @@ protected:
       vkCmdDrawIndexed(commandBuffer,
         static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
     }
+
+    int j;
     Pipshop.bind(commandBuffer);
-    for (int i = 0; i < Shop.size(); i++) {
-        Shop[i].model.bind(commandBuffer);
-        Shop[i].DS.bind(commandBuffer, Pipshop, 0, currentImage);
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[i].model.indices.size()), 1, 0, 0, 0);
+    for (j= 0; j < Shop.size()-4; j++) {
+        Shop[j].model.bind(commandBuffer);
+        Shop[j].DS.bind(commandBuffer, Pipshop, 0, currentImage);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
+    }
+    PipEmission.bind(commandBuffer);
+    for (; j < Shop.size(); j++) {
+        Shop[j].model.bind(commandBuffer);
+        Shop[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
     }
   }
 
@@ -469,47 +523,48 @@ protected:
 
     }
 
-    for (int i = 0; i < Shop.size(); i++) {
-        mat4 Transform = translate(mat4(1), Shop[i].pos);
-        Transform = scale(Transform, Shop[i].scale);
-        if (!Shop[i].rot.empty()) {
-            for (int j = 0; j < Shop[i].rot.size(); j++) {
-                Transform = rotate(Transform, radians(Shop[i].angle[j]), Shop[i].rot[j]);
-            }
-        }
-        Ubo.mMat = Transform;
-        Ubo.mvpMat = ViewPrj * Ubo.mMat;
-        Ubo.nMat = inverse(transpose(Ubo.mMat));
-        Shop[i].DS.map(currentImage, &Ubo, 0);
-    }
+   
 
     //SHOP 
     spotLightUBO subo{};
+    EmissionUniformBufferObject eubo{};
     for (int i = 0; i < 4; i++) {
         subo.lightPos[i] = Shop[23 + i].pos;
+        subo.lightPos[i].y = 1.7f;
         subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
         subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
     }
     subo.cosIn = 0.45;
     subo.cosOut = 0.50;
     subo.eyePos = CamPos;
-
-    for (int i = 0; i < Shop.size(); i++) {
-        mat4 Transform = translate(mat4(1), Shop[i].pos);
-        Transform = scale(Transform, Shop[i].scale);
-        if (!Shop[i].rot.empty()) {
-            for (int j = 0; j < Shop[i].rot.size(); j++) {
-                Transform = rotate(Transform, radians(Shop[i].angle[j]), Shop[i].rot[j]);
+    int j=0;
+    
+    for (; j < Shop.size() - 4; j++) {
+        mat4 Transform = translate(mat4(1), Shop[j].pos);
+        Transform = scale(Transform, Shop[j].scale);
+        if (!Shop[j].rot.empty()) {
+            for (int k = 0; k < Shop[j].rot.size(); k++) {
+                Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
             }
         }
         Ubo.mMat = Transform;
         Ubo.mvpMat = ViewPrj * Ubo.mMat;
         Ubo.nMat = inverse(transpose(Ubo.mMat));
-        Shop[i].DS.map(currentImage, &Ubo, 0);
-        Shop[i].DS.map(currentImage, &subo, 2);
+        Shop[j].DS.map(currentImage, &Ubo, 0);
+        Shop[j].DS.map(currentImage, &subo, 2);
     }
-
-
+   
+    for (; j < Shop.size(); j++) {
+        mat4 Transform = translate(mat4(1), Shop[j].pos);
+        Transform = scale(Transform, Shop[j].scale);
+        if (!Shop[j].rot.empty()) {
+            for (int k = 0; k < Shop[j].rot.size(); k++) {
+                Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
+            }
+        }
+        eubo.mvpMat = ViewPrj * Transform;
+        Shop[j].DS.map(currentImage, &eubo, 0);
+    }
   }
 
   bool checkLimits(vec3 newCamPos) {

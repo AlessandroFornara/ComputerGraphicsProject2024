@@ -32,7 +32,7 @@ vec3 lambertDiffuse(vec3 Norm, vec3 lightPos, vec3 Color, vec3 fragmentPosition)
 
 vec3 phongSpecular(vec3 Norm, vec3 lightPos, vec3 specularColor, vec3 eyeDir) {
     vec3 direction = normalize(lightPos - fragPos);
-    vec3 f_specular = specularColor * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0, 1), 150.0f);
+    vec3 f_specular = specularColor * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0, 1), 80.0f);
     return f_specular;
 }
 

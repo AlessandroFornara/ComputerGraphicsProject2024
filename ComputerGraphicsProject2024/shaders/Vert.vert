@@ -24,3 +24,4 @@ void main() {
 	fragNorm = (ubo.nMat * vec4(inNorm, 0.0)).xyz;
 	fragUV = inUV;
 }
+
