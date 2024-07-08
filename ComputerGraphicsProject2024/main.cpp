@@ -237,6 +237,9 @@ protected:
 
   bool spectatorMode = false;
 
+  bool isInsideCar = false;
+  bool firstPersonView = true;
+
 
   void setWindowParameters() {
     windowWidth = 800;
@@ -492,6 +495,10 @@ protected:
             tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
             checkDoors(cameraPosition, 360.0 + tmp);
         }
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_Y)) {
+        isInsideCar = true;
     }
 
     // Here is where you actually update your uniforms
