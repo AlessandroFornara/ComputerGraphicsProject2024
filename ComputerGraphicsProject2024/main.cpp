@@ -89,7 +89,7 @@ vector<Component> Shop = {
 
 std::vector<Component> ComponentVector = {
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    /*
+    
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", {8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png", {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png", {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -186,7 +186,7 @@ std::vector<Component> ComponentVector = {
 
     
     {"models/park_002.mgcg", "textures/Textures_City.png", {2+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}}
-    */
+    
 
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
@@ -232,7 +232,7 @@ protected:
   Pipeline PipEmission;
   VertexDescriptor VDemission;
 
-  vec3 CamPos = vec3(100.0, 1.0, 100.0);
+  vec3 CamPos = vec3(1.0, 1.0, -8.0);
   float CamAlpha = 0.0f, CamBeta = 0.0f;
   mat4 ViewMatrix;
 
