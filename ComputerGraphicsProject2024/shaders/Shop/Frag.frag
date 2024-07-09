@@ -7,15 +7,17 @@ layout(location = 2) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
 
-layout(set = 0, binding = 1) uniform sampler2D tex;
 
-layout(set = 0, binding = 2) uniform spotLightUBO {
+layout(set = 0, binding = 0) uniform spotLightUBO {
     vec3 lightDir[4];
     vec3 lightPos[4];
     vec3 lightColor[4];
 	vec3 eyePos;
     vec4 InOutDecayTarget;
 } subo;
+
+layout(set = 1, binding = 1) uniform sampler2D tex;
+
 
 vec3 spot_light_color(vec3 lightPos, vec3 pos, vec3 lightDir, vec3 lightColor) {
     vec3 L0 = lightColor * pow(subo.InOutDecayTarget.w / length(pos - lightPos), subo.InOutDecayTarget.z);
