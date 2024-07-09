@@ -44,32 +44,32 @@ vector<Component> Shop = {
 
     //MURI
     //ALTO SINISTRA
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, 1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, 1.0f, 106.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
     //ALTO DESTRA
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{106.0f, 1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{104.0f, 1.0f, 106.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{106.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{104.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
     //BASSO DESTRA
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{104.0f, 1.0f, 98.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{106.0f, 1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{104.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{106.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f},  { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     //BASSO SINISTRA
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, 1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-    {"models/Shop/wall_013_Mesh.290.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, 1.0f, 98.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0f,0.0f}}, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f} , { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f} },
 
     //TETTO
-    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/floor_013_Mesh.331.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
 
     //ACCESSORI
     {"models/Shop/shop_003_Mesh.4875.mgcg", "textures/Textures.png", MGCG,{105.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/shop_003_Mesh.4875.mgcg", "textures/Textures.png", MGCG,{103.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/shop_004_Mesh.4923.mgcg", "textures/Textures.png", MGCG,{100.0f, 0.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/shop_002_Mesh.5167.mgcg", "textures/Textures.png", MGCG,{104.0f, 0.0f, 105.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-    {"models/Shop/door_011_Mesh.116.mgcg", "textures/Textures.png",MGCG, {101.0f, -1.0f, 106.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{106.0f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{98.0f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/door_011_Mesh.116.mgcg", "textures/Textures.png",MGCG, {101.0f, -1.0f, 105.7f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{105.7f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{98.3f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
 
     //LAMPADE 
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -84,6 +84,7 @@ vector<Component> Shop = {
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
 
 };
+
 
 
 
@@ -198,10 +199,10 @@ struct spotLightUBO {
     alignas(16) vec3 lightDir[4];
     alignas(16) vec3 lightPos[4];
     alignas(16) vec3 lightColor[4];
-    alignas(4) float cosIn;
-    alignas(4) float cosOut;
     alignas(16) vec3 eyePos;
+    alignas(16) vec4 InOutDecayTarget;
 };
+
 
 struct EmissionUniformBufferObject {
     alignas(16) mat4 mvpMat;
@@ -315,7 +316,7 @@ protected:
       //SHOP
       int j;
       for (j = 0; j < Shop.size()-4; j++) {
-          Shop[j].model.init(this, &VDBlinnVertex, Shop[j].ObjPath, Shop[j].type);
+          Shop[j].model.init(this, &VDshop, Shop[j].ObjPath, Shop[j].type);
           Shop[j].texture.init(this, Shop[j].TexturePath);
       }
       for (; j < Shop.size(); j++) {
@@ -550,13 +551,16 @@ protected:
     EmissionUniformBufferObject eubo{};
     for (int i = 0; i < 4; i++) {
         subo.lightPos[i] = Shop[23 + i].pos;
-        subo.lightPos[i].y = 1.7f;
+        //subo.lightPos[i].y = 1.7f;
         subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
         subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
     }
-    subo.cosIn = 0.45;
-    subo.cosOut = 0.50;
+    subo.InOutDecayTarget.x = 0.90f;
+    subo.InOutDecayTarget.y = 0.92f;
+    subo.InOutDecayTarget.z = 2.0f;
+    subo.InOutDecayTarget.w = 2.0f;
     subo.eyePos = CamPos;
+
     int j=0;
     
     for (; j < Shop.size() - 4; j++) {
