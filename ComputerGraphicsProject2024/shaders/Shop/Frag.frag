@@ -54,5 +54,5 @@ void main() {
         finalResult += (spec[i]+diffSpot[i])*spotColor[i] ;
     }
 	
-    outColor = vec4(finalResult, 1.0f) + vec4( vec3(0.2f, 0.2f, 0.2f) * Albedo, 1.0f); 
+    outColor = vec4(finalResult, 1.0f) + vec4( vec3(0.1f, 0.1f, 0.1f) * Albedo, 1.0f); 
 }
