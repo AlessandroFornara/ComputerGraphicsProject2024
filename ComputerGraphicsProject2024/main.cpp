@@ -212,17 +212,28 @@ struct EmissionVertex {
     glm::vec2 UV;
 };
 
+struct BlinnUniformBufferObject {
+    alignas(16) glm::mat4 mvpMat;
+    alignas(16) glm::mat4 mMat;
+    alignas(16) glm::mat4 nMat;
+};
+
+struct BlinnMatParUniformBufferObject {
+    alignas(4)  float Power;
+};
+
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
 
     Scene currentScene = CITY;
 
   float Ar;
-
-  DescriptorSetLayout DSL;
-  Pipeline Pip;
-  VertexDescriptor VDVertex;
   TextMaker txt;
+
+  //BLINN
+  DescriptorSetLayout DSLBlinn;
+  Pipeline PipBlinn;
+  VertexDescriptor VDBlinnVertex;
 
   //SHOP
   DescriptorSetLayout DSLshop;
@@ -262,7 +273,7 @@ protected:
 
   void localInit() {
 
-      DSL.init(this, {
+      DSLBlinn.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
       DSLshop.init(this, {
@@ -275,7 +286,7 @@ protected:
           });
 
 
-      VDVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
+      VDBlinnVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
              {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
              {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
              {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
@@ -291,20 +302,20 @@ protected:
           );
 
 
-      Pip.init(this, &VDVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL });
+      PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLBlinn });
       Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLshop });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
       for (int i = 0; i < ComponentVector.size(); i++) {
-          ComponentVector[i].model.init(this, &VDVertex, ComponentVector[i].ObjPath, ComponentVector[i].type);
+          ComponentVector[i].model.init(this, &VDBlinnVertex, ComponentVector[i].ObjPath, ComponentVector[i].type);
           ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
       }
       
       //SHOP
       int j;
       for (j = 0; j < Shop.size()-4; j++) {
-          Shop[j].model.init(this, &VDVertex, Shop[j].ObjPath, Shop[j].type);
+          Shop[j].model.init(this, &VDBlinnVertex, Shop[j].ObjPath, Shop[j].type);
           Shop[j].texture.init(this, Shop[j].TexturePath);
       }
       for (; j < Shop.size(); j++) {
@@ -332,14 +343,14 @@ protected:
 
   void pipelinesAndDescriptorSetsInit() {
 
-    Pip.create();
+    PipBlinn.create();
     Pipshop.create();
     PipEmission.create();
 
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
     int sizeCV = ComponentVector.size();
     for (int i = 0; i < sizeCV; i++) {
-      ComponentVector[i].DS.init(this, &DSL, {&ComponentVector[i].texture});
+      ComponentVector[i].DS.init(this, &DSLBlinn, {&ComponentVector[i].texture});
     }
     int sizeSHOP, j;
     for (j = 0; j < Shop.size()-4; j++) {
@@ -352,7 +363,7 @@ protected:
 
   void pipelinesAndDescriptorSetsCleanup() {
 
-    Pip.cleanup();
+    PipBlinn.cleanup();
     Pipshop.cleanup();
     PipEmission.cleanup();
 
@@ -380,21 +391,21 @@ protected:
 
     DSLemission.cleanup();
     DSLshop.cleanup();
-    DSL.cleanup();
+    DSLBlinn.cleanup();
 
     PipEmission.destroy();
-    Pip.destroy();
+    PipBlinn.destroy();
     Pipshop.destroy();
   }
 
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
 
-    Pip.bind(commandBuffer);
+    PipBlinn.bind(commandBuffer);
     
     for (int i = 0; i < ComponentVector.size(); i++) {
 
       ComponentVector[i].model.bind(commandBuffer);
-      ComponentVector[i].DS.bind(commandBuffer, Pip, 0, currentImage);
+      ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 0, currentImage);
 
       // The actual draw call.
       vkCmdDrawIndexed(commandBuffer,
