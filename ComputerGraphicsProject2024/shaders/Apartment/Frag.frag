@@ -57,6 +57,6 @@ void main() {
 	vec3 speElement = spectWithToon(normalize(fragNorm), normalize(tubo.eyePos - fragPos), tubo.lightDir, Albedo);
 	vec3 col  =  (diffElement + speElement) * tubo.lightColor.xyz;
 	
-	outColor = vec4(col, 1.0f);
+	outColor = vec4(col + Albedo * vec3(0.1, 0.1, 0.1), 1.0f);
 	
 }

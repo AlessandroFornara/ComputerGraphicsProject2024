@@ -40,6 +40,14 @@ struct BlinnMatParUniformBufferObject {
     alignas(4)  float Power;
 };
 
+struct ToonUniformBufferObject {
+    alignas(16) glm::vec3 lightDir;
+    alignas(16) glm::vec3 lightColor;
+    alignas(16) glm::vec3 eyePos;
+    alignas(4) float angleDiff;
+    alignas(4) float angleSpec;
+};
+
 struct Component {
   const string ObjPath;
   const string TexturePath;
@@ -59,16 +67,61 @@ struct Vertex {
   vec2 UV;
 };
 
-enum Scene { CITY, SHOP };
+enum Scene { CITY, SHOP, APARTMENT };
+
+vector<Component> Apartment = {
+    //PAVIMENTO
+    {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{199.0f, -1.0f, 197.0f}, {0.5f, 2.0f, 0.5f}, {}, {}},
+
+    //SOFFITTO
+    {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{200.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+    {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{204.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+    {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{200.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+    {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{204.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+    {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{199.0f, 3.0f, 196.0f}, {0.5f, 1.0f, 0.5f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+
+    //MURI
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{202.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{198.0f, -1.0f, 200.0f},{1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{198.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, 1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{202.0f, 1.0f, 198.0f}, {0.5f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{200.0f, 1.0f, 196.0f}, {0.5f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{198.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+
+    //ACCESSORI
+    {"models/Apartment/door_005_Mesh.119.mgcg", "textures/Textures.png", MGCG,{198.15f, -1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{205.8f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{205.8f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+    {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
+    {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
+    {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
+    {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.2f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
+
+    
+};
+
 
 //SHOP
 vector<Component> Shop = {
+    
     //PAVIMENTO
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-
+    
     //MURI
     //ALTO SINISTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
@@ -109,7 +162,7 @@ vector<Component> Shop = {
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
-
+    
 };
 
 
@@ -217,7 +270,7 @@ std::vector<Component> ComponentVector = {
     
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f } }   
-
+    
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
 
@@ -243,6 +296,12 @@ protected:
   DescriptorSet DSlight;
   Pipeline Pipshop;
   VertexDescriptor VDshop;
+
+  //APARTMENT
+  DescriptorSetLayout DSLapartmentLight;
+  DescriptorSet DStoonLight;
+  Pipeline Pipapartment;
+  VertexDescriptor VDapartment;
 
   //ONLY EMISSION
   DescriptorSetLayout DSLemission;
@@ -296,6 +355,9 @@ protected:
       DSLShopLight.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
       );
+      DSLapartmentLight.init(this, {
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(ToonUniformBufferObject), 1 }
+      });
 
       DSLemission.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(EmissionUniformBufferObject), 1},
@@ -317,11 +379,17 @@ protected:
           { 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(EmissionVertex, pos),sizeof(vec3), POSITION },
           { 0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(EmissionVertex, UV), sizeof(vec2), UV } }
           );
+      VDapartment.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
+          {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
+          {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
+          {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
+      });
 
 
       PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL, &DSLBlinn });
       Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLshop });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
+      Pipapartment.init(this, &VDapartment, "shaders/Apartment/Vert.spv", "shaders/Apartment/ToonLight.spv", { &DSLapartmentLight, &DSLshop });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
       for (int i = 0; i < ComponentVector.size(); i++) {
@@ -340,11 +408,17 @@ protected:
           Shop[j].texture.init(this, Shop[j].TexturePath);
       }
 
+      //APARTMENT
+      for (j = 0; j < Apartment.size(); j++) {
+          Apartment[j].model.init(this, &VDapartment, Apartment[j].ObjPath, Apartment[j].type);
+          Apartment[j].texture.init(this, Apartment[j].TexturePath);
+      }
+
 
       //DA CAMBIARE
-      DPSZs.uniformBlocksInPool = ComponentVector.size()*2 + Shop.size() + 2;
-      DPSZs.texturesInPool = ComponentVector.size() + Shop.size();
-      DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 3;
+      DPSZs.uniformBlocksInPool = ComponentVector.size() * 2 + Shop.size() + 2 + Apartment.size() + 1;
+      DPSZs.texturesInPool = ComponentVector.size() + Shop.size() + Apartment.size();
+      DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 3 + Apartment.size() + 1;
 
       cout << "Initializing text\n";
       //txt.init(this, &outText);
@@ -362,6 +436,7 @@ protected:
     PipBlinn.create();
     Pipshop.create();
     PipEmission.create();
+    Pipapartment.create();
 
     DS.init(this, &DSL, {});
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
@@ -377,6 +452,10 @@ protected:
         Shop[j].DS.init(this, &DSLemission, { &Shop[j].texture });
     }
     DSlight.init(this, &DSLShopLight, {});
+    for (j = 0; j < Apartment.size(); j++) {
+        Apartment[j].DS.init(this, &DSLshop, { &Apartment[j].texture });
+    }
+    DStoonLight.init(this, &DSLapartmentLight, {});
   }
 
   void pipelinesAndDescriptorSetsCleanup() {
@@ -384,6 +463,7 @@ protected:
     PipBlinn.cleanup();
     Pipshop.cleanup();
     PipEmission.cleanup();
+    Pipapartment.cleanup();
 
     DS.cleanup();
     //CLEAN UP DI TUTTI I DESCRIPTOR SET
@@ -395,7 +475,11 @@ protected:
         Shop[i].DS.cleanup();
     }
     DSlight.cleanup();
-
+    //APARTMENT
+    for (int i = 0; i < Apartment.size(); i++) {
+        Apartment[i].DS.cleanup();
+    }
+    DStoonLight.cleanup();
   }
 
   void localCleanup() {
@@ -409,15 +493,21 @@ protected:
         Shop[i].model.cleanup();
         Shop[i].texture.cleanup();
     }
+    for (int i = 0; i < Apartment.size(); i++) {
+        Apartment[i].model.cleanup();
+        Apartment[i].texture.cleanup();
+    }
 
     DSLemission.cleanup();
     DSLshop.cleanup();
     DSLShopLight.cleanup();
     DSLBlinn.cleanup();
+    DSLapartmentLight.cleanup();
 
     PipEmission.destroy();
     PipBlinn.destroy();
     Pipshop.destroy();
+    Pipapartment.destroy();
   }
 
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
@@ -451,6 +541,17 @@ protected:
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
           }
       }
+      else if (currentScene == APARTMENT) {
+          int j;
+          Pipapartment.bind(commandBuffer);
+          DStoonLight.bind(commandBuffer, Pipapartment, 0, currentImage);
+          for (j = 0; j < Apartment.size(); j++) {
+              Apartment[j].model.bind(commandBuffer);
+              Apartment[j].DS.bind(commandBuffer, Pipapartment, 1, currentImage);
+              vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
+          }
+      }
+      
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
@@ -634,7 +735,7 @@ protected:
 
     }
 
-   
+
 
     //SHOP 
     spotLightUBO subo{};
@@ -665,7 +766,7 @@ protected:
         Ubo.nMat = inverse(transpose(Ubo.mMat));
         Shop[j].DS.map(currentImage, &Ubo, 0);
     }
-   
+
     for (; j < Shop.size(); j++) {
         mat4 Transform = translate(mat4(1), Shop[j].pos);
         Transform = scale(Transform, Shop[j].scale);
@@ -677,6 +778,32 @@ protected:
         eubo.mvpMat = ViewPrj * Transform;
         Shop[j].DS.map(currentImage, &eubo, 0);
     }
+
+    //APARTMENT
+    ToonUniformBufferObject tubo{};
+    tubo.angleDiff = 0.70f;
+    tubo.angleSpec = 0.95f;
+    tubo.eyePos = { 200.2, 3.0, 202.0 };
+    tubo.eyePos.y = 2.2f;
+    tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
+    tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
+
+    DStoonLight.map(currentImage, &tubo, 0);
+    j = 0;
+    for (; j < Apartment.size(); j++) {
+        mat4 Transform = translate(mat4(1), Apartment[j].pos);
+        Transform = scale(Transform, Apartment[j].scale);
+        if (!Apartment[j].rot.empty()) {
+            for (int k = 0; k < Apartment[j].rot.size(); k++) {
+                Transform = rotate(Transform, radians(Apartment[j].angle[k]), Apartment[j].rot[k]);
+            }
+        }
+        Ubo.mMat = Transform;
+        Ubo.mvpMat = ViewPrj * Ubo.mMat;
+        Ubo.nMat = inverse(transpose(Ubo.mMat));
+        Apartment[j].DS.map(currentImage, &Ubo, 0);
+    }
+
   }
 
   bool checkLimits(vec3 newCamPos) {
@@ -690,23 +817,31 @@ protected:
   }
 
   void checkDoors(vec3 cameraPosition, float cameraAngle) {
-      //DA CAMBIARE IN UN FOR O QUALCOSA DI SIMILE SE DIVENTANO TANTI OGGETTI
-
       //Check porta negozio 
       if (checkSingleDoor(cameraPosition, cameraAngle, 7.5, 8.8, -12.8404, true))
-          goToShop();
+          goTo(SHOP, { 100.0f, 1.0f, 104.0f });
       if (checkSingleDoor(cameraPosition, cameraAngle, 99.63, 100.86, 105, false))
-          exitShop();
+          exit({ 7.0, 1.0, -12.0 });
+      vec3 tmpcam = invertXZ(cameraPosition);
+      if(checkSingleDoor(tmpcam, cameraAngle, -14.70f, -13.70f, 23.2f, true))
+        goTo(APARTMENT, { 200.0f, 1.0f, 200.0f });
+      if (checkSingleDoor(tmpcam, cameraAngle, 196.70f, 197.90f, 198.2f, true))
+          exit({ 25.0, 1.0, -14.0 });
   }
 
-  void goToShop() {
-      CamPos = { 100.0, 1.0, 104.0 };
-      currentScene = SHOP;
+  vec3 invertXZ(vec3 cam){
+      vec3 tmp = vec3(cam.z, cam.y, cam.x);
+      return tmp;
+  }
+
+  void goTo(Scene ty, vec3 cor) {
+      CamPos = cor;
+      currentScene = ty;
       RebuildPipeline();
   }
 
-  void exitShop() {
-      CamPos = { 7.0, 1.0, -12.0 };
+  void exit(vec3 c) {
+      CamPos = c;
       currentScene = CITY;
       RebuildPipeline();
   }
@@ -738,9 +873,16 @@ protected:
       center = (x2 + x1) / 2;
       halfSide = (x2 - x1) / 2;
       distance = sqrt(pow(center - cameraPosition.x, 2) + pow(Zmin - Zmax, 2));
+      /*
+      cout << "Center: " << center << '\n';
+      cout << ": " << cameraPosition.x << '\n';
+      cout << "Zmin: " << Zmin << '\n';
+      cout << "Zmax: " << Zmax << '\n';
+      cout << "distance: " << distance << '\n';
+      */
       if (distance < minDistance && cameraPosition.x >= x1 && cameraPosition.x <= x2 && Zmin < Zmax) {
           alpha = 60 - (Zmax - Zmin) / minDistance * 60;
-          cout << "ALPHA: " << alpha <<'\n';
+         // cout << "ALPHA: " << alpha <<'\n';
           if (center < cameraPosition.x) {
               beta = alpha * (cameraPosition.x - center) / halfSide;
               left = alpha + beta;
@@ -751,7 +893,7 @@ protected:
               left = alpha - beta;
               right = alpha + beta / 2;
           }
-          cout << "ANGOLO VA TRA: " << left << " - " << 360 - right << ", Angolo attuale: " << cameraAngle << '\n';
+          //cout << "ANGOLO VA TRA: " << left << " - " << 360 - right << ", Angolo attuale: " << cameraAngle << '\n';
           return ((cameraAngle < left && cameraAngle >= 0) || (cameraAngle <= 360 && cameraAngle > (360 - right)));
       }
       return false;
