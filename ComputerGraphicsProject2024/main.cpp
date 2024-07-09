@@ -240,7 +240,8 @@ protected:
   VertexDescriptor VDBlinnVertex;
 
   //SHOP
-  DescriptorSetLayout DSLshop;
+  DescriptorSetLayout DSLshop, DSLShopLight;
+  DescriptorSet DSlight;
   Pipeline Pipshop;
   VertexDescriptor VDshop;
 
@@ -284,10 +285,19 @@ protected:
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
           {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1} });
+
+
+      /*DSLshop contiene al texture e le matrici per posizionare nei punti corretti i vari modelli, mentre DSLShopLight contiene 
+      esclusivamente le informazioni per le luci. Essendo che le stesse luci colpiscono tutti gli oggetti è presente un descriptor 
+      set a parte. Il primo sarà associato al set 1, mentre il secondo al set 0*/
       DSLshop.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
-          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(spotLightUBO), 1} });
+          });
+      DSLShopLight.init(this, {
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
+      );
+
       DSLemission.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(EmissionUniformBufferObject), 1},
             {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
@@ -311,7 +321,7 @@ protected:
 
 
       PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL, &DSLBlinn });
-      Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLshop });
+      Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLshop });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
@@ -333,10 +343,9 @@ protected:
 
 
       //DA CAMBIARE
-  //    DPSZs.uniformBlocksInPool = 3;
-      DPSZs.uniformBlocksInPool = ComponentVector.size() + Shop.size()*2 + 1;
+      DPSZs.uniformBlocksInPool = ComponentVector.size()*2 + Shop.size() + 2;
       DPSZs.texturesInPool = ComponentVector.size() + Shop.size();
-      DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 1;
+      DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 3;
 
       cout << "Initializing text\n";
       //txt.init(this, &outText);
@@ -362,12 +371,13 @@ protected:
       ComponentVector[i].DS.init(this, &DSLBlinn, {&ComponentVector[i].texture});
     }
     int sizeSHOP, j;
-    for (j = 0; j < Shop.size()-4; j++) {
+    for (j = 0; j < Shop.size() - 4; j++) {
         Shop[j].DS.init(this, &DSLshop, { &Shop[j].texture });
     }
     for (; j < Shop.size(); j++) {
         Shop[j].DS.init(this, &DSLemission, { &Shop[j].texture });
     }
+    DSlight.init(this, &DSLShopLight, {});
   }
 
   void pipelinesAndDescriptorSetsCleanup() {
@@ -381,9 +391,11 @@ protected:
     for (int i = 0; i < ComponentVector.size(); i++) {
       ComponentVector[i].DS.cleanup();
     }
+    //SHOP
     for (int i = 0; i < Shop.size(); i++) {
         Shop[i].DS.cleanup();
     }
+    DSlight.cleanup();
 
   }
 
@@ -401,6 +413,7 @@ protected:
 
     DSLemission.cleanup();
     DSLshop.cleanup();
+    DSLShopLight.cleanup();
     DSLBlinn.cleanup();
 
     PipEmission.destroy();
@@ -426,9 +439,10 @@ protected:
       else if (currentScene == SHOP) {
           int j;
           Pipshop.bind(commandBuffer);
+          DSlight.bind(commandBuffer, Pipshop, 0, currentImage);
           for (j = 0; j < Shop.size() - 4; j++) {
               Shop[j].model.bind(commandBuffer);
-              Shop[j].DS.bind(commandBuffer, Pipshop, 0, currentImage);
+              Shop[j].DS.bind(commandBuffer, Pipshop, 1, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
           }
           PipEmission.bind(commandBuffer);
@@ -585,7 +599,6 @@ protected:
     EmissionUniformBufferObject eubo{};
     for (int i = 0; i < 4; i++) {
         subo.lightPos[i] = Shop[23 + i].pos;
-        //subo.lightPos[i].y = 1.7f;
         subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
         subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
     }
@@ -594,9 +607,9 @@ protected:
     subo.InOutDecayTarget.z = 2.0f;
     subo.InOutDecayTarget.w = 2.0f;
     subo.eyePos = CamPos;
+    DSlight.map(currentImage, &subo, 0);
 
-    int j=0;
-    
+    int j = 0;
     for (; j < Shop.size() - 4; j++) {
         mat4 Transform = translate(mat4(1), Shop[j].pos);
         Transform = scale(Transform, Shop[j].scale);
@@ -609,7 +622,6 @@ protected:
         Ubo.mvpMat = ViewPrj * Ubo.mMat;
         Ubo.nMat = inverse(transpose(Ubo.mMat));
         Shop[j].DS.map(currentImage, &Ubo, 0);
-        Shop[j].DS.map(currentImage, &subo, 2);
     }
    
     for (; j < Shop.size(); j++) {
