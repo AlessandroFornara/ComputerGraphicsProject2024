@@ -11,6 +11,34 @@ struct UniformBufferObject {
   alignas(16) mat4 mvpMat;
   alignas(16) mat4 mMat;
   alignas(16) mat4 nMat;
+  alignas(16) mat4 lightSpaceMatrix;
+};
+
+struct spotLightUBO {
+    alignas(16) vec3 lightDir[4];
+    alignas(16) vec3 lightPos[4];
+    alignas(16) vec3 lightColor[4];
+    alignas(16) vec3 eyePos;
+    alignas(16) vec4 InOutDecayTarget;
+};
+
+struct EmissionUniformBufferObject {
+    alignas(16) mat4 mvpMat;
+};
+
+struct EmissionVertex {
+    glm::vec3 pos;
+    glm::vec2 UV;
+};
+
+struct BlinnUniformBufferObject {
+    alignas(16) glm::vec3 lightDir;
+    alignas(16) glm::vec4 lightColor;
+    alignas(16) glm::vec3 eyePos;
+};
+
+struct BlinnMatParUniformBufferObject {
+    alignas(4)  float Power;
 };
 
 struct Component {
@@ -194,42 +222,17 @@ std::vector<Component> ComponentVector = {
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
 
-
-struct spotLightUBO {
-    alignas(16) vec3 lightDir[4];
-    alignas(16) vec3 lightPos[4];
-    alignas(16) vec3 lightColor[4];
-    alignas(16) vec3 eyePos;
-    alignas(16) vec4 InOutDecayTarget;
-};
-
-
-struct EmissionUniformBufferObject {
-    alignas(16) mat4 mvpMat;
-};
-
-struct EmissionVertex {
-    glm::vec3 pos;
-    glm::vec2 UV;
-};
-
-struct BlinnUniformBufferObject {
-    alignas(16) glm::vec3 lightDir;
-    alignas(16) glm::vec4 lightColor;
-    alignas(16) glm::vec3 eyePos;
-};
-
-struct BlinnMatParUniformBufferObject {
-    alignas(4)  float Power;
-};
-
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
 
-    Scene currentScene = CITY;
+  Scene currentScene = CITY;
 
   float Ar;
   TextMaker txt;
+
+  DescriptorSet DS;
+
+  DescriptorSetLayout DSL;
 
   //BLINN
   DescriptorSetLayout DSLBlinn;
@@ -274,11 +277,13 @@ protected:
 
   void localInit() {
 
+      DSL.init(this, {
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1}
+          });
       DSLBlinn.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
-          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1},
-          {3, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnUniformBufferObject), 1} });
+          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1} });
       DSLshop.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
@@ -305,7 +310,7 @@ protected:
           );
 
 
-      PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLBlinn });
+      PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL, &DSLBlinn });
       Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLshop });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
 
@@ -329,9 +334,9 @@ protected:
 
       //DA CAMBIARE
   //    DPSZs.uniformBlocksInPool = 3;
-      DPSZs.uniformBlocksInPool = ComponentVector.size() + Shop.size()*2;
+      DPSZs.uniformBlocksInPool = ComponentVector.size() + Shop.size()*2 + 1;
       DPSZs.texturesInPool = ComponentVector.size() + Shop.size();
-      DPSZs.setsInPool = ComponentVector.size() + Shop.size();
+      DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 1;
 
       cout << "Initializing text\n";
       //txt.init(this, &outText);
@@ -350,6 +355,7 @@ protected:
     Pipshop.create();
     PipEmission.create();
 
+    DS.init(this, &DSL, {});
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
     int sizeCV = ComponentVector.size();
     for (int i = 0; i < sizeCV; i++) {
@@ -370,6 +376,7 @@ protected:
     Pipshop.cleanup();
     PipEmission.cleanup();
 
+    DS.cleanup();
     //CLEAN UP DI TUTTI I DESCRIPTOR SET
     for (int i = 0; i < ComponentVector.size(); i++) {
       ComponentVector[i].DS.cleanup();
@@ -405,10 +412,11 @@ protected:
       if (currentScene == CITY) {
           PipBlinn.bind(commandBuffer);
 
+          DS.bind(commandBuffer, PipBlinn, 0, currentImage);
           for (int i = 0; i < ComponentVector.size(); i++) {
 
               ComponentVector[i].model.bind(commandBuffer);
-              ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 0, currentImage);
+              ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 1, currentImage);
 
               // The actual draw call.
               vkCmdDrawIndexed(commandBuffer,
@@ -539,13 +547,15 @@ protected:
 
     // objects
     UniformBufferObject Ubo{};
-    BlinnMatParUniformBufferObject blinnMatParUbo{};
-    blinnMatParUbo.Power = 200.0;
 
     BlinnUniformBufferObject BlinnUbo{};
     BlinnUbo.lightDir = glm::vec3(cos(glm::radians(135.0f)) * cos(cTime * angTurnTimeFact), sin(glm::radians(135.0f)), cos(glm::radians(135.0f)) * sin(cTime * angTurnTimeFact));
     BlinnUbo.lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
+    DS.map(currentImage, &BlinnUbo, 0);
+
+    BlinnMatParUniformBufferObject blinnMatParUbo{};
+    blinnMatParUbo.Power = 200.0;
 
     for (int i = 0; i < ComponentVector.size(); i++) {
      
@@ -565,7 +575,6 @@ protected:
       ComponentVector[i].DS.map(currentImage, &Ubo, 0);
 
       ComponentVector[i].DS.map(currentImage, &blinnMatParUbo, 2);
-      ComponentVector[i].DS.map(currentImage, &BlinnUbo, 3);
 
     }
 

@@ -8,17 +8,17 @@ layout(location = 2) in vec2 fragUV;
 // This defines the color computed by this shader. Generally is always location 0.
 layout(location = 0) out vec4 outColor;
 
-layout(set = 0, binding = 3) uniform BlinnUniformBufferObject {
+layout(set = 0, binding = 0) uniform BlinnUniformBufferObject {
 	vec3 lightDir;
 	vec4 lightColor;
 	vec3 eyePos;
 } gubo;
 
-layout(set = 0, binding = 2) uniform BlinnParUniformBufferObject {
+layout(set = 1, binding = 2) uniform BlinnParUniformBufferObject {
 	float Pow;
 } mubo;
 
-layout(set = 0, binding = 1) uniform sampler2D tex;
+layout(set = 1, binding = 1) uniform sampler2D tex;
 
 void main() {
 	vec3 Norm = normalize(fragNorm);
