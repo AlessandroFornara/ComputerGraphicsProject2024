@@ -11,7 +11,6 @@ struct UniformBufferObject {
   alignas(16) mat4 mvpMat;
   alignas(16) mat4 mMat;
   alignas(16) mat4 nMat;
-  alignas(16) mat4 lightSpaceMatrix;
 };
 
 struct spotLightUBO {
@@ -209,12 +208,12 @@ std::vector<Component> ComponentVector = {
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
 
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -50.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png",MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{28.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_003.mgcg", "textures/Textures_City.png",MGCG, {5+5*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}, //001 or 003;
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{44.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/parking_tile_2x2_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -67.0f}, {1.0f, 1.0f, 1.15f}},
+    {"models/parking_tile_2x2_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -68.0f}, {1.0f, 1.0f, 1.0f}},
     
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f } }   
@@ -279,12 +278,12 @@ protected:
   void localInit() {
 
       DSL.init(this, {
-          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1}
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1},
+          {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1}
           });
       DSLBlinn.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
-          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
-          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1} });
+          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
 
 
       /*DSLshop contiene al texture e le matrici per posizionare nei punti corretti i vari modelli, mentre DSLShopLight contiene 
@@ -563,13 +562,58 @@ protected:
     UniformBufferObject Ubo{};
 
     BlinnUniformBufferObject BlinnUbo{};
-    BlinnUbo.lightDir = glm::vec3(cos(glm::radians(135.0f)) * cos(cTime * angTurnTimeFact), sin(glm::radians(135.0f)), cos(glm::radians(135.0f)) * sin(cTime * angTurnTimeFact));
-    BlinnUbo.lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    float timeFactor = 0.040f;
+    float cycleDuration = 24.0f; 
+    float timeInCycle = fmod(cTime * timeFactor, cycleDuration); 
+    float azimuthAngle = glm::radians((timeInCycle / cycleDuration) * 360.0f);
+
+    float maxElevation = glm::radians(45.0f);
+    float elevationAngle = maxElevation * sin((timeInCycle / cycleDuration) * glm::pi<float>());
+
+    BlinnUbo.lightDir = glm::vec3(cos(elevationAngle) * cos(azimuthAngle), sin(elevationAngle), cos(elevationAngle) * sin(azimuthAngle));
+
+    glm::vec4 dawnColor = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
+    glm::vec4 dayColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
+    glm::vec4 duskColor = glm::vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
+    glm::vec4 nightColor = glm::vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
+
+    float normalizedTime = fmod(cTime * timeFactor, 1.0f);
+    glm::vec4 interpolatedColor;
+
+    if (normalizedTime < 0.15f) {
+        // Da notte ad alba (15% del ciclo)
+        float t = normalizedTime / 0.15f;
+        interpolatedColor = glm::mix(nightColor, dawnColor, t);
+    }
+    else if (normalizedTime < 0.4f) {
+        // Da alba a giorno (25% del ciclo)
+        float t = (normalizedTime - 0.15f) / 0.25f;
+        interpolatedColor = glm::mix(dawnColor, dayColor, t);
+    }
+    else if (normalizedTime < 0.6f) {
+        // Da giorno a tramonto (20% del ciclo)
+        float t = (normalizedTime - 0.4f) / 0.2f;
+        interpolatedColor = glm::mix(dayColor, duskColor, t);
+    }
+    else if (normalizedTime < 0.85f) {
+        // Da tramonto a notte (25% del ciclo)
+        float t = (normalizedTime - 0.6f) / 0.25f;
+        interpolatedColor = glm::mix(duskColor, nightColor, t);
+    }
+    else {
+        // Notte (15% del ciclo)
+        float t = (normalizedTime - 0.85f) / 0.15f;
+        interpolatedColor = glm::mix(nightColor, nightColor, t);
+    }
+
+    BlinnUbo.lightColor = interpolatedColor;
     BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
     DS.map(currentImage, &BlinnUbo, 0);
 
     BlinnMatParUniformBufferObject blinnMatParUbo{};
     blinnMatParUbo.Power = 200.0;
+    DS.map(currentImage, &blinnMatParUbo, 1);
 
     for (int i = 0; i < ComponentVector.size(); i++) {
      
@@ -587,8 +631,6 @@ protected:
       Ubo.nMat = inverse(transpose(Ubo.mMat));
 
       ComponentVector[i].DS.map(currentImage, &Ubo, 0);
-
-      ComponentVector[i].DS.map(currentImage, &blinnMatParUbo, 2);
 
     }
 
