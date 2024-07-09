@@ -400,32 +400,34 @@ protected:
   }
 
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
+      if (currentScene == CITY) {
+          PipBlinn.bind(commandBuffer);
 
-    PipBlinn.bind(commandBuffer);
-    
-    for (int i = 0; i < ComponentVector.size(); i++) {
+          for (int i = 0; i < ComponentVector.size(); i++) {
 
-      ComponentVector[i].model.bind(commandBuffer);
-      ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 0, currentImage);
+              ComponentVector[i].model.bind(commandBuffer);
+              ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 0, currentImage);
 
-      // The actual draw call.
-      vkCmdDrawIndexed(commandBuffer,
-        static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
-    }
-
-    int j;
-    Pipshop.bind(commandBuffer);
-    for (j= 0; j < Shop.size()-4; j++) {
-        Shop[j].model.bind(commandBuffer);
-        Shop[j].DS.bind(commandBuffer, Pipshop, 0, currentImage);
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
-    }
-    PipEmission.bind(commandBuffer);
-    for (; j < Shop.size(); j++) {
-        Shop[j].model.bind(commandBuffer);
-        Shop[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
-    }
+              // The actual draw call.
+              vkCmdDrawIndexed(commandBuffer,
+                  static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
+          }
+      }
+      else if (currentScene == SHOP) {
+          int j;
+          Pipshop.bind(commandBuffer);
+          for (j = 0; j < Shop.size() - 4; j++) {
+              Shop[j].model.bind(commandBuffer);
+              Shop[j].DS.bind(commandBuffer, Pipshop, 0, currentImage);
+              vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
+          }
+          PipEmission.bind(commandBuffer);
+          for (; j < Shop.size(); j++) {
+              Shop[j].model.bind(commandBuffer);
+              Shop[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
+              vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
+          }
+      }
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
@@ -614,11 +616,13 @@ protected:
   void goToShop() {
       CamPos = { 100.0, 1.0, 104.0 };
       currentScene = SHOP;
+      RebuildPipeline();
   }
 
   void exitShop() {
       CamPos = { 7.0, 1.0, -12.0 };
       currentScene = CITY;
+      RebuildPipeline();
   }
 
   /*
