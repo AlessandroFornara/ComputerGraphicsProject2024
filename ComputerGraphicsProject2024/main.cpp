@@ -214,9 +214,9 @@ struct EmissionVertex {
 };
 
 struct BlinnUniformBufferObject {
-    alignas(16) glm::mat4 mvpMat;
-    alignas(16) glm::mat4 mMat;
-    alignas(16) glm::mat4 nMat;
+    alignas(16) glm::vec3 lightDir;
+    alignas(16) glm::vec4 lightColor;
+    alignas(16) glm::vec3 eyePos;
 };
 
 struct BlinnMatParUniformBufferObject {
@@ -276,7 +276,9 @@ protected:
 
       DSLBlinn.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
-          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
+          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
+          {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1},
+          {3, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnUniformBufferObject), 1} });
       DSLshop.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
@@ -437,6 +439,16 @@ protected:
 
     getSixAxis(deltaT, m, r, fire);
 
+    static float autoTime = true;
+	static float cTime = 0.0;
+	const float turnTime = 72.0f;
+	const float angTurnTimeFact = 2.0f * M_PI / turnTime;
+		
+	if(autoTime) {
+		cTime = cTime + deltaT;
+		cTime = (cTime > turnTime) ? (cTime - turnTime) : cTime;
+	};
+
     const float ROT_SPEED = radians(120.0f);
     const float WALK_SPEED = 8.0f;
     const float RUN_SPEED = WALK_SPEED * 2;
@@ -525,6 +537,14 @@ protected:
 
     // objects
     UniformBufferObject Ubo{};
+    BlinnMatParUniformBufferObject blinnMatParUbo{};
+    blinnMatParUbo.Power = 200.0;
+
+    BlinnUniformBufferObject BlinnUbo{};
+    BlinnUbo.lightDir = glm::vec3(cos(glm::radians(135.0f)) * cos(cTime * angTurnTimeFact), sin(glm::radians(135.0f)), cos(glm::radians(135.0f)) * sin(cTime * angTurnTimeFact));
+    BlinnUbo.lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
+
     for (int i = 0; i < ComponentVector.size(); i++) {
      
       mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
@@ -541,6 +561,9 @@ protected:
       Ubo.nMat = inverse(transpose(Ubo.mMat));
 
       ComponentVector[i].DS.map(currentImage, &Ubo, 0);
+
+      ComponentVector[i].DS.map(currentImage, &blinnMatParUbo, 2);
+      ComponentVector[i].DS.map(currentImage, &BlinnUbo, 3);
 
     }
 
