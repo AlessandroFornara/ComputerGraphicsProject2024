@@ -41,11 +41,10 @@ struct BlinnMatParUniformBufferObject {
 };
 
 struct ToonUniformBufferObject {
-    alignas(16) glm::vec3 lightDir;
-    alignas(16) glm::vec3 lightColor;
-    alignas(16) glm::vec3 eyePos;
-    alignas(4) float angleDiff;
-    alignas(4) float angleSpec;
+    alignas(16) vec3 lightDir;
+    alignas(16) vec3 lightColor;
+    alignas(16) vec3 eyePos;
+    alignas(16) vec3 diffSpecJolly;
 };
 
 struct Component {
@@ -107,7 +106,7 @@ vector<Component> Apartment = {
     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
-    {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.2f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
+    {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
 
     
 };
@@ -135,7 +134,7 @@ vector<Component> Shop = {
     //BASSO SINISTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f} , { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f} },
-
+    
     //TETTO
     {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
     {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
@@ -156,7 +155,7 @@ vector<Component> Shop = {
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png",MGCG, {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-
+    
     //LAMPADINE
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
@@ -409,11 +408,12 @@ protected:
       }
 
       //APARTMENT
-      for (j = 0; j < Apartment.size(); j++) {
+      for (j = 0; j < Apartment.size()-1; j++) {
           Apartment[j].model.init(this, &VDapartment, Apartment[j].ObjPath, Apartment[j].type);
           Apartment[j].texture.init(this, Apartment[j].TexturePath);
       }
-
+      Apartment[j].model.init(this, &VDemission, Apartment[j].ObjPath, Apartment[j].type);
+      Apartment[j].texture.init(this, Apartment[j].TexturePath);
 
       //DA CAMBIARE
       DPSZs.uniformBlocksInPool = ComponentVector.size() * 2 + Shop.size() + 2 + Apartment.size() + 1;
@@ -440,10 +440,14 @@ protected:
 
     DS.init(this, &DSL, {});
     //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
+
+    //CITY
     int sizeCV = ComponentVector.size();
     for (int i = 0; i < sizeCV; i++) {
       ComponentVector[i].DS.init(this, &DSLBlinn, {&ComponentVector[i].texture});
     }
+
+    //SHOP
     int sizeSHOP, j;
     for (j = 0; j < Shop.size() - 4; j++) {
         Shop[j].DS.init(this, &DSLshop, { &Shop[j].texture });
@@ -452,10 +456,14 @@ protected:
         Shop[j].DS.init(this, &DSLemission, { &Shop[j].texture });
     }
     DSlight.init(this, &DSLShopLight, {});
-    for (j = 0; j < Apartment.size(); j++) {
+
+    //APARTMENT
+    for (j = 0; j < Apartment.size()-1; j++) {
         Apartment[j].DS.init(this, &DSLshop, { &Apartment[j].texture });
     }
+    Apartment[j].DS.init(this, &DSLemission, { &Apartment[j].texture });
     DStoonLight.init(this, &DSLapartmentLight, {});
+
   }
 
   void pipelinesAndDescriptorSetsCleanup() {
@@ -465,16 +473,18 @@ protected:
     PipEmission.cleanup();
     Pipapartment.cleanup();
 
+    //CITY
     DS.cleanup();
-    //CLEAN UP DI TUTTI I DESCRIPTOR SET
     for (int i = 0; i < ComponentVector.size(); i++) {
       ComponentVector[i].DS.cleanup();
     }
+
     //SHOP
     for (int i = 0; i < Shop.size(); i++) {
         Shop[i].DS.cleanup();
     }
     DSlight.cleanup();
+
     //APARTMENT
     for (int i = 0; i < Apartment.size(); i++) {
         Apartment[i].DS.cleanup();
@@ -484,15 +494,19 @@ protected:
 
   void localCleanup() {
 
-    //CLEAN UP DI TUTTI I MODEL E TEXTURES
+    //CITY
     for (int i = 0; i < ComponentVector.size(); i++) {
       ComponentVector[i].model.cleanup();
       ComponentVector[i].texture.cleanup();
     }
+
+    //SHOP
     for (int i = 0; i < Shop.size(); i++) {
         Shop[i].model.cleanup();
         Shop[i].texture.cleanup();
     }
+
+    //APARTMENT
     for (int i = 0; i < Apartment.size(); i++) {
         Apartment[i].model.cleanup();
         Apartment[i].texture.cleanup();
@@ -511,6 +525,7 @@ protected:
   }
 
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
+      //CITY
       if (currentScene == CITY) {
           PipBlinn.bind(commandBuffer);
 
@@ -524,7 +539,7 @@ protected:
               vkCmdDrawIndexed(commandBuffer,
                   static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
           }
-      }
+      }//SHOP
       else if (currentScene == SHOP) {
           int j;
           Pipshop.bind(commandBuffer);
@@ -540,18 +555,22 @@ protected:
               Shop[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
           }
-      }
+      }//APARTMENT
       else if (currentScene == APARTMENT) {
           int j;
           Pipapartment.bind(commandBuffer);
           DStoonLight.bind(commandBuffer, Pipapartment, 0, currentImage);
-          for (j = 0; j < Apartment.size(); j++) {
+          for (j = 0; j < Apartment.size() - 1; j++) {
               Apartment[j].model.bind(commandBuffer);
               Apartment[j].DS.bind(commandBuffer, Pipapartment, 1, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
           }
+          PipEmission.bind(commandBuffer);
+          Apartment[j].model.bind(commandBuffer);
+          Apartment[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
+          vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
       }
-      
+     
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
@@ -647,11 +666,9 @@ protected:
             checkDoors(cameraPosition, 360.0 + tmp);
         }
     }
-
     if (glfwGetKey(window, GLFW_KEY_Y)) {
         isInsideCar = true;
     }
-
     // Here is where you actually update your uniforms
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
@@ -659,150 +676,16 @@ protected:
     mat4 ViewPrj = M * Mv;
     mat4 baseTr = mat4(1.0f);
 
-    // objects
-    UniformBufferObject Ubo{};
-
-    BlinnUniformBufferObject BlinnUbo{};
-
-    float timeFactor = 0.040f;
-    float cycleDuration = 24.0f; 
-    float timeInCycle = fmod(cTime * timeFactor, cycleDuration); 
-    float azimuthAngle = glm::radians((timeInCycle / cycleDuration) * 360.0f);
-
-    float maxElevation = glm::radians(45.0f);
-    float elevationAngle = maxElevation * sin((timeInCycle / cycleDuration) * glm::pi<float>());
-
-    BlinnUbo.lightDir = glm::vec3(cos(elevationAngle) * cos(azimuthAngle), sin(elevationAngle), cos(elevationAngle) * sin(azimuthAngle));
-
-    glm::vec4 dawnColor = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
-    glm::vec4 dayColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
-    glm::vec4 duskColor = glm::vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
-    glm::vec4 nightColor = glm::vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
-
-    float normalizedTime = fmod(cTime * timeFactor, 1.0f);
-    glm::vec4 interpolatedColor;
-
-    if (normalizedTime < 0.15f) {
-        // Da notte ad alba (15% del ciclo)
-        float t = normalizedTime / 0.15f;
-        interpolatedColor = glm::mix(nightColor, dawnColor, t);
+    if (currentScene == CITY) {
+        buildCity(currentImage, ViewPrj, cTime);
     }
-    else if (normalizedTime < 0.4f) {
-        // Da alba a giorno (25% del ciclo)
-        float t = (normalizedTime - 0.15f) / 0.25f;
-        interpolatedColor = glm::mix(dawnColor, dayColor, t);
+    else if (currentScene == SHOP) {
+        buildShop(currentImage, ViewPrj);
     }
-    else if (normalizedTime < 0.6f) {
-        // Da giorno a tramonto (20% del ciclo)
-        float t = (normalizedTime - 0.4f) / 0.2f;
-        interpolatedColor = glm::mix(dayColor, duskColor, t);
-    }
-    else if (normalizedTime < 0.85f) {
-        // Da tramonto a notte (25% del ciclo)
-        float t = (normalizedTime - 0.6f) / 0.25f;
-        interpolatedColor = glm::mix(duskColor, nightColor, t);
-    }
-    else {
-        // Notte (15% del ciclo)
-        float t = (normalizedTime - 0.85f) / 0.15f;
-        interpolatedColor = glm::mix(nightColor, nightColor, t);
+    else if (currentScene == APARTMENT) {
+        buildApartment(currentImage, ViewPrj);
     }
 
-    BlinnUbo.lightColor = interpolatedColor;
-    BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
-    DS.map(currentImage, &BlinnUbo, 0);
-
-    BlinnMatParUniformBufferObject blinnMatParUbo{};
-    blinnMatParUbo.Power = 200.0;
-    DS.map(currentImage, &blinnMatParUbo, 1);
-
-    for (int i = 0; i < ComponentVector.size(); i++) {
-     
-      mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
-      Transform = scale(Transform, ComponentVector[i].scale);
-
-      if (!ComponentVector[i].rot.empty()) {
-          for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
-              Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
-          }
-      }
-      
-      Ubo.mMat = Transform;
-      Ubo.mvpMat = ViewPrj * Ubo.mMat;
-      Ubo.nMat = inverse(transpose(Ubo.mMat));
-
-      ComponentVector[i].DS.map(currentImage, &Ubo, 0);
-
-    }
-
-
-
-    //SHOP 
-    spotLightUBO subo{};
-    EmissionUniformBufferObject eubo{};
-    for (int i = 0; i < 4; i++) {
-        subo.lightPos[i] = Shop[23 + i].pos;
-        subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
-        subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
-    }
-    subo.InOutDecayTarget.x = 0.90f;
-    subo.InOutDecayTarget.y = 0.92f;
-    subo.InOutDecayTarget.z = 2.0f;
-    subo.InOutDecayTarget.w = 2.0f;
-    subo.eyePos = CamPos;
-    DSlight.map(currentImage, &subo, 0);
-
-    int j = 0;
-    for (; j < Shop.size() - 4; j++) {
-        mat4 Transform = translate(mat4(1), Shop[j].pos);
-        Transform = scale(Transform, Shop[j].scale);
-        if (!Shop[j].rot.empty()) {
-            for (int k = 0; k < Shop[j].rot.size(); k++) {
-                Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
-            }
-        }
-        Ubo.mMat = Transform;
-        Ubo.mvpMat = ViewPrj * Ubo.mMat;
-        Ubo.nMat = inverse(transpose(Ubo.mMat));
-        Shop[j].DS.map(currentImage, &Ubo, 0);
-    }
-
-    for (; j < Shop.size(); j++) {
-        mat4 Transform = translate(mat4(1), Shop[j].pos);
-        Transform = scale(Transform, Shop[j].scale);
-        if (!Shop[j].rot.empty()) {
-            for (int k = 0; k < Shop[j].rot.size(); k++) {
-                Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
-            }
-        }
-        eubo.mvpMat = ViewPrj * Transform;
-        Shop[j].DS.map(currentImage, &eubo, 0);
-    }
-
-    //APARTMENT
-    ToonUniformBufferObject tubo{};
-    tubo.angleDiff = 0.70f;
-    tubo.angleSpec = 0.95f;
-    tubo.eyePos = { 200.2, 3.0, 202.0 };
-    tubo.eyePos.y = 2.2f;
-    tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
-    tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
-
-    DStoonLight.map(currentImage, &tubo, 0);
-    j = 0;
-    for (; j < Apartment.size(); j++) {
-        mat4 Transform = translate(mat4(1), Apartment[j].pos);
-        Transform = scale(Transform, Apartment[j].scale);
-        if (!Apartment[j].rot.empty()) {
-            for (int k = 0; k < Apartment[j].rot.size(); k++) {
-                Transform = rotate(Transform, radians(Apartment[j].angle[k]), Apartment[j].rot[k]);
-            }
-        }
-        Ubo.mMat = Transform;
-        Ubo.mvpMat = ViewPrj * Ubo.mMat;
-        Ubo.nMat = inverse(transpose(Ubo.mMat));
-        Apartment[j].DS.map(currentImage, &Ubo, 0);
-    }
 
   }
 
@@ -813,6 +696,11 @@ protected:
           result = result && !(newCamPos.x > 102 && newCamPos.x < 105 && newCamPos.z > 104 && newCamPos.z < 105.5);
           return result;
       }
+      if (currentScene == APARTMENT) {
+         result = (newCamPos.z > 197 && newCamPos.z <= 205 && newCamPos.x > 198 && newCamPos.x <= 205);
+         result = result && !(newCamPos.x > 200 && newCamPos.x < 205 && newCamPos.z > 197 && newCamPos.z < 198);
+         return result;
+      }
       return true;
   }
 
@@ -822,10 +710,12 @@ protected:
           goTo(SHOP, { 100.0f, 1.0f, 104.0f });
       if (checkSingleDoor(cameraPosition, cameraAngle, 99.63, 100.86, 105, false))
           exit({ 7.0, 1.0, -12.0 });
-      vec3 tmpcam = invertXZ(cameraPosition);
-      if(checkSingleDoor(tmpcam, cameraAngle, -14.70f, -13.70f, 23.2f, true))
-        goTo(APARTMENT, { 200.0f, 1.0f, 200.0f });
-      if (checkSingleDoor(tmpcam, cameraAngle, 196.70f, 197.90f, 198.2f, true))
+      vec3 tmpcam;
+      tmpcam = invertXZ(cameraPosition);
+      if (checkSingleDoor(tmpcam, (cameraAngle-90.0 > 0.0) ? (cameraAngle-90.0) : 360.0 +(cameraAngle-90.0), -15.0f, -12.0f, 23.0f, true)) {
+          goTo(APARTMENT, { 198.5, 1.0f, 198.5f });
+      }
+      if (checkSingleDoor(tmpcam, (cameraAngle - 90.0 > 0.0) ? (cameraAngle - 90.0) : 360.0 + (cameraAngle - 90.0), 196.70f, 197.90f, 198.2f, true))
           exit({ 25.0, 1.0, -14.0 });
   }
 
@@ -875,14 +765,14 @@ protected:
       distance = sqrt(pow(center - cameraPosition.x, 2) + pow(Zmin - Zmax, 2));
       /*
       cout << "Center: " << center << '\n';
-      cout << ": " << cameraPosition.x << '\n';
+      cout << "X: " << cameraPosition.x << '\n';
       cout << "Zmin: " << Zmin << '\n';
       cout << "Zmax: " << Zmax << '\n';
       cout << "distance: " << distance << '\n';
       */
       if (distance < minDistance && cameraPosition.x >= x1 && cameraPosition.x <= x2 && Zmin < Zmax) {
           alpha = 60 - (Zmax - Zmin) / minDistance * 60;
-         // cout << "ALPHA: " << alpha <<'\n';
+          //cout << "ALPHA: " << alpha <<'\n';
           if (center < cameraPosition.x) {
               beta = alpha * (cameraPosition.x - center) / halfSide;
               left = alpha + beta;
@@ -899,8 +789,6 @@ protected:
       return false;
   }
 
-
-
   void makeRight(vec3 cameraPosition, vec3 modelRotation, float z) {
       //DA FARE PIù AVANTI SE C'è TEMPO
   }
@@ -909,6 +797,167 @@ protected:
       cout << "________________________________________________________________________________" << '\n';
       cout << "X: " << CamPos.x << ", Y: " << CamPos.y << ", Z: " << CamPos.z << ", CameraAngle: " << cameraAngle << "\n";
       cout << "________________________________________________________________________________" << '\n';
+  }
+
+  void buildApartment(int currentImage, mat4 ViewPrj) {
+      UniformBufferObject Ubo{};
+      ToonUniformBufferObject tubo{};
+      EmissionUniformBufferObject eubo{};
+
+      tubo.diffSpecJolly.y = 0.60f;
+      tubo.diffSpecJolly.x = 0.35f;
+      tubo.diffSpecJolly.z = 0.0f;
+      tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
+      tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
+      tubo.eyePos = { 202.0, 1.0, 202.0 };
+      DStoonLight.map(currentImage, &tubo, 0);
+
+      int j = 0;
+      for (; j < Apartment.size() - 1; j++) {
+          mat4 Transform = translate(mat4(1), Apartment[j].pos);
+          Transform = scale(Transform, Apartment[j].scale);
+          if (!Apartment[j].rot.empty()) {
+              for (int k = 0; k < Apartment[j].rot.size(); k++) {
+                  Transform = rotate(Transform, radians(Apartment[j].angle[k]), Apartment[j].rot[k]);
+              }
+          }
+          Ubo.mMat = Transform;
+          Ubo.mvpMat = ViewPrj * Ubo.mMat;
+          Ubo.nMat = inverse(transpose(Ubo.mMat));
+          Apartment[j].DS.map(currentImage, &Ubo, 0);
+      }
+      mat4 Transform = translate(mat4(1), Apartment[j].pos);
+      Transform = scale(Transform, Apartment[j].scale);
+      if (!Apartment[j].rot.empty()) {
+          for (int k = 0; k < Apartment[j].rot.size(); k++) {
+              Transform = rotate(Transform, radians(Apartment[j].angle[k]), Apartment[j].rot[k]);
+          }
+      }
+      eubo.mvpMat = ViewPrj * Transform;
+      Apartment[j].DS.map(currentImage, &eubo, 0);
+  }
+
+  void buildShop(int currentImage, mat4 ViewPrj) {
+      //SHOP 
+      spotLightUBO subo{};
+      EmissionUniformBufferObject eubo{};
+      UniformBufferObject Ubo{};
+      for (int i = 0; i < 4; i++) {
+          subo.lightPos[i] = Shop[23 + i].pos;
+          subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
+          subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
+      }
+      subo.InOutDecayTarget.x = 0.90f;
+      subo.InOutDecayTarget.y = 0.92f;
+      subo.InOutDecayTarget.z = 2.0f;
+      subo.InOutDecayTarget.w = 2.0f;
+      subo.eyePos = CamPos;
+      DSlight.map(currentImage, &subo, 0);
+
+      int j = 0;
+      for (; j < Shop.size() - 4; j++) {
+          mat4 Transform = translate(mat4(1), Shop[j].pos);
+          Transform = scale(Transform, Shop[j].scale);
+          if (!Shop[j].rot.empty()) {
+              for (int k = 0; k < Shop[j].rot.size(); k++) {
+                  Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
+              }
+          }
+          Ubo.mMat = Transform;
+          Ubo.mvpMat = ViewPrj * Ubo.mMat;
+          Ubo.nMat = inverse(transpose(Ubo.mMat));
+          Shop[j].DS.map(currentImage, &Ubo, 0);
+      }
+
+      for (; j < Shop.size(); j++) {
+          mat4 Transform = translate(mat4(1), Shop[j].pos);
+          Transform = scale(Transform, Shop[j].scale);
+          if (!Shop[j].rot.empty()) {
+              for (int k = 0; k < Shop[j].rot.size(); k++) {
+                  Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
+              }
+          }
+          eubo.mvpMat = ViewPrj * Transform;
+          Shop[j].DS.map(currentImage, &eubo, 0);
+      }
+  }
+
+  void buildCity(int currentImage, mat4 ViewPrj, float cTime) {
+      // objects
+      UniformBufferObject Ubo{};
+
+      BlinnUniformBufferObject BlinnUbo{};
+
+      float timeFactor = 0.040f;
+      float cycleDuration = 24.0f;
+      float timeInCycle = fmod(cTime * timeFactor, cycleDuration);
+      float azimuthAngle = glm::radians((timeInCycle / cycleDuration) * 360.0f);
+
+      float maxElevation = glm::radians(45.0f);
+      float elevationAngle = maxElevation * sin((timeInCycle / cycleDuration) * glm::pi<float>());
+
+      BlinnUbo.lightDir = glm::vec3(cos(elevationAngle) * cos(azimuthAngle), sin(elevationAngle), cos(elevationAngle) * sin(azimuthAngle));
+
+      glm::vec4 dawnColor = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
+      glm::vec4 dayColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
+      glm::vec4 duskColor = glm::vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
+      glm::vec4 nightColor = glm::vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
+
+      float normalizedTime = fmod(cTime * timeFactor, 1.0f);
+      glm::vec4 interpolatedColor;
+
+      if (normalizedTime < 0.15f) {
+          // Da notte ad alba (15% del ciclo)
+          float t = normalizedTime / 0.15f;
+          interpolatedColor = glm::mix(nightColor, dawnColor, t);
+      }
+      else if (normalizedTime < 0.4f) {
+          // Da alba a giorno (25% del ciclo)
+          float t = (normalizedTime - 0.15f) / 0.25f;
+          interpolatedColor = glm::mix(dawnColor, dayColor, t);
+      }
+      else if (normalizedTime < 0.6f) {
+          // Da giorno a tramonto (20% del ciclo)
+          float t = (normalizedTime - 0.4f) / 0.2f;
+          interpolatedColor = glm::mix(dayColor, duskColor, t);
+      }
+      else if (normalizedTime < 0.85f) {
+          // Da tramonto a notte (25% del ciclo)
+          float t = (normalizedTime - 0.6f) / 0.25f;
+          interpolatedColor = glm::mix(duskColor, nightColor, t);
+      }
+      else {
+          // Notte (15% del ciclo)
+          float t = (normalizedTime - 0.85f) / 0.15f;
+          interpolatedColor = glm::mix(nightColor, nightColor, t);
+      }
+
+      BlinnUbo.lightColor = interpolatedColor;
+      BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
+      DS.map(currentImage, &BlinnUbo, 0);
+
+      BlinnMatParUniformBufferObject blinnMatParUbo{};
+      blinnMatParUbo.Power = 200.0;
+      DS.map(currentImage, &blinnMatParUbo, 1);
+
+      for (int i = 0; i < ComponentVector.size(); i++) {
+
+          mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
+          Transform = scale(Transform, ComponentVector[i].scale);
+
+          if (!ComponentVector[i].rot.empty()) {
+              for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
+                  Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
+              }
+          }
+
+          Ubo.mMat = Transform;
+          Ubo.mvpMat = ViewPrj * Ubo.mMat;
+          Ubo.nMat = inverse(transpose(Ubo.mMat));
+
+          ComponentVector[i].DS.map(currentImage, &Ubo, 0);
+
+      }
   }
 
 };

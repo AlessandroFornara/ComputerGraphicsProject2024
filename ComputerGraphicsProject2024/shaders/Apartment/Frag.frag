@@ -13,11 +13,10 @@ layout(set = 0, binding = 0) uniform ToonUniformBufferObject {
 	vec3 lightDir;
 	vec3 lightColor;
 	vec3 eyePos;
-	float angleDiff;
-	float angleSpec;
+	vec3 diffSpecJolly;
 }tubo;
 
-vec3 diffuseWithToon(vec3 Norm, vec3 ViewDir, vec3 lightdir, vec3 color){
+vec3 diffuseWithToon(vec3 Norm, vec3 lightdir, vec3 color){
 	float percentage;
 	
 	float cosAlpha = dot(Norm,lightdir);
@@ -25,8 +24,8 @@ vec3 diffuseWithToon(vec3 Norm, vec3 ViewDir, vec3 lightdir, vec3 color){
 		percentage = 0;
 	}else if(cosAlpha <= 0.1){
 		percentage = 150 * cosAlpha;
-	}else if(cosAlpha <= tubo.angleDiff){
-		percentage = 15 +  850 * (0.1 - (tubo.angleDiff - cosAlpha));
+	}else if(cosAlpha <= tubo.diffSpecJolly.x){
+		percentage = 15 +  850 * (0.1 - (tubo.diffSpecJolly.x - cosAlpha));
 	}else{
 		percentage = 100;
 	}
@@ -34,15 +33,14 @@ vec3 diffuseWithToon(vec3 Norm, vec3 ViewDir, vec3 lightdir, vec3 color){
 	return color * percentage / 100;
 }
 
-vec3 spectWithToon(vec3 Norm, vec3 ViewDir, vec3 lightdir, vec3 color){
+vec3 spectWithToon(vec3 Norm, vec3 ViewDir, vec3 lightdir, vec3 color, float change){
 	
 	float percentage;
 	vec3 r = -reflect(lightdir, Norm);
-	float cosBeta = dot(r, ViewDir);
-	if(cosBeta <=0.9){
+	float cosBeta = dot(ViewDir, r);
+	
+	if(cosBeta <= change){
 		percentage = 0;
-	}else if(cosBeta <= tubo.angleSpec){
-		percentage = 100 * ( (1-tubo.angleSpec) - (tubo.angleSpec - cosBeta)) / (1-tubo.angleSpec);
 	}else{  
 		percentage = 100;
 	}
@@ -52,11 +50,13 @@ vec3 spectWithToon(vec3 Norm, vec3 ViewDir, vec3 lightdir, vec3 color){
 void main() {
 
 	vec3 Albedo = texture(tex, fragUV).rgb;
-
-	vec3 diffElement = diffuseWithToon( normalize(fragNorm), normalize(tubo.eyePos - fragPos), tubo.lightDir, Albedo);
-	vec3 speElement = spectWithToon(normalize(fragNorm), normalize(tubo.eyePos - fragPos), tubo.lightDir, Albedo);
-	vec3 col  =  (diffElement + speElement) * tubo.lightColor.xyz;
+	vec3 Norm = normalize(fragNorm);
+	vec3 diffElement = diffuseWithToon( normalize(fragNorm), tubo.lightDir , Albedo);
+	vec3 speElement = spectWithToon(normalize(fragNorm), normalize(tubo.eyePos - fragPos), tubo.lightDir, Albedo, tubo.diffSpecJolly.y);
+	vec3 col  =  ( diffElement + speElement) * tubo.lightColor.xyz;
 	
-	outColor = vec4(col + Albedo * vec3(0.1, 0.1, 0.1), 1.0f);
+	
+	
+	outColor = vec4(col + Albedo*vec3(0.4, 0.4, 0.4)  , 1.0f);
 	
 }
