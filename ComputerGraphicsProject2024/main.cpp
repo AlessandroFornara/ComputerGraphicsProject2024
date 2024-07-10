@@ -268,7 +268,8 @@ std::vector<Component> ComponentVector = {
     {"models/parking_tile_2x2_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -68.0f}, {1.0f, 1.0f, 1.0f}},
     
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f } }   
+    {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
+    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
     
 };
 //    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
@@ -315,6 +316,12 @@ protected:
 
   bool isInsideCar = false;
   bool firstPersonView = true;
+  bool autoTime = true;
+  const float ROT_SPEED = radians(120.0f);
+  const float WALK_SPEED = 8.0f;
+  const float RUN_SPEED = WALK_SPEED * 2;
+  float sunAng = 0.0f;
+  const float rotSpeed = 3.3333f;
 
 
   void setWindowParameters() {
@@ -391,10 +398,13 @@ protected:
       Pipapartment.init(this, &VDapartment, "shaders/Apartment/Vert.spv", "shaders/Apartment/ToonLight.spv", { &DSLapartmentLight, &DSLshop });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
-      for (int i = 0; i < ComponentVector.size(); i++) {
+      int i = 0;
+      for (; i < ComponentVector.size() - 1; i++) {
           ComponentVector[i].model.init(this, &VDBlinnVertex, ComponentVector[i].ObjPath, ComponentVector[i].type);
           ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
       }
+      ComponentVector[i].model.init(this, &VDemission, ComponentVector[i].ObjPath, ComponentVector[i].type);
+      ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
       
       //SHOP
       int j;
@@ -443,9 +453,10 @@ protected:
 
     //CITY
     int sizeCV = ComponentVector.size();
-    for (int i = 0; i < sizeCV; i++) {
+    for (int i = 0; i < sizeCV - 1; i++) {
       ComponentVector[i].DS.init(this, &DSLBlinn, {&ComponentVector[i].texture});
     }
+    ComponentVector[sizeCV - 1].DS.init(this, &DSLemission, { &ComponentVector[sizeCV - 1].texture });
 
     //SHOP
     int sizeSHOP, j;
@@ -530,7 +541,8 @@ protected:
           PipBlinn.bind(commandBuffer);
 
           DS.bind(commandBuffer, PipBlinn, 0, currentImage);
-          for (int i = 0; i < ComponentVector.size(); i++) {
+          int i = 0;
+          for (; i < ComponentVector.size() - 1; i++) {
 
               ComponentVector[i].model.bind(commandBuffer);
               ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 1, currentImage);
@@ -539,6 +551,11 @@ protected:
               vkCmdDrawIndexed(commandBuffer,
                   static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
           }
+          PipEmission.bind(commandBuffer);
+          ComponentVector[i].model.bind(commandBuffer);
+          ComponentVector[i].DS.bind(commandBuffer, PipEmission, 0, currentImage);
+          vkCmdDrawIndexed(commandBuffer,
+              static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
       }//SHOP
       else if (currentScene == SHOP) {
           int j;
@@ -581,20 +598,6 @@ protected:
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
-
-    static float autoTime = true;
-	static float cTime = 0.0;
-	const float turnTime = 72.0f;
-	const float angTurnTimeFact = 2.0f * M_PI / turnTime;
-		
-	if(autoTime) {
-		cTime = cTime + deltaT;
-		cTime = (cTime > turnTime) ? (cTime - turnTime) : cTime;
-	};
-
-    const float ROT_SPEED = radians(120.0f);
-    const float WALK_SPEED = 8.0f;
-    const float RUN_SPEED = WALK_SPEED * 2;
 
     float MOVE_SPEED = WALK_SPEED;
 
@@ -677,7 +680,7 @@ protected:
     mat4 baseTr = mat4(1.0f);
 
     if (currentScene == CITY) {
-        buildCity(currentImage, ViewPrj, cTime);
+        buildCity(currentImage, ViewPrj, deltaT);
     }
     else if (currentScene == SHOP) {
         buildShop(currentImage, ViewPrj);
@@ -882,54 +885,50 @@ protected:
       }
   }
 
-  void buildCity(int currentImage, mat4 ViewPrj, float cTime) {
+  void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
       // objects
       UniformBufferObject Ubo{};
 
       BlinnUniformBufferObject BlinnUbo{};
 
-      float timeFactor = 0.040f;
-      float cycleDuration = 24.0f;
-      float timeInCycle = fmod(cTime * timeFactor, cycleDuration);
-      float azimuthAngle = glm::radians((timeInCycle / cycleDuration) * 360.0f);
+      if (autoTime) {
+          sunAng = fmod(sunAng + deltaT * rotSpeed, 360.0f);
+          //cout << sunAng << "\n";
+      }
 
-      float maxElevation = glm::radians(45.0f);
-      float elevationAngle = maxElevation * sin((timeInCycle / cycleDuration) * glm::pi<float>());
-
-      BlinnUbo.lightDir = glm::vec3(cos(elevationAngle) * cos(azimuthAngle), sin(elevationAngle), cos(elevationAngle) * sin(azimuthAngle));
+      float x, y, z;
+      float r = 100.0f;
+      x = 26.5852f + r * cos(radians(sunAng)) * cos(radians(45.0f)); // Inclinazione di 45 gradi per simulare un percorso ellittico
+      y = r * sin(radians(sunAng)) * sin(radians(45.0f)); // La componente y varia tra -r/2 e r/2
+      z = -35.3748f + r * cos(radians(sunAng)) * sin(radians(45.0f)); // Inclinazione di 45 gradi per simulare un percorso ellittico
+      BlinnUbo.lightDir = glm::vec3(x, y, z);
 
       glm::vec4 dawnColor = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
       glm::vec4 dayColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
       glm::vec4 duskColor = glm::vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
       glm::vec4 nightColor = glm::vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
 
-      float normalizedTime = fmod(cTime * timeFactor, 1.0f);
+      float normalizedTime = sunAng;
       glm::vec4 interpolatedColor;
 
-      if (normalizedTime < 0.15f) {
-          // Da notte ad alba (15% del ciclo)
-          float t = normalizedTime / 0.15f;
+      if (normalizedTime < 15.0f) {
+          float t = normalizedTime / 15.0f;
           interpolatedColor = glm::mix(nightColor, dawnColor, t);
       }
-      else if (normalizedTime < 0.4f) {
-          // Da alba a giorno (25% del ciclo)
-          float t = (normalizedTime - 0.15f) / 0.25f;
+      else if (normalizedTime < 40.0f) {
+          float t = (normalizedTime - 15.0f) / 25.0f;
           interpolatedColor = glm::mix(dawnColor, dayColor, t);
       }
-      else if (normalizedTime < 0.6f) {
-          // Da giorno a tramonto (20% del ciclo)
-          float t = (normalizedTime - 0.4f) / 0.2f;
+      else if (normalizedTime < 165.0f) {
+          float t = (normalizedTime - 40.0f) / 125.0f;
           interpolatedColor = glm::mix(dayColor, duskColor, t);
       }
-      else if (normalizedTime < 0.85f) {
-          // Da tramonto a notte (25% del ciclo)
-          float t = (normalizedTime - 0.6f) / 0.25f;
+      else if (normalizedTime < 180.0f) {
+          float t = (normalizedTime - 165.0f) / 25.0f;
           interpolatedColor = glm::mix(duskColor, nightColor, t);
       }
       else {
-          // Notte (15% del ciclo)
-          float t = (normalizedTime - 0.85f) / 0.15f;
-          interpolatedColor = glm::mix(nightColor, nightColor, t);
+          interpolatedColor = nightColor;
       }
 
       BlinnUbo.lightColor = interpolatedColor;
@@ -937,10 +936,11 @@ protected:
       DS.map(currentImage, &BlinnUbo, 0);
 
       BlinnMatParUniformBufferObject blinnMatParUbo{};
-      blinnMatParUbo.Power = 200.0;
+      blinnMatParUbo.Power = 100.0;
       DS.map(currentImage, &blinnMatParUbo, 1);
 
-      for (int i = 0; i < ComponentVector.size(); i++) {
+      int i = 0;
+      for (; i < ComponentVector.size() - 1; i++) {
 
           mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
           Transform = scale(Transform, ComponentVector[i].scale);
@@ -958,6 +958,19 @@ protected:
           ComponentVector[i].DS.map(currentImage, &Ubo, 0);
 
       }
+
+      EmissionUniformBufferObject eubo {};
+      mat4 Transform = translate(mat4(1), vec3(x, y, z));
+      Transform = scale(Transform, ComponentVector[i].scale);
+
+      if (!ComponentVector[i].rot.empty()) {
+          for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
+              Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
+          }
+      }
+
+      eubo.mvpMat = ViewPrj * Transform;
+      ComponentVector[i].DS.map(currentImage, &eubo, 0);
   }
 
 };
