@@ -593,7 +593,7 @@ protected:
   void updateUniformBuffer(uint32_t currentImage) {
 
     
-    float deltaT, cameraAngle = 0.0, movX, movZ;
+    float deltaT, cameraAngle = 0.0;
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld;
     bool fire = false;
 
@@ -854,8 +854,6 @@ protected:
   void buildShop(int currentImage, mat4 ViewPrj) {
       //SHOP 
       spotLightUBO subo{};
-      EmissionUniformBufferObject eubo{};
-      UniformBufferObject Ubo{};
       for (int i = 0; i < 4; i++) {
           subo.lightPos[i] = Shop[23 + i].pos;
           subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
@@ -875,14 +873,10 @@ protected:
   }
 
   void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
-      // objects
-      UniformBufferObject Ubo{};
-
       BlinnUniformBufferObject BlinnUbo{};
 
       if (autoTime) {
           sunAng = fmod(sunAng + deltaT * rotSpeed, 360.0f);
-          //cout << sunAng << "\n";
       }
 
       float x, y, z;
