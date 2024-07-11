@@ -313,6 +313,7 @@ protected:
   mat4 ViewMatrix;
 
   bool spectatorMode = false;
+  bool cityWithLimits = false;
 
   bool isInsideCar = false;
   bool firstPersonView = true;
@@ -659,7 +660,12 @@ protected:
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
-
+    if (glfwGetKey(window, GLFW_KEY_B)) {
+        cityWithLimits = false;
+    }
+    if (glfwGetKey(window, GLFW_KEY_V)) {
+        cityWithLimits = true;
+    }
     if (glfwGetKey(window, GLFW_KEY_K)) {
         if (cameraAngle > 0) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
@@ -699,10 +705,20 @@ protected:
           result = result && !(newCamPos.x > 102 && newCamPos.x < 105 && newCamPos.z > 104 && newCamPos.z < 105.5);
           return result;
       }
-      if (currentScene == APARTMENT) {
+      else if (currentScene == APARTMENT) {
          result = (newCamPos.z > 197 && newCamPos.z <= 205 && newCamPos.x > 198 && newCamPos.x <= 205);
          result = result && !(newCamPos.x > 200 && newCamPos.x < 205 && newCamPos.z > 197 && newCamPos.z < 198);
          return result;
+      }
+      else if (currentFrame == CITY && cityWithLimits) {
+          result = (newCamPos.x >= -1.77 && newCamPos.x <= 65.75 && newCamPos.z <= -6.24 && newCamPos.z >= -9.71) //1
+           || (newCamPos.x >= 13.50 && newCamPos.x <= 17.8 && newCamPos.z <= -9.71 && newCamPos.z >= -30.3)//2
+           || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -30.3 && newCamPos.z >= -41.7) //3
+           || (newCamPos.x >= 14 && newCamPos.x <= 18 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //4
+           || (newCamPos.x >= 54.10 && newCamPos.x <= 65.8 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //6
+           || (newCamPos.x >= -17.5 && newCamPos.x <= -6.2 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //5
+           || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -78.0 && newCamPos.z >= -89.95); //7
+          return result;
       }
       return true;
   }
