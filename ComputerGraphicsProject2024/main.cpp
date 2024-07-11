@@ -802,11 +802,41 @@ protected:
       cout << "________________________________________________________________________________" << '\n';
   }
 
-  void buildApartment(int currentImage, mat4 ViewPrj) {
-      UniformBufferObject Ubo{};
-      ToonUniformBufferObject tubo{};
-      EmissionUniformBufferObject eubo{};
+  void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
+      UniformBufferObject ubo{};
+      for (int i = start; i < end; i++) {
+          mat4 Transform = translate(mat4(1), vec[i].pos + traslation);
+          Transform = scale(Transform, vec[i].scale);
+          if (!vec[i].rot.empty()) {
+              for (int k = 0; k < vec[i].rot.size(); k++) {
+                  Transform = rotate(Transform, radians(vec[i].angle[k]), vec[i].rot[k]);
+              }
+          }
+          ubo.mMat = Transform;
+          ubo.mvpMat = ViewPrj * ubo.mMat;
+          ubo.nMat = inverse(transpose(ubo.mMat));
+          vec[i].DS.map(currentImage, &ubo, 0);
+      }
+  }
 
+  void fillEmossionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
+      EmissionUniformBufferObject eubo{};
+      for (int j = start; j < vec.size(); j++) {
+          mat4 Transform = translate(mat4(1), vec[j].pos + traslation);
+          Transform = scale(Transform, vec[j].scale);
+          if (!vec[j].rot.empty()) {
+              for (int k = 0; k < vec[j].rot.size(); k++) {
+                  Transform = rotate(Transform, radians(vec[j].angle[k]), vec[j].rot[k]);
+              }
+          }
+          eubo.mvpMat = ViewPrj * Transform;
+          vec[j].DS.map(currentImage, &eubo, 0);
+      }
+  }
+
+  void buildApartment(int currentImage, mat4 ViewPrj) {
+      ToonUniformBufferObject tubo{};
+      
       tubo.diffSpecJolly.y = 0.60f;
       tubo.diffSpecJolly.x = 0.35f;
       tubo.diffSpecJolly.z = 0.0f;
@@ -815,29 +845,10 @@ protected:
       tubo.eyePos = { 202.0, 1.0, 202.0 };
       DStoonLight.map(currentImage, &tubo, 0);
 
-      int j = 0;
-      for (; j < Apartment.size() - 1; j++) {
-          mat4 Transform = translate(mat4(1), Apartment[j].pos);
-          Transform = scale(Transform, Apartment[j].scale);
-          if (!Apartment[j].rot.empty()) {
-              for (int k = 0; k < Apartment[j].rot.size(); k++) {
-                  Transform = rotate(Transform, radians(Apartment[j].angle[k]), Apartment[j].rot[k]);
-              }
-          }
-          Ubo.mMat = Transform;
-          Ubo.mvpMat = ViewPrj * Ubo.mMat;
-          Ubo.nMat = inverse(transpose(Ubo.mMat));
-          Apartment[j].DS.map(currentImage, &Ubo, 0);
-      }
-      mat4 Transform = translate(mat4(1), Apartment[j].pos);
-      Transform = scale(Transform, Apartment[j].scale);
-      if (!Apartment[j].rot.empty()) {
-          for (int k = 0; k < Apartment[j].rot.size(); k++) {
-              Transform = rotate(Transform, radians(Apartment[j].angle[k]), Apartment[j].rot[k]);
-          }
-      }
-      eubo.mvpMat = ViewPrj * Transform;
-      Apartment[j].DS.map(currentImage, &eubo, 0);
+      fillUniformBuffer(0, Apartment.size() - 1, Apartment,ViewPrj, currentImage, vec3(0.0f));
+
+      fillEmossionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f));
+      
   }
 
   void buildShop(int currentImage, mat4 ViewPrj) {
@@ -857,32 +868,10 @@ protected:
       subo.eyePos = CamPos;
       DSlight.map(currentImage, &subo, 0);
 
-      int j = 0;
-      for (; j < Shop.size() - 4; j++) {
-          mat4 Transform = translate(mat4(1), Shop[j].pos);
-          Transform = scale(Transform, Shop[j].scale);
-          if (!Shop[j].rot.empty()) {
-              for (int k = 0; k < Shop[j].rot.size(); k++) {
-                  Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
-              }
-          }
-          Ubo.mMat = Transform;
-          Ubo.mvpMat = ViewPrj * Ubo.mMat;
-          Ubo.nMat = inverse(transpose(Ubo.mMat));
-          Shop[j].DS.map(currentImage, &Ubo, 0);
-      }
+      fillUniformBuffer(0, Shop.size() - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
 
-      for (; j < Shop.size(); j++) {
-          mat4 Transform = translate(mat4(1), Shop[j].pos);
-          Transform = scale(Transform, Shop[j].scale);
-          if (!Shop[j].rot.empty()) {
-              for (int k = 0; k < Shop[j].rot.size(); k++) {
-                  Transform = rotate(Transform, radians(Shop[j].angle[k]), Shop[j].rot[k]);
-              }
-          }
-          eubo.mvpMat = ViewPrj * Transform;
-          Shop[j].DS.map(currentImage, &eubo, 0);
-      }
+      fillEmossionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f));
+
   }
 
   void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
@@ -939,38 +928,12 @@ protected:
       blinnMatParUbo.Power = 100.0;
       DS.map(currentImage, &blinnMatParUbo, 1);
 
-      int i = 0;
-      for (; i < ComponentVector.size() - 1; i++) {
+      fillUniformBuffer(0, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(0.0f));
 
-          mat4 Transform = translate(mat4(1), ComponentVector[i].pos);
-          Transform = scale(Transform, ComponentVector[i].scale);
+      int index = ComponentVector.size() - 1;
 
-          if (!ComponentVector[i].rot.empty()) {
-              for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
-                  Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
-              }
-          }
+      fillEmossionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3 (x,y,z));
 
-          Ubo.mMat = Transform;
-          Ubo.mvpMat = ViewPrj * Ubo.mMat;
-          Ubo.nMat = inverse(transpose(Ubo.mMat));
-
-          ComponentVector[i].DS.map(currentImage, &Ubo, 0);
-
-      }
-
-      EmissionUniformBufferObject eubo {};
-      mat4 Transform = translate(mat4(1), vec3(x, y, z));
-      Transform = scale(Transform, ComponentVector[i].scale);
-
-      if (!ComponentVector[i].rot.empty()) {
-          for (int j = 0; j < ComponentVector[i].rot.size(); j++) {
-              Transform = rotate(Transform, radians(ComponentVector[i].angle[j]), ComponentVector[i].rot[j]);
-          }
-      }
-
-      eubo.mvpMat = ViewPrj * Transform;
-      ComponentVector[i].DS.map(currentImage, &eubo, 0);
   }
 
 };
