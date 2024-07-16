@@ -40,11 +40,11 @@ struct BlinnMatParUniformBufferObject {
     alignas(4)  float Power;
 };
 
-struct ToonUniformBufferObject {
+struct ApartmentUniBuffer {
     alignas(16) vec3 lightDir;
     alignas(16) vec3 lightColor;
+    alignas(16) vec3 lightPos;
     alignas(16) vec3 eyePos;
-    alignas(16) vec3 diffSpecJolly;
 };
 
 struct Component {
@@ -149,7 +149,7 @@ vector<Component> Shop = {
     {"models/Shop/door_011_Mesh.116.mgcg", "textures/Textures.png",MGCG, {101.0f, -1.0f, 105.7f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
     {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{105.7f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{98.3f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-
+    
     //LAMPADE 
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -306,7 +306,7 @@ protected:
   Pipeline PipEmission;
   VertexDescriptor VDemission;
 
-  vec3 CamPos = vec3(1.0, 1.0, -8.0);
+  vec3 CamPos = vec3(0.0, 1.0, -8.0);
   float CamAlpha = 0.0f, CamBeta = 0.0f;
   mat4 ViewMatrix;
 
@@ -365,7 +365,7 @@ protected:
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
       );
       DSLapartmentLight.init(this, {
-          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(ToonUniformBufferObject), 1 }
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(ApartmentUniBuffer), 1 }
       });
 
       DSLemission.init(this, {
@@ -398,7 +398,7 @@ protected:
       PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL, &DSLBlinn });
       Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLshop });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
-      Pipapartment.init(this, &VDapartment, "shaders/Apartment/Vert.spv", "shaders/Apartment/ToonLight.spv", { &DSLapartmentLight, &DSLshop });
+      Pipapartment.init(this, &VDapartment, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLapartmentLight, &DSLshop });
 
       //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
       int i = 0;
@@ -590,7 +590,6 @@ protected:
           Apartment[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
           vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
       }
-     
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
@@ -870,14 +869,12 @@ protected:
   }
 
   void buildApartment(int currentImage, mat4 ViewPrj) {
-      ToonUniformBufferObject tubo{};
-      
-      tubo.diffSpecJolly.y = 0.60f;
-      tubo.diffSpecJolly.x = 0.35f;
-      tubo.diffSpecJolly.z = 0.0f;
+      ApartmentUniBuffer tubo{};
+
       tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
-      tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
-      tubo.eyePos = { 202.0, 1.0, 202.0 };
+      tubo.lightDir = vec3(0.0f, -1.0f, 0.0f);
+      tubo.lightPos = vec3(202.0f, 2.0f, 202.0f);
+      tubo.eyePos = CamPos;
       DStoonLight.map(currentImage, &tubo, 0);
 
       fillUniformBuffer(0, Apartment.size() - 1, Apartment,ViewPrj, currentImage, vec3(0.0f));
