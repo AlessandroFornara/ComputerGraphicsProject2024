@@ -595,7 +595,7 @@ protected:
 
     
     float deltaT, cameraAngle = 0.0;
-    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld;
+    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
@@ -617,12 +617,16 @@ protected:
     vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
     vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
     
+    tmpCamPos = CamPos;
     CamPosOld = CamPos;
-    CamPos = CamPos + MOVE_SPEED * m.x * ux * deltaT;
-    CamPos = CamPos - MOVE_SPEED * m.z * uz * deltaT;
+    tmpCamPos = tmpCamPos + MOVE_SPEED * m.x * ux * deltaT;
+    tmpCamPos = tmpCamPos - MOVE_SPEED * m.z * uz * deltaT;
 
-    if (!checkLimits(CamPos)) {
+    if (!checkLimits(tmpCamPos)) {
         CamPos = CamPosOld;
+    }
+    else {
+        CamPos = tmpCamPos;
     }
 
     if (spectatorMode) {
@@ -710,14 +714,14 @@ protected:
          result = result && !(newCamPos.x > 200 && newCamPos.x < 205 && newCamPos.z > 197 && newCamPos.z < 198);
          return result;
       }
-      else if (currentFrame == CITY && cityWithLimits) {
+      else if (currentScene == CITY && cityWithLimits) {
           result = (newCamPos.x >= -1.77 && newCamPos.x <= 65.75 && newCamPos.z <= -6.24 && newCamPos.z >= -9.71) //1
-           || (newCamPos.x >= 13.50 && newCamPos.x <= 17.8 && newCamPos.z <= -9.71 && newCamPos.z >= -30.3)//2
-           || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -30.3 && newCamPos.z >= -41.7) //3
-           || (newCamPos.x >= 14 && newCamPos.x <= 18 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //4
-           || (newCamPos.x >= 54.10 && newCamPos.x <= 65.8 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //6
-           || (newCamPos.x >= -17.5 && newCamPos.x <= -6.2 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //5
-           || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -78.0 && newCamPos.z >= -89.95); //7
+              || (newCamPos.x >= 13.50 && newCamPos.x <= 17.8 && newCamPos.z <= -9.71 && newCamPos.z >= -30.3)//2
+              || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -30.3 && newCamPos.z >= -41.7) //3
+              || (newCamPos.x >= 14 && newCamPos.x <= 18 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //4
+              || (newCamPos.x >= 54.10 && newCamPos.x <= 65.8 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //6
+              || (newCamPos.x >= -17.5 && newCamPos.x <= -6.2 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //5
+              || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -78.0 && newCamPos.z >= -89.95); //7
           return result;
       }
       return true;
