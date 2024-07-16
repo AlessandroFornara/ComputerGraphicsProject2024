@@ -316,15 +316,15 @@ protected:
   //car set up
   vec3 CarPos = vec3(0.0f, 0.0f, -24.0f);
   bool isInsideCar = false;
-  float carSpeed = 0.0f;
-  float carRotation = 0.0f;
+  float carSpeed = 10.0f;
+  const float carRotSpeed = 60.0f;  //IDEA: rotation slower when you are in the car
 
   bool autoTime = true;
   const float ROT_SPEED = radians(120.0f);
-  const float WALK_SPEED = 8.0f;
+  const float WALK_SPEED = 5.0f;
   const float RUN_SPEED = WALK_SPEED * 2;
   float sunAng = 0.0f;
-  const float rotSpeed = 3.3333f;
+  const float sunRotSpeed = 3.3333f;
 
 
   void setWindowParameters() {
@@ -594,6 +594,8 @@ protected:
 
   void updateUniformBuffer(uint32_t currentImage) {
     float deltaT, cameraAngle = 0.0;
+
+
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
 
@@ -654,7 +656,6 @@ protected:
         }
     }
 
-
     if (glfwGetKey(window, GLFW_KEY_P)) {
         spectatorMode = true;
     }
@@ -669,25 +670,24 @@ protected:
         cityWithLimits = true;
     }
     if (glfwGetKey(window, GLFW_KEY_K)) {
-        if (cameraAngle > 0) {
+        if (cameraAngle > 0 && !isInsideCar) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
         }
-        else if (isInsideCar) {
-            if(isNearCar)
+        else if (isInsideCar == false) {
+            if(isNearCar())
                 isInsideCar = true;
             //todo: create method: enterCar
         }
-        else if (!isInsideCar) {
+        else if (isInsideCar == true) {
             isInsideCar = false;
             //todo: create method: exitCar
         }
         else {
-            tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
-            checkDoors(cameraPosition, 360.0 + tmp);
+            if(!isInsideCar){
+                tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
+                checkDoors(cameraPosition, 360.0 + tmp);
+            }
         }
-    }
-    if (glfwGetKey(window, GLFW_KEY_Y)) {
-        isInsideCar = true;
     }
     // Here is where you actually update your uniforms
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
@@ -705,8 +705,16 @@ protected:
     else if (currentScene == APARTMENT) {
         buildApartment(currentImage, ViewPrj);
     }
+  }
 
+  bool isNearCar() {
+      float distance;
+      distance = glm::distance(CamPos, CarPos);
+      return distance < 1.0f;
+  }
 
+  void enterCar() {
+      isInsideCar = true;
   }
 
   bool checkLimits(vec3 newCamPos) {
@@ -733,12 +741,6 @@ protected:
           return result;
       }
       return true;
-  }
-
-  bool isNearCar() {
-      float distance;
-      distance = glm::distance(CamPos, CarPos);
-      return distance < 1.0f;
   }
 
   void checkDoors(vec3 cameraPosition, float cameraAngle) {
@@ -853,7 +855,7 @@ protected:
       }
   }
 
-  void fillEmossionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
+  void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
       EmissionUniformBufferObject eubo{};
       for (int j = start; j < vec.size(); j++) {
           mat4 Transform = translate(mat4(1), vec[j].pos + traslation);
@@ -879,7 +881,7 @@ protected:
 
       fillUniformBuffer(0, Apartment.size() - 1, Apartment,ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmossionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f));
+      fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f));
       
   }
 
@@ -900,7 +902,7 @@ protected:
 
       fillUniformBuffer(0, Shop.size() - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmossionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f));
+      fillEmissionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f));
 
   }
 
@@ -908,7 +910,7 @@ protected:
       BlinnUniformBufferObject BlinnUbo{};
 
       if (autoTime) {
-          sunAng = fmod(sunAng + deltaT * rotSpeed, 360.0f);
+          sunAng = fmod(sunAng + deltaT * sunRotSpeed, 360.0f);
       }
 
       float x, y, z;
@@ -958,7 +960,7 @@ protected:
 
       int index = ComponentVector.size() - 1;
 
-      fillEmossionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3 (x,y,z));
+      fillEmissionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3 (x,y,z));
 
   }
 
