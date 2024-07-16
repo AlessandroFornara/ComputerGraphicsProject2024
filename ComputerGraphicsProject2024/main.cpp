@@ -69,7 +69,7 @@ struct Vertex {
 enum Scene { CITY, SHOP, APARTMENT };
 
 vector<Component> Apartment = {
-    //PAVIMENTO
+/*    //PAVIMENTO
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -103,18 +103,18 @@ vector<Component> Apartment = {
     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+*/
     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
     {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
-
-    
+       
 };
 
 
 //SHOP
 vector<Component> Shop = {
-    
+
     //PAVIMENTO
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -165,8 +165,6 @@ vector<Component> Shop = {
 };
 
 
-
-
 std::vector<Component> ComponentVector = {
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     
@@ -204,8 +202,8 @@ std::vector<Component> ComponentVector = {
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}},
-    
-    {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png",MGCG, {4+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
+
+    {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png",MGCG, {4 + 5 * 8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
     {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
     {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", MGCG,{20+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {-90.0f}}, //foot
@@ -218,7 +216,7 @@ std::vector<Component> ComponentVector = {
     {"models/apartment_012.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_012.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {180.0f}},
-    
+/*
     {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", MGCG,{2*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {90.0f}},
     {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
@@ -258,7 +256,7 @@ std::vector<Component> ComponentVector = {
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
-
+*/
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png",MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -315,8 +313,12 @@ protected:
   bool spectatorMode = false;
   bool cityWithLimits = false;
 
+  //car set up
+  vec3 CarPos = vec3(0.0f, 0.0f, -24.0f);
   bool isInsideCar = false;
-  bool firstPersonView = true;
+  float carSpeed = 0.0f;
+  float carRotation = 0.0f;
+
   bool autoTime = true;
   const float ROT_SPEED = radians(120.0f);
   const float WALK_SPEED = 8.0f;
@@ -352,7 +354,7 @@ protected:
           {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
 
 
-      /*DSLshop contiene al texture e le matrici per posizionare nei punti corretti i vari modelli, mentre DSLShopLight contiene 
+      /*DSLshop contiene la texture e le matrici per posizionare nei punti corretti i vari modelli, mentre DSLShopLight contiene 
       esclusivamente le informazioni per le luci. Essendo che le stesse luci colpiscono tutti gli oggetti è presente un descriptor 
       set a parte. Il primo sarà associato al set 1, mentre il secondo al set 0*/
       DSLshop.init(this, {
@@ -592,8 +594,6 @@ protected:
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
-
-    
     float deltaT, cameraAngle = 0.0;
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
@@ -611,7 +611,6 @@ protected:
     CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
     CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
     CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
-
 
     vec3 ux = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(1, 0, 0, 1);
     vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
@@ -674,6 +673,15 @@ protected:
         if (cameraAngle > 0) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
         }
+        else if (isInsideCar) {
+            if(isNearCar)
+                isInsideCar = true;
+            //todo: create method: enterCar
+        }
+        else if (!isInsideCar) {
+            isInsideCar = false;
+            //todo: create method: exitCar
+        }
         else {
             tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
             checkDoors(cameraPosition, 360.0 + tmp);
@@ -714,6 +722,7 @@ protected:
          result = result && !(newCamPos.x > 200 && newCamPos.x < 205 && newCamPos.z > 197 && newCamPos.z < 198);
          return result;
       }
+      //todo: finished the implementation of the car, put isInsideCar in the conditions;
       else if (currentScene == CITY && cityWithLimits) {
           result = (newCamPos.x >= -1.77 && newCamPos.x <= 65.75 && newCamPos.z <= -6.24 && newCamPos.z >= -9.71) //1
               || (newCamPos.x >= 13.50 && newCamPos.x <= 17.8 && newCamPos.z <= -9.71 && newCamPos.z >= -30.3)//2
@@ -725,6 +734,12 @@ protected:
           return result;
       }
       return true;
+  }
+
+  bool isNearCar() {
+      float distance;
+      distance = glm::distance(CamPos, CarPos);
+      return distance < 1.0f;
   }
 
   void checkDoors(vec3 cameraPosition, float cameraAngle) {
