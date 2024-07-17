@@ -54,7 +54,7 @@ struct Component {
   vec3 pos;
   const vec3 scale;
   const std::vector<vec3> rot;
-  const std::vector<float> angle;
+  std::vector<float> angle;
   Model model;
   Texture texture;
   DescriptorSet DS;
@@ -166,7 +166,7 @@ vector<Component> Shop = {
 
 
 std::vector<Component> ComponentVector = {
-    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}}, //DRIVEABLE CAR MODEL
+    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {0.0f}}, //DRIVEABLE CAR MODEL; {{0.0f, 1.0f, 0.0f}}, {0.0f} per la rotazione;
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
 /*
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -595,6 +595,7 @@ protected:
 
   void updateUniformBuffer(uint32_t currentImage) {
     float deltaT, cameraAngle = 0.0;
+    float rotAngleCar = 0.0f;
 
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
@@ -636,12 +637,14 @@ protected:
         CamPos.y = vec3(0, 1, 0).y;
     }
     else if(isInsideCar) {
-        CarPos = CarPos + MOVE_SPEED * m.x * ux * deltaT;
         CarPos = CarPos - MOVE_SPEED * m.z * uz * deltaT;
+        rotAngleCar = m.x;
         printf("position: %f, %f, %f\n", CarPos.x, CarPos.y, CarPos.z);
+        printf("rotation: %f\n", rotAngleCar);
         ComponentVector[0].pos.x = CarPos.x;
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
+        //ComponentVector[0].angle[0] = rotAngleCar; // potenziale overflow;
         updateViewMatrix();
     }
 
@@ -716,15 +719,15 @@ protected:
         buildApartment(currentImage, ViewPrj);
     }
     if (isInsideCar) {
-        printf("renderCar pre call flag\n");
+        // printf("renderCar pre call flag\n");
         renderCar(CarPos, currentImage, ViewPrj);
-        printf("renderCar post call flag\n");
+        // printf("renderCar post call flag\n");
     }
   }
     
   //at the moment "newCarPosition" is useless;
   void renderCar(const vec3& newCarPosition, int currentImage, mat4 ViewPrj) {
-      printf("Rendering car at position: %f, %f, %f\n", newCarPosition.x, newCarPosition.y, newCarPosition.z);
+      // printf("Rendering car at position: %f, %f, %f\n", newCarPosition.x, newCarPosition.y, newCarPosition.z);
       fillUniformBuffer(0, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(0.0f));
   }
 
