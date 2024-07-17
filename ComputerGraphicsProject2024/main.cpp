@@ -51,7 +51,7 @@ struct Component {
   const string ObjPath;
   const string TexturePath;
   ModelType type;
-  const vec3 pos;
+  vec3 pos;
   const vec3 scale;
   const std::vector<vec3> rot;
   const std::vector<float> angle;
@@ -166,8 +166,9 @@ vector<Component> Shop = {
 
 
 std::vector<Component> ComponentVector = {
+    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}}, //DRIVEABLE CAR MODEL
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    
+/*
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png",MGCG, {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -181,7 +182,7 @@ std::vector<Component> ComponentVector = {
     {"models/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
-    
+*/    
     {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png",MGCG, {10.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png",MGCG, {20.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
     
@@ -201,7 +202,6 @@ std::vector<Component> ComponentVector = {
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}},
 
     {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png",MGCG, {4 + 5 * 8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
     {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
@@ -315,6 +315,7 @@ protected:
 
   //car set up
   vec3 CarPos = vec3(0.0f, 0.0f, -24.0f);
+  // X: 1.20916, Y : 1, Z : -24.3505, CameraAngle : 85.2512
   bool isInsideCar = false;
   float carSpeed = 10.0f;
   const float carRotSpeed = 60.0f;  //IDEA: rotation slower when you are in the car
@@ -632,9 +633,19 @@ protected:
     if (spectatorMode) {
         CamPos = CamPos + MOVE_SPEED * m.y * uy * deltaT;
     }
-    else {
+    else if(!isInsideCar) {
         CamPos.y = vec3(0, 1, 0).y;
     }
+    else if(isInsideCar) {
+        CarPos = CarPos + MOVE_SPEED * m.x * ux * deltaT;
+        CarPos = CarPos - MOVE_SPEED * m.z * uz * deltaT;
+        ComponentVector[0].pos.x = CarPos.x;
+        ComponentVector[0].pos.y = CarPos.y;
+        ComponentVector[0].pos.z = CarPos.z;
+        //renderCar(CarPos); method ?
+        updateViewMatrix();
+    }
+
     cameraPosition = CamPos;
     cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
     Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
@@ -673,22 +684,23 @@ protected:
         if (cameraAngle > 0 && !isInsideCar) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
         }
-        else if (isInsideCar == false) {
-            if(isNearCar())
-                isInsideCar = true;
-            //todo: create method: enterCar
-        }
-        else if (isInsideCar == true) {
-            isInsideCar = false;
-            //todo: create method: exitCar
-        }
         else {
             if(!isInsideCar){
                 tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
                 checkDoors(cameraPosition, 360.0 + tmp);
             }
         }
+        if (isInsideCar == false) {
+            if (isNearCar()) {
+                enterCar();
+            }
+        }
+        else if (isInsideCar == true) {
+            isInsideCar = false;
+            //todo: create method: exitCar
+        }
     }
+
     // Here is where you actually update your uniforms
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
@@ -707,14 +719,28 @@ protected:
     }
   }
 
+  void renderCar(const vec3 &newCarPosition) {
+      mat4 modelMatrix = translate(mat4(1.0f), newCarPosition);
+
+  }
+
   bool isNearCar() {
-      float distance;
-      distance = glm::distance(CamPos, CarPos);
-      return distance < 1.0f;
+      float dist;
+      dist = distance(CamPos, CarPos);
+      return dist < 2.0f;
   }
 
   void enterCar() {
       isInsideCar = true;
+      CamPos = CarPos + vec3(0.0f, 2.0f, -5.0f);
+      updateViewMatrix();
+  }
+
+  void updateViewMatrix() {
+      printf("cipolla\n");
+      if (isInsideCar) {
+          ViewMatrix = lookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0.0f, 1.0f, 0.0f));
+      }
   }
 
   bool checkLimits(vec3 newCamPos) {
