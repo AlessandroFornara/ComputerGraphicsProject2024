@@ -596,7 +596,6 @@ protected:
   void updateUniformBuffer(uint32_t currentImage) {
     float deltaT, cameraAngle = 0.0;
 
-
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
 
@@ -639,17 +638,16 @@ protected:
     else if(isInsideCar) {
         CarPos = CarPos + MOVE_SPEED * m.x * ux * deltaT;
         CarPos = CarPos - MOVE_SPEED * m.z * uz * deltaT;
+        printf("position: %f, %f, %f\n", CarPos.x, CarPos.y, CarPos.z);
         ComponentVector[0].pos.x = CarPos.x;
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
-        //renderCar(CarPos); method ?
         updateViewMatrix();
     }
 
     cameraPosition = CamPos;
     cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
     Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
-
 
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -696,7 +694,7 @@ protected:
             }
         }
         else if (isInsideCar == true) {
-            isInsideCar = false;
+            // isInsideCar = false;
             //todo: create method: exitCar
         }
     }
@@ -717,12 +715,19 @@ protected:
     else if (currentScene == APARTMENT) {
         buildApartment(currentImage, ViewPrj);
     }
+    if (isInsideCar) {
+        printf("renderCar pre call flag\n");
+        renderCar(CarPos, currentImage, ViewPrj);
+        printf("renderCar post call flag\n");
+    }
+  }
+    
+  //at the moment "newCarPosition" is useless;
+  void renderCar(const vec3& newCarPosition, int currentImage, mat4 ViewPrj) {
+      printf("Rendering car at position: %f, %f, %f\n", newCarPosition.x, newCarPosition.y, newCarPosition.z);
+      fillUniformBuffer(0, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(0.0f));
   }
 
-  void renderCar(const vec3 &newCarPosition) {
-      mat4 modelMatrix = translate(mat4(1.0f), newCarPosition);
-
-  }
 
   bool isNearCar() {
       float dist;
@@ -737,7 +742,6 @@ protected:
   }
 
   void updateViewMatrix() {
-      printf("cipolla\n");
       if (isInsideCar) {
           ViewMatrix = lookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0.0f, 1.0f, 0.0f));
       }
@@ -867,14 +871,14 @@ protected:
   void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
       UniformBufferObject ubo{};
       for (int i = start; i < end; i++) {
-          mat4 Transform = translate(mat4(1), vec[i].pos + traslation);
-          Transform = scale(Transform, vec[i].scale);
+          mat4 transform = translate(mat4(1), vec[i].pos + traslation);
+          transform = scale(transform, vec[i].scale);
           if (!vec[i].rot.empty()) {
               for (int k = 0; k < vec[i].rot.size(); k++) {
-                  Transform = rotate(Transform, radians(vec[i].angle[k]), vec[i].rot[k]);
+                  transform = rotate(transform, radians(vec[i].angle[k]), vec[i].rot[k]);
               }
           }
-          ubo.mMat = Transform;
+          ubo.mMat = transform;
           ubo.mvpMat = ViewPrj * ubo.mMat;
           ubo.nMat = inverse(transpose(ubo.mMat));
           vec[i].DS.map(currentImage, &ubo, 0);
@@ -884,14 +888,14 @@ protected:
   void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
       EmissionUniformBufferObject eubo{};
       for (int j = start; j < vec.size(); j++) {
-          mat4 Transform = translate(mat4(1), vec[j].pos + traslation);
-          Transform = scale(Transform, vec[j].scale);
+          mat4 transform = translate(mat4(1), vec[j].pos + traslation);
+          transform = scale(transform, vec[j].scale);
           if (!vec[j].rot.empty()) {
               for (int k = 0; k < vec[j].rot.size(); k++) {
-                  Transform = rotate(Transform, radians(vec[j].angle[k]), vec[j].rot[k]);
+                  transform = rotate(transform, radians(vec[j].angle[k]), vec[j].rot[k]);
               }
           }
-          eubo.mvpMat = ViewPrj * Transform;
+          eubo.mvpMat = ViewPrj * transform;
           vec[j].DS.map(currentImage, &eubo, 0);
       }
   }
@@ -905,7 +909,7 @@ protected:
       tubo.eyePos = CamPos;
       DStoonLight.map(currentImage, &tubo, 0);
 
-      fillUniformBuffer(0, Apartment.size() - 1, Apartment,ViewPrj, currentImage, vec3(0.0f));
+      fillUniformBuffer(0, Apartment.size() - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
       fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f));
       
