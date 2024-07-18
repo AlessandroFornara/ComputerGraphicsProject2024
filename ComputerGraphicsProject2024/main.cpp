@@ -279,6 +279,7 @@ protected:
 
   float Ar;
   TextMaker txt;
+  float Yaw;
 
   DescriptorSet DS;
 
@@ -308,6 +309,7 @@ protected:
 
   vec3 CamPos = vec3(0.0, 1.0, -8.0);
   float CamAlpha = 0.0f, CamBeta = 0.0f;
+  float CamRoll = 0.0f;
   mat4 ViewMatrix;
 
   bool spectatorMode = false;
@@ -345,6 +347,8 @@ protected:
   }
 
   void localInit() {
+
+      Yaw = 0.0f;
 
       DSL.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1},
@@ -596,13 +600,21 @@ protected:
   void updateUniformBuffer(uint32_t currentImage) {
     float deltaT, cameraAngle = 0.0;
     float rotAngleCar = 0.0f;
+    float MOVE_SPEED = WALK_SPEED;
 
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
+    vec3 dampedCamPos;
 
     getSixAxis(deltaT, m, r, fire);
 
-    float MOVE_SPEED = WALK_SPEED;
+    // test
+    static float CamPitch = glm::radians(20.0f);
+    static float CamYaw = M_PI;
+    static float CamDist = 10.0f;
+    static float CamRoll = 0.0f;
+    const glm::vec3 CamTargetDelta = glm::vec3(0, 2, 0);
+    static float dampedVel = 0.0f;
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
         MOVE_SPEED = RUN_SPEED;
@@ -643,8 +655,38 @@ protected:
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
         rotAngleCar = -rotAngleCar;
-        ComponentVector[0].angle[0] += rotAngleCar; // potenziale overflow;
+        ComponentVector[0].angle[0] += rotAngleCar;
+        CamRoll -= ROT_SPEED * deltaT * r.z;
         // updateViewMatrix();
+
+        //working in progress
+        double lambdaVel = 8.0f;
+        double dampedVelEpsilon = 0.001f;
+        dampedVel = MOVE_SPEED * deltaT * m.z * (1 - exp(-lambdaVel * deltaT)) + dampedVel * exp(-lambdaVel * deltaT);
+        dampedVel = ((fabs(dampedVel) < dampedVelEpsilon) ? 0.0f : dampedVel);
+        CamYaw += ROT_SPEED * deltaT * r.y;
+        CamPitch -= ROT_SPEED * deltaT * r.x;
+        CamRoll -= ROT_SPEED * deltaT * r.z;
+        CamDist -= MOVE_SPEED * deltaT * m.y;
+
+        CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
+        CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
+        CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
+        CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
+/*
+*       error with dampedVel; FIX IT!
+        if (dampedVel != 0.0f){
+            float Dbeta = dampedVel / r;
+            Yaw = Yaw - Dbeta;
+        }
+*/
+
+        vec3 CamTarget = CarPos;
+        CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
+
+        const float lambdaCam = 10.0f;
+        dampedCamPos = CamPos * (1 - exp(-lambdaCam * deltaT)) +
+            dampedCamPos * exp(-lambdaCam * deltaT);
     }
 
     cameraPosition = CamPos;
@@ -718,13 +760,32 @@ protected:
         buildApartment(currentImage, ViewPrj);
     }
     if (isInsideCar) {
-        // printf("renderCar pre call flag\n");
         renderCar(CarPos, currentImage, ViewPrj);
         updateViewMatrix();
-        // printf("renderCar post call flag\n");
     }
   }
-    
+
+/*
+  CamYaw += ROT_SPEED * deltaT * r.y;
+  CamPitch -= ROT_SPEED * deltaT * r.x;
+  CamRoll -= ROT_SPEED * deltaT * r.z;
+  CamDist -= MOVE_SPEED * deltaT * m.y;
+
+  CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
+  CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
+  CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
+  CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
+
+  glm::vec3 CamTarget = Pos + glm::vec3(glm::rotate(glm::mat4(1), Yaw, glm::vec3(0, 1, 0)) *
+      glm::vec4(CamTargetDelta, 1));
+  CamPos = CamTarget + glm::vec3(glm::rotate(glm::mat4(1), Yaw + CamYaw, glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1), -CamPitch, glm::vec3(1, 0, 0)) *
+      glm::vec4(0, 0, CamDist, 1));
+
+  const float lambdaCam = 10.0f;
+  dampedCamPos = CamPos * (1 - exp(-lambdaCam * deltaT)) +
+      dampedCamPos * exp(-lambdaCam * deltaT);
+*/
+
   //at the moment "newCarPosition" is useless;
   void renderCar(const vec3& newCarPosition, int currentImage, mat4 ViewPrj) {
       // printf("Rendering car at position: %f, %f, %f\n", newCarPosition.x, newCarPosition.y, newCarPosition.z);
@@ -746,8 +807,20 @@ protected:
 
   void updateViewMatrix() {
       if (isInsideCar) {
-          ViewMatrix = lookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0.0f, 1.0f, 0.0f));
+          // ViewMatrix = lookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0));
+          ViewMatrix = MakeViewProjectionLookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
       }
+  }
+
+  glm::mat4 MakeViewProjectionLookAt(glm::vec3 Pos, glm::vec3 Target, glm::vec3 Up, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
+      glm::mat4 M = glm::perspective(FOVy, Ar, nearPlane, farPlane);
+      M[1][1] *= -1;
+
+      M = M *
+          glm::rotate(glm::mat4(1.0), -Roll, glm::vec3(0, 0, 1)) *
+          glm::lookAt(Pos, Target, Up) *
+          glm::mat4(1.0f);
+      return M;
   }
 
   bool checkLimits(vec3 newCamPos) {
