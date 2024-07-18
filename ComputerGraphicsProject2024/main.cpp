@@ -648,15 +648,14 @@ protected:
         CamPos.y = vec3(0, 1, 0).y;
     }
     else if(isInsideCar) {
-        CarPos = CarPos - MOVE_SPEED * m.z * uz * deltaT;
-        rotAngleCar = m.x;
+        float carCurrAngle = ComponentVector[0].angle[0];
+        CarPos = CarPos - MOVE_SPEED * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
+        rotAngleCar = -m.x;
         ComponentVector[0].pos.x = CarPos.x;
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
-        rotAngleCar = -rotAngleCar;
         ComponentVector[0].angle[0] += rotAngleCar;
 
-        //working in progress
         CamYaw += ROT_SPEED * deltaT * r.y;
         CamPitch -= ROT_SPEED * deltaT * r.x;
         CamRoll -= ROT_SPEED * deltaT * r.z;
@@ -669,7 +668,6 @@ protected:
 
         vec3 CamTarget = CarPos;
         CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
-
     }
 
     cameraPosition = CamPos;
@@ -731,8 +729,6 @@ protected:
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
     mat4 ViewPrj;
-    //return MakeViewProjectionLookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
-
     
     if (!isInsideCar) {
         ViewPrj = M * Mv;
@@ -751,39 +747,7 @@ protected:
     else if (currentScene == APARTMENT) {
         buildApartment(currentImage, ViewPrj);
     }
-    /*if (isInsideCar) {
-        renderCar(CarPos, currentImage, ViewPrj);
-        //updateViewMatrix();
-    }*/
   }
-
-/*
-  CamYaw += ROT_SPEED * deltaT * r.y;
-  CamPitch -= ROT_SPEED * deltaT * r.x;
-  CamRoll -= ROT_SPEED * deltaT * r.z;
-  CamDist -= MOVE_SPEED * deltaT * m.y;
-
-  CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
-  CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
-  CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
-  CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
-
-  glm::vec3 CamTarget = Pos + glm::vec3(glm::rotate(glm::mat4(1), Yaw, glm::vec3(0, 1, 0)) *
-      glm::vec4(CamTargetDelta, 1));
-  CamPos = CamTarget + glm::vec3(glm::rotate(glm::mat4(1), Yaw + CamYaw, glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1), -CamPitch, glm::vec3(1, 0, 0)) *
-      glm::vec4(0, 0, CamDist, 1));
-
-  const float lambdaCam = 10.0f;
-  dampedCamPos = CamPos * (1 - exp(-lambdaCam * deltaT)) +
-      dampedCamPos * exp(-lambdaCam * deltaT);
-*/
-
-  //at the moment "newCarPosition" is useless;
-  void renderCar(const vec3& newCarPosition, int currentImage, mat4 ViewPrj) {
-      // printf("Rendering car at position: %f, %f, %f\n", newCarPosition.x, newCarPosition.y, newCarPosition.z);
-      fillUniformBuffer(0, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(0.0f));
-  }
-
 
   bool isNearCar() {
       float dist;
@@ -794,12 +758,10 @@ protected:
   void enterCar() {
       isInsideCar = true;
       CamPos = CarPos + vec3(0.0f, 2.0f, -5.0f);
-      //updateViewMatrix();
   }
 
   mat4 updateViewMatrix() {
       if (isInsideCar) {
-          // ViewMatrix = lookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0));
           return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
       }
   }
