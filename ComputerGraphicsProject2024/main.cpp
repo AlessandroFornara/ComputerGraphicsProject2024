@@ -604,7 +604,6 @@ protected:
 
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
-    vec3 dampedCamPos;
 
     getSixAxis(deltaT, m, r, fire);
 
@@ -656,14 +655,8 @@ protected:
         ComponentVector[0].pos.z = CarPos.z;
         rotAngleCar = -rotAngleCar;
         ComponentVector[0].angle[0] += rotAngleCar;
-        CamRoll -= ROT_SPEED * deltaT * r.z;
-        // updateViewMatrix();
 
         //working in progress
-        double lambdaVel = 8.0f;
-        double dampedVelEpsilon = 0.001f;
-        dampedVel = MOVE_SPEED * deltaT * m.z * (1 - exp(-lambdaVel * deltaT)) + dampedVel * exp(-lambdaVel * deltaT);
-        dampedVel = ((fabs(dampedVel) < dampedVelEpsilon) ? 0.0f : dampedVel);
         CamYaw += ROT_SPEED * deltaT * r.y;
         CamPitch -= ROT_SPEED * deltaT * r.x;
         CamRoll -= ROT_SPEED * deltaT * r.z;
@@ -673,25 +666,14 @@ protected:
         CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
         CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
         CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
-/*
-*       error with dampedVel; FIX IT!
-        if (dampedVel != 0.0f){
-            float Dbeta = dampedVel / r;
-            Yaw = Yaw - Dbeta;
-        }
-*/
 
         vec3 CamTarget = CarPos;
         CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
 
-        const float lambdaCam = 10.0f;
-        dampedCamPos = CamPos * (1 - exp(-lambdaCam * deltaT)) +
-            dampedCamPos * exp(-lambdaCam * deltaT);
     }
 
     cameraPosition = CamPos;
     cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
-    Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
 
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -743,11 +725,21 @@ protected:
         }
     }
 
+    Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
+
     // Here is where you actually update your uniforms
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
+    mat4 ViewPrj;
+    //return MakeViewProjectionLookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
 
-    mat4 ViewPrj = M * Mv;
+    
+    if (!isInsideCar) {
+        ViewPrj = M * Mv;
+    }
+    else {
+        ViewPrj = updateViewMatrix();
+    }
     mat4 baseTr = mat4(1.0f);
 
     if (currentScene == CITY) {
@@ -759,10 +751,10 @@ protected:
     else if (currentScene == APARTMENT) {
         buildApartment(currentImage, ViewPrj);
     }
-    if (isInsideCar) {
+    /*if (isInsideCar) {
         renderCar(CarPos, currentImage, ViewPrj);
-        updateViewMatrix();
-    }
+        //updateViewMatrix();
+    }*/
   }
 
 /*
@@ -802,13 +794,13 @@ protected:
   void enterCar() {
       isInsideCar = true;
       CamPos = CarPos + vec3(0.0f, 2.0f, -5.0f);
-      updateViewMatrix();
+      //updateViewMatrix();
   }
 
-  void updateViewMatrix() {
+  mat4 updateViewMatrix() {
       if (isInsideCar) {
           // ViewMatrix = lookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0));
-          ViewMatrix = MakeViewProjectionLookAt(CarPos + vec3(0.0f, 3.0f, -5.0f), CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
+          return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
       }
   }
 
@@ -818,8 +810,7 @@ protected:
 
       M = M *
           glm::rotate(glm::mat4(1.0), -Roll, glm::vec3(0, 0, 1)) *
-          glm::lookAt(Pos, Target, Up) *
-          glm::mat4(1.0f);
+          glm::lookAt(Pos, Target, Up);
       return M;
   }
 
