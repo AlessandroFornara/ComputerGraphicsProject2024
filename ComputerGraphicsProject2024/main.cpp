@@ -166,7 +166,7 @@ vector<Component> Shop = {
 
 
 std::vector<Component> ComponentVector = {
-    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {0.0f}}, //DRIVEABLE CAR MODEL; {{0.0f, 1.0f, 0.0f}}, {0.0f} per la rotazione;
+    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {0.0f}}, // DRIVEABLE CAR MODEL;
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
 /*
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -639,13 +639,12 @@ protected:
     else if(isInsideCar) {
         CarPos = CarPos - MOVE_SPEED * m.z * uz * deltaT;
         rotAngleCar = m.x;
-        printf("position: %f, %f, %f\n", CarPos.x, CarPos.y, CarPos.z);
-        printf("rotation: %f\n", rotAngleCar);
         ComponentVector[0].pos.x = CarPos.x;
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
-        //ComponentVector[0].angle[0] = rotAngleCar; // potenziale overflow;
-        updateViewMatrix();
+        rotAngleCar = -rotAngleCar;
+        ComponentVector[0].angle[0] += rotAngleCar; // potenziale overflow;
+        // updateViewMatrix();
     }
 
     cameraPosition = CamPos;
@@ -721,6 +720,7 @@ protected:
     if (isInsideCar) {
         // printf("renderCar pre call flag\n");
         renderCar(CarPos, currentImage, ViewPrj);
+        updateViewMatrix();
         // printf("renderCar post call flag\n");
     }
   }
