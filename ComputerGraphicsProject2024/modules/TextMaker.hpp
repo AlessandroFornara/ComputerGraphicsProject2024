@@ -1,7 +1,7 @@
 
 struct SingleText {
 	int usedLines;
-	const char *l[4];
+	const char *l[10];
 	int start;
 	int len;
 };
@@ -228,7 +228,7 @@ struct TextMaker {
 		P.destroy();
 	}
 	
-    void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage, int curText = 0) {
+    void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage, int curText) {
     	P.bind(commandBuffer);
 		M.bind(commandBuffer);
 		DS.bind(commandBuffer, P, 0, currentImage);
