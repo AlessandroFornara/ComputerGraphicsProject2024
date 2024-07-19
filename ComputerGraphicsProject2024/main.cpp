@@ -184,7 +184,6 @@ vector<Component> Shop = {
 std::vector<Component> ComponentVector = {
     {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {0.0f}}, // DRIVEABLE CAR MODEL;
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-/*
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_006.mgcg", "textures/Textures_City.png",MGCG, {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -198,7 +197,7 @@ std::vector<Component> ComponentVector = {
     {"models/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/landscape_entertainments_006.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
-*/    
+    
     {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png",MGCG, {10.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_river_2x2_001.mgcg", "textures/Textures_City.png",MGCG, {20.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
     
@@ -232,7 +231,7 @@ std::vector<Component> ComponentVector = {
     {"models/apartment_012.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_012.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {180.0f}},
-/*
+
     {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png", MGCG,{2*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {90.0f}},
     {"models/road_tile_1x1_010.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
@@ -272,7 +271,7 @@ std::vector<Component> ComponentVector = {
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
-*/
+
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png",MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -338,7 +337,7 @@ protected:
 
   bool autoTime = true;
   const float ROT_SPEED = radians(120.0f);
-  const float WALK_SPEED = 2.5f;
+  const float WALK_SPEED = 10.0f;
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
   float moveSpeed;
@@ -631,7 +630,10 @@ protected:
     if (!isInsideCar)
         moveSpeed = WALK_SPEED;
 
-    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
+    vec3 m = vec3(0.0f);
+    vec3 r = vec3(0.0f);
+    vec3 cameraPosition = { 0.0,0.0,0.0 };
+    vec3 CarPosOld, tmpCarPos;
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
@@ -661,17 +663,8 @@ protected:
     vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
     vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
     
-    tmpCamPos = CamPos;
-    CamPosOld = CamPos;
-    tmpCamPos = tmpCamPos + moveSpeed * m.x * ux * deltaT;
-    tmpCamPos = tmpCamPos - moveSpeed * m.z * uz * deltaT;
-
-    if (!checkLimits(tmpCamPos)) {
-        CamPos = CamPosOld;
-    }
-    else {
-        CamPos = tmpCamPos;
-    }
+    CamPos = CamPos + moveSpeed * m.x * ux * deltaT;
+    CamPos = CamPos - moveSpeed * m.z * uz * deltaT;
 
     if (spectatorMode) {
         CamPos = CamPos + moveSpeed * m.y * uy * deltaT;
@@ -681,8 +674,17 @@ protected:
     }
     else if(isInsideCar) {
         float carCurrAngle = ComponentVector[0].angle[0];
-        CarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
+        CarPosOld = CarPos;
+        tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
+        
+        if (checkLimits(tmpCarPos)) {
+            CarPos = tmpCarPos;
+        }
+        else {
+            CarPos = CarPosOld;
+        }
+
         ComponentVector[0].pos.x = CarPos.x;
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
@@ -735,12 +737,6 @@ protected:
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
-    if (glfwGetKey(window, GLFW_KEY_B)) {
-        cityWithLimits = false;
-    }
-    if (glfwGetKey(window, GLFW_KEY_V)) {
-        cityWithLimits = true;
-    }
     if (glfwGetKey(window, GLFW_KEY_K)) {
         if (cameraAngle > 0 && !isInsideCar) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
@@ -755,6 +751,7 @@ protected:
             if (isNearCar()) {
                 enterCar();
                 moveSpeed = CAR_SPEED;
+                cityWithLimits = true;
             }
         }
     }
@@ -762,6 +759,7 @@ protected:
         if (isInsideCar == true) {
             exitCar();
             moveSpeed = WALK_SPEED;
+            cityWithLimits = false;
         }
     }
 
@@ -843,27 +841,30 @@ protected:
       return M;
   }
 
-  bool checkLimits(vec3 newCamPos) {
+  bool checkLimits(vec3 newPos) {
       bool result;
       if (currentScene == SHOP) {
-          result = (newCamPos.z > 100.1 && newCamPos.z <= 105.5 && newCamPos.x < 105 && newCamPos.x >= 98.60);
-          result = result && !(newCamPos.x > 102 && newCamPos.x < 105 && newCamPos.z > 104 && newCamPos.z < 105.5);
+          result = (newPos.z > 100.1 && newPos.z <= 105.5 && newPos.x < 105 && newPos.x >= 98.60);
+          result = result && !(newPos.x > 102 && newPos.x < 105 && newPos.z > 104 && newPos.z < 105.5);
           return result;
       }
       else if (currentScene == APARTMENT) {
-         result = (newCamPos.z > 197 && newCamPos.z <= 205 && newCamPos.x > 198 && newCamPos.x <= 205);
-         result = result && !(newCamPos.x > 200 && newCamPos.x < 205 && newCamPos.z > 197 && newCamPos.z < 198);
+         result = (newPos.z > 197 && newPos.z <= 205 && newPos.x > 198 && newPos.x <= 205);
+         result = result && !(newPos.x > 200 && newPos.x < 205 && newPos.z > 197 && newPos.z < 198);
          return result;
       }
-      //todo: finished the implementation of the car, put isInsideCar in the conditions;
       else if (currentScene == CITY && cityWithLimits) {
-          result = (newCamPos.x >= -1.77 && newCamPos.x <= 65.75 && newCamPos.z <= -6.24 && newCamPos.z >= -9.71) //1
-              || (newCamPos.x >= 13.50 && newCamPos.x <= 17.8 && newCamPos.z <= -9.71 && newCamPos.z >= -30.3)//2
-              || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -30.3 && newCamPos.z >= -41.7) //3
-              || (newCamPos.x >= 14 && newCamPos.x <= 18 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //4
-              || (newCamPos.x >= 54.10 && newCamPos.x <= 65.8 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //6
-              || (newCamPos.x >= -17.5 && newCamPos.x <= -6.2 && newCamPos.z <= -41.7 && newCamPos.z >= -78.0) //5
-              || (newCamPos.x >= -17.5 && newCamPos.x <= 65.8 && newCamPos.z <= -78.0 && newCamPos.z >= -89.95); //7
+          result = (newPos.x >= -1.77 && newPos.x <= 65.75 && newPos.z <= -6.24 && newPos.z >= -9.71) //1
+              || (newPos.x >= 13.50 && newPos.x <= 17.8 && newPos.z <= -9.71 && newPos.z >= -30.3)//2
+              || (newPos.x >= -17.5 && newPos.x <= 65.8 && newPos.z <= -30.3 && newPos.z >= -41.7) //3
+              || (newPos.x >= 15 && newPos.x <= 18 && newPos.z <= -41.7 && newPos.z >= -78.0) //4
+              || (newPos.x >= 54.10 && newPos.x <= 65.8 && newPos.z <= -41.7 && newPos.z >= -78.0) //6
+              || (newPos.x >= -17.5 && newPos.x <= -6.2 && newPos.z <= -41.7 && newPos.z >= -78.0) //5
+              || (newPos.x >= -17.5 && newPos.x <= 65.8 && newPos.z <= -78.0 && newPos.z >= -89.95) //7
+              || (newPos.x >= -2.0f && newPos.x <= 2.0f && newPos.z >= -78.0 && newPos.z < -77.0) //8
+              || (newPos.x >= -3.6f && newPos.x <= 11.6f && newPos.z >= -77.0f && newPos.z <= -61.58f) //9
+              || (newPos.x >= 12.5f && newPos.x <= 13.5f && newPos.z >= -27.0f && newPos.z <= -21.0f) //10
+              || (newPos.x >= -16.0f && newPos.x < 12.5f && newPos.z >= -28.0f && newPos.z <= -21.0f); //11
           return result;
       }
       return true;
