@@ -333,7 +333,7 @@ protected:
 
   bool autoTime = true;
   const float ROT_SPEED = radians(120.0f);
-  const float WALK_SPEED = 10.0f;
+  const float WALK_SPEED = 2.5f;
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
   float moveSpeed;
@@ -646,7 +646,7 @@ protected:
         CamPos.y = vec3(0, 1, 0).y;
     }
     else if(isInsideCar) {
-        float carCurrAngle = ComponentVector[0].angle[0];
+        float carCurrAngle = CityComponents[0].angle[0];
         CarPosOld = CarPos;
         tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
@@ -658,10 +658,10 @@ protected:
             CarPos = CarPosOld;
         }
 
-        ComponentVector[0].pos.x = CarPos.x;
-        ComponentVector[0].pos.y = CarPos.y;
-        ComponentVector[0].pos.z = CarPos.z;
-        ComponentVector[0].angle[0] += rotAngleCar;
+        CityComponents[0].pos.x = CarPos.x;
+        CityComponents[0].pos.y = CarPos.y;
+        CityComponents[0].pos.z = CarPos.z;
+        CityComponents[0].angle[0] += rotAngleCar;
 
         CamYaw += rotSpeed * deltaT * r.y;
         CamPitch -= rotSpeed * deltaT * r.x;
