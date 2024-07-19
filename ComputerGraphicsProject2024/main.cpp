@@ -300,17 +300,17 @@ protected:
   //CITY
   DescriptorSetLayout DSLSunLight;
   DescriptorSet DSSunLight;
-  Pipeline PipBlinn;
+  Pipeline PipCity;
 
   //SHOP
   DescriptorSetLayout DSLShopLight;
   DescriptorSet DSlight;
-  Pipeline Pipshop;
+  Pipeline PipShop;
 
   //APARTMENT
-  DescriptorSetLayout DSLapartmentLight;
-  DescriptorSet DStoonLight;
-  Pipeline Pipapartment;
+  DescriptorSetLayout DSLApartmentLight;
+  DescriptorSet DSApartmentLight;
+  Pipeline PipApartment;
 
   //ONLY EMISSION
   DescriptorSetLayout DSLemission;
@@ -368,7 +368,7 @@ protected:
       DSLShopLight.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
       );
-      DSLapartmentLight.init(this, {
+      DSLApartmentLight.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(ApartmentUniBuffer), 1 }
       });
 
@@ -390,10 +390,10 @@ protected:
           );
 
 
-      PipBlinn.init(this, &VDWorld, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLSunLight, &DSLMatricesAndTextures });
-      Pipshop.init(this, &VDWorld, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLMatricesAndTextures });
+      PipCity.init(this, &VDWorld, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLSunLight, &DSLMatricesAndTextures });
+      PipShop.init(this, &VDWorld, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLMatricesAndTextures });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
-      Pipapartment.init(this, &VDWorld, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLapartmentLight, &DSLMatricesAndTextures });
+      PipApartment.init(this, &VDWorld, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLApartmentLight, &DSLMatricesAndTextures });
 
       //City
       int i = 0;
@@ -436,15 +436,15 @@ protected:
       cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
       cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
 
-      //ViewMatrix = translate(mat4(1), -CamPos);
+      ViewMatrix = translate(mat4(1), -CamPos);
   }
 
   void pipelinesAndDescriptorSetsInit() {
 
-    PipBlinn.create();
-    Pipshop.create();
+    PipCity.create();
+    PipShop.create();
     PipEmission.create();
-    Pipapartment.create();
+    PipApartment.create();
 
     //CITY
     DSSunLight.init(this, &DSLSunLight, {});
@@ -469,17 +469,17 @@ protected:
         Apartment[j].DS.init(this, &DSLMatricesAndTextures, { &Apartment[j].texture });
     }
     Apartment[j].DS.init(this, &DSLemission, { &Apartment[j].texture });
-    DStoonLight.init(this, &DSLapartmentLight, {});
+    DSApartmentLight.init(this, &DSLApartmentLight, {});
 
     outTxt.pipelinesAndDescriptorSetsInit();
   }
 
   void pipelinesAndDescriptorSetsCleanup() {
 
-    PipBlinn.cleanup();
-    Pipshop.cleanup();
+    PipCity.cleanup();
+    PipShop.cleanup();
     PipEmission.cleanup();
-    Pipapartment.cleanup();
+    PipApartment.cleanup();
 
     //CITY
     for (int i = 0; i < CityComponents.size(); i++) {
@@ -497,7 +497,7 @@ protected:
     for (int i = 0; i < Apartment.size(); i++) {
         Apartment[i].DS.cleanup();
     }
-    DStoonLight.cleanup();
+    DSApartmentLight.cleanup();
 
     outTxt.pipelinesAndDescriptorSetsCleanup();
   }
@@ -526,12 +526,12 @@ protected:
     DSLemission.cleanup();
     DSLMatricesAndTextures.cleanup();
     DSLShopLight.cleanup();
-    DSLapartmentLight.cleanup();
+    DSLApartmentLight.cleanup();
 
     PipEmission.destroy();
-    PipBlinn.destroy();
-    Pipshop.destroy();
-    Pipapartment.destroy();
+    PipCity.destroy();
+    PipShop.destroy();
+    PipApartment.destroy();
 
     outTxt.localCleanup();
   }
@@ -539,14 +539,14 @@ protected:
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
       //CITY
       if (currentScene == CITY) {
-          PipBlinn.bind(commandBuffer);
+          PipCity.bind(commandBuffer);
 
-          DSSunLight.bind(commandBuffer, PipBlinn, 0, currentImage);
+          DSSunLight.bind(commandBuffer, PipCity, 0, currentImage);
           int i = 0;
           for (; i < CityComponents.size() - 1; i++) {
 
               CityComponents[i].model.bind(commandBuffer);
-              CityComponents[i].DS.bind(commandBuffer, PipBlinn, 1, currentImage);
+              CityComponents[i].DS.bind(commandBuffer, PipCity, 1, currentImage);
 
               // The actual draw call.
               vkCmdDrawIndexed(commandBuffer,
@@ -560,11 +560,11 @@ protected:
       }//SHOP
       else if (currentScene == SHOP) {
           int j;
-          Pipshop.bind(commandBuffer);
-          DSlight.bind(commandBuffer, Pipshop, 0, currentImage);
+          PipShop.bind(commandBuffer);
+          DSlight.bind(commandBuffer, PipShop, 0, currentImage);
           for (j = 0; j < Shop.size() - 4; j++) {
               Shop[j].model.bind(commandBuffer);
-              Shop[j].DS.bind(commandBuffer, Pipshop, 1, currentImage);
+              Shop[j].DS.bind(commandBuffer, PipShop, 1, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
           }
           PipEmission.bind(commandBuffer);
@@ -576,11 +576,11 @@ protected:
       }//APARTMENT
       else if (currentScene == APARTMENT) {
           int j;
-          Pipapartment.bind(commandBuffer);
-          DStoonLight.bind(commandBuffer, Pipapartment, 0, currentImage);
+          PipApartment.bind(commandBuffer);
+          DSApartmentLight.bind(commandBuffer, PipApartment, 0, currentImage);
           for (j = 0; j < Apartment.size() - 1; j++) {
               Apartment[j].model.bind(commandBuffer);
-              Apartment[j].DS.bind(commandBuffer, Pipapartment, 1, currentImage);
+              Apartment[j].DS.bind(commandBuffer, PipApartment, 1, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
           }
           PipEmission.bind(commandBuffer);
@@ -737,7 +737,7 @@ protected:
     }
 
     Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
-
+    ViewMatrix = Mv;
     // Here is where you actually update your uniforms
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
@@ -987,7 +987,7 @@ protected:
       tubo.lightDir = vec3(0.0f, -1.0f, 0.0f);
       tubo.lightPos = vec3(202.0f, 2.0f, 202.0f);
       tubo.eyePos = CamPos;
-      DStoonLight.map(currentImage, &tubo, 0);
+      DSApartmentLight.map(currentImage, &tubo, 0);
 
       fillUniformBuffer(0, Apartment.size() - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
