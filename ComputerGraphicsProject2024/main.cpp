@@ -295,7 +295,6 @@ protected:
 
   float Ar;
   TextMaker outTxt;
-  float Yaw;
 
   DescriptorSet DS;
 
@@ -343,7 +342,7 @@ protected:
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
   float moveSpeed;
-
+  float Yaw = 0.0f;
   bool showCommands = false;
 
   void setWindowParameters() {
@@ -363,8 +362,6 @@ protected:
   }
 
   void localInit() {
-
-      Yaw = 0.0f;
 
       DSL.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1},
