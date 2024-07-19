@@ -21,9 +21,16 @@ struct spotLightUBO {
     alignas(16) vec4 InOutDecayTarget;
 };
 
+
 struct EmissionUniformBufferObject {
     alignas(16) mat4 mvpMat;
 };
+
+
+struct EmissionColorUniformBuffer {
+    alignas(16) vec4 color;
+};
+
 
 struct EmissionVertex {
     glm::vec3 pos;
@@ -69,7 +76,7 @@ struct Vertex {
 enum Scene { CITY, SHOP, APARTMENT };
 
 vector<Component> Apartment = {
-/*    //PAVIMENTO
+/*   //PAVIMENTO
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -107,7 +114,7 @@ vector<Component> Apartment = {
     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
-    {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
+    {"models/Apartment/Sphere.obj", "textures/sunTexture.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
        
 };
 
@@ -373,8 +380,9 @@ protected:
       });
 
       DSLemission.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(EmissionUniformBufferObject), 1},
-            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(EmissionUniformBufferObject), 1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
+            {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(EmissionColorUniformBuffer), 1}
           });
 
 
@@ -945,8 +953,9 @@ protected:
       }
   }
 
-  void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
+  void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation, bool flag, vec4 colorLight) {
       EmissionUniformBufferObject eubo{};
+      EmissionColorUniformBuffer ecubo{};
       for (int j = start; j < vec.size(); j++) {
           mat4 transform = translate(mat4(1), vec[j].pos + traslation);
           transform = scale(transform, vec[j].scale);
@@ -956,9 +965,18 @@ protected:
               }
           }
           eubo.mvpMat = ViewPrj * transform;
+          if (flag) {
+              ecubo.color = colorLight;
+              ecubo.color.w = 1.0f;
+          }
+          else
+              ecubo.color = vec4(1.0);
+
           vec[j].DS.map(currentImage, &eubo, 0);
+          vec[j].DS.map(currentImage, &ecubo, 2);
       }
   }
+
 
   void buildApartment(int currentImage, mat4 ViewPrj) {
       ApartmentUniBuffer tubo{};
@@ -971,8 +989,7 @@ protected:
 
       fillUniformBuffer(0, Apartment.size() - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f));
-      
+      fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
   }
 
   void buildShop(int currentImage, mat4 ViewPrj) {
@@ -992,8 +1009,7 @@ protected:
 
       fillUniformBuffer(0, Shop.size() - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmissionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f));
-
+      fillEmissionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
   }
 
   void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
@@ -1050,8 +1066,7 @@ protected:
 
       int index = ComponentVector.size() - 1;
 
-      fillEmissionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3 (x,y,z));
-
+      fillEmissionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
   }
 
 };
