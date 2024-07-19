@@ -4,8 +4,17 @@
 using namespace std;
 using namespace glm;
 
-/*vector<SingleText> outText = {
-  {2, {"City", "","",""}, 0, 0} };*/
+vector<SingleText> outText = {
+  {1, {"Press H to see the command list"}, 0, 0},
+  {7, {"Press L to print coordinates", 
+  "Press P to enter spectator mode", 
+  "Press O to exit spectator mode", 
+  "Press B to hide city limits", 
+  "Press V to show city limits", 
+  "Press K to check doors / enter car", 
+  "Press J to exit car"}, 
+  0, 0},
+  };
 
 struct UniformBufferObject {
   alignas(16) mat4 mvpMat;
@@ -278,7 +287,7 @@ protected:
   Scene currentScene = CITY;
 
   float Ar;
-  TextMaker txt;
+  TextMaker outTxt;
   float Yaw;
 
   DescriptorSet DS;
@@ -329,6 +338,7 @@ protected:
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
 
+  bool showCommands = false;
 
   void setWindowParameters() {
     windowWidth = 800;
@@ -439,7 +449,7 @@ protected:
       DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 3 + Apartment.size() + 1;
 
       cout << "Initializing text\n";
-      //txt.init(this, &outText);
+      outTxt.init(this, &outText);
 
       cout << "Initialization completed!\n";
       cout << "Uniform Blocks in the Pool  : " << DPSZs.uniformBlocksInPool << "\n";
@@ -483,6 +493,7 @@ protected:
     Apartment[j].DS.init(this, &DSLemission, { &Apartment[j].texture });
     DStoonLight.init(this, &DSLapartmentLight, {});
 
+    outTxt.pipelinesAndDescriptorSetsInit();
   }
 
   void pipelinesAndDescriptorSetsCleanup() {
@@ -509,6 +520,8 @@ protected:
         Apartment[i].DS.cleanup();
     }
     DStoonLight.cleanup();
+
+    outTxt.pipelinesAndDescriptorSetsCleanup();
   }
 
   void localCleanup() {
@@ -541,6 +554,8 @@ protected:
     PipBlinn.destroy();
     Pipshop.destroy();
     Pipapartment.destroy();
+
+    outTxt.localCleanup();
   }
 
   void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
@@ -595,6 +610,11 @@ protected:
           Apartment[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
           vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
       }
+
+      if (!showCommands)
+          outTxt.populateCommandBuffer(commandBuffer, currentImage, 0);
+      else
+          outTxt.populateCommandBuffer(commandBuffer, currentImage, 1);
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
@@ -676,6 +696,15 @@ protected:
     // Standard procedure to quit when the ESC key is pressed
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
         glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_H)) {
+        showCommands = true;
+        RebuildPipeline();
+    }
+    if (glfwGetKey(window, GLFW_KEY_G)) {
+        showCommands = false;
+        RebuildPipeline();
     }
 
     float tmp;
