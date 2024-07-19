@@ -6,17 +6,16 @@ using namespace glm;
 
 vector<SingleText> outText = {
   {1, {"Press H to see the command list"}, 0, 0},
-  {7, {"Press L to print coordinates", 
+  {6, {"Press L to print coordinates", 
   "Press P to enter spectator mode", 
   "Press O to exit spectator mode", 
-  "Press B to hide city limits", 
-  "Press V to show city limits", 
   "Press K to check doors / enter car", 
-  "Press J to exit car"}, 
+  "Press J to exit car",
+  "Press G to close this text"}, 
   0, 0},
   };
 
-struct UniformBufferObject {
+struct MatricesUniformBufferObject {
   alignas(16) mat4 mvpMat;
   alignas(16) mat4 mMat;
   alignas(16) mat4 nMat;
@@ -42,8 +41,8 @@ struct EmissionColorUniformBuffer {
 
 
 struct EmissionVertex {
-    glm::vec3 pos;
-    glm::vec2 UV;
+    alignas(16) vec3 pos;
+    alignas(16) vec2 UV;
 };
 
 struct BlinnUniformBufferObject {
@@ -123,7 +122,7 @@ vector<Component> Apartment = {
     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
-    {"models/Apartment/Sphere.obj", "textures/sunTexture.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
+    {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
        
 };
 
@@ -181,7 +180,7 @@ vector<Component> Shop = {
 };
 
 
-std::vector<Component> ComponentVector = {
+std::vector<Component> CityComponents = {
     {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {0.0f}}, // DRIVEABLE CAR MODEL;
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
 /*
@@ -296,26 +295,23 @@ protected:
   float Ar;
   TextMaker outTxt;
 
-  DescriptorSet DS;
+  DescriptorSetLayout DSLMatricesAndTextures;
+  VertexDescriptor VDWorld;
 
-  DescriptorSetLayout DSL;
-
-  //BLINN
-  DescriptorSetLayout DSLBlinn;
+  //CITY
+  DescriptorSetLayout DSLSunLight;
+  DescriptorSet DSSunLight;
   Pipeline PipBlinn;
-  VertexDescriptor VDBlinnVertex;
 
   //SHOP
-  DescriptorSetLayout DSLshop, DSLShopLight;
+  DescriptorSetLayout DSLShopLight;
   DescriptorSet DSlight;
   Pipeline Pipshop;
-  VertexDescriptor VDshop;
 
   //APARTMENT
   DescriptorSetLayout DSLapartmentLight;
   DescriptorSet DStoonLight;
   Pipeline Pipapartment;
-  VertexDescriptor VDapartment;
 
   //ONLY EMISSION
   DescriptorSetLayout DSLemission;
@@ -363,21 +359,12 @@ protected:
 
   void localInit() {
 
-      DSL.init(this, {
+      DSLMatricesAndTextures.init(this, {
+          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(MatricesUniformBufferObject), 1},
+          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
+      DSLSunLight.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1},
           {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1}
-          });
-      DSLBlinn.init(this, {
-          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
-          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
-
-
-      /*DSLshop contiene la texture e le matrici per posizionare nei punti corretti i vari modelli, mentre DSLShopLight contiene 
-      esclusivamente le informazioni per le luci. Essendo che le stesse luci colpiscono tutti gli oggetti è presente un descriptor 
-      set a parte. Il primo sarà associato al set 1, mentre il secondo al set 0*/
-      DSLshop.init(this, {
-          {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject), 1},
-          {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
           });
       DSLShopLight.init(this, {
           {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
@@ -393,45 +380,35 @@ protected:
           });
 
 
-      VDBlinnVertex.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
+      VDWorld.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
              {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
              {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
              {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
-          });
-      VDshop.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
-          {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
-          {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
-          {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
           });
       VDemission.init(this, { {0, sizeof(EmissionVertex),VK_VERTEX_INPUT_RATE_VERTEX} }, {
           { 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(EmissionVertex, pos),sizeof(vec3), POSITION },
           { 0, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(EmissionVertex, UV), sizeof(vec2), UV } }
           );
-      VDapartment.init(this, { {0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX} }, {
-          {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos),sizeof(vec3), POSITION},
-          {0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, norm),sizeof(vec3), NORMAL},
-          {0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, UV), sizeof(vec2), UV}
-      });
 
 
-      PipBlinn.init(this, &VDBlinnVertex, "shaders/Vert.spv", "shaders/Frag.spv", { &DSL, &DSLBlinn });
-      Pipshop.init(this, &VDshop, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLshop });
+      PipBlinn.init(this, &VDWorld, "shaders/Vert.spv", "shaders/Frag.spv", { &DSLSunLight, &DSLMatricesAndTextures });
+      Pipshop.init(this, &VDWorld, "shaders/Shop/Vert.spv", "shaders/Shop/SpotLight.spv", { &DSLShopLight, &DSLMatricesAndTextures });
       PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
-      Pipapartment.init(this, &VDapartment, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLapartmentLight, &DSLshop });
+      Pipapartment.init(this, &VDWorld, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLapartmentLight, &DSLMatricesAndTextures });
 
-      //METODO CHE INIZIALIZZA TUTTI I MODELLI E TEXTURE DELL'ARRAY DI ASSET
+      //City
       int i = 0;
-      for (; i < ComponentVector.size() - 1; i++) {
-          ComponentVector[i].model.init(this, &VDBlinnVertex, ComponentVector[i].ObjPath, ComponentVector[i].type);
-          ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
+      for (; i < CityComponents.size() - 1; i++) {
+          CityComponents[i].model.init(this, &VDWorld, CityComponents[i].ObjPath, CityComponents[i].type);
+          CityComponents[i].texture.init(this, CityComponents[i].TexturePath);
       }
-      ComponentVector[i].model.init(this, &VDemission, ComponentVector[i].ObjPath, ComponentVector[i].type);
-      ComponentVector[i].texture.init(this, ComponentVector[i].TexturePath);
+      CityComponents[i].model.init(this, &VDemission, CityComponents[i].ObjPath, CityComponents[i].type);
+      CityComponents[i].texture.init(this, CityComponents[i].TexturePath);
       
       //SHOP
       int j;
       for (j = 0; j < Shop.size()-4; j++) {
-          Shop[j].model.init(this, &VDshop, Shop[j].ObjPath, Shop[j].type);
+          Shop[j].model.init(this, &VDWorld, Shop[j].ObjPath, Shop[j].type);
           Shop[j].texture.init(this, Shop[j].TexturePath);
       }
       for (; j < Shop.size(); j++) {
@@ -441,16 +418,16 @@ protected:
 
       //APARTMENT
       for (j = 0; j < Apartment.size()-1; j++) {
-          Apartment[j].model.init(this, &VDapartment, Apartment[j].ObjPath, Apartment[j].type);
+          Apartment[j].model.init(this, &VDWorld, Apartment[j].ObjPath, Apartment[j].type);
           Apartment[j].texture.init(this, Apartment[j].TexturePath);
       }
       Apartment[j].model.init(this, &VDemission, Apartment[j].ObjPath, Apartment[j].type);
       Apartment[j].texture.init(this, Apartment[j].TexturePath);
 
       //DA CAMBIARE
-      DPSZs.uniformBlocksInPool = ComponentVector.size() * 2 + Shop.size() + 2 + Apartment.size() + 1;
-      DPSZs.texturesInPool = ComponentVector.size() + Shop.size() + Apartment.size();
-      DPSZs.setsInPool = ComponentVector.size() + Shop.size() + 3 + Apartment.size() + 1;
+      DPSZs.uniformBlocksInPool = CityComponents.size() * 2 + Shop.size() + 2 + Apartment.size() + 1;
+      DPSZs.texturesInPool = CityComponents.size() + Shop.size() + Apartment.size();
+      DPSZs.setsInPool = CityComponents.size() + Shop.size() + 3 + Apartment.size() + 1;
 
       cout << "Initializing text\n";
       outTxt.init(this, &outText);
@@ -460,7 +437,7 @@ protected:
       cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
       cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
 
-      ViewMatrix = translate(mat4(1), -CamPos);
+      //ViewMatrix = translate(mat4(1), -CamPos);
   }
 
   void pipelinesAndDescriptorSetsInit() {
@@ -470,20 +447,18 @@ protected:
     PipEmission.create();
     Pipapartment.create();
 
-    DS.init(this, &DSL, {});
-    //METODO CHE INIZIALIZZA TUTTI I DESCRIPTOR SET
-
     //CITY
-    int sizeCV = ComponentVector.size();
+    DSSunLight.init(this, &DSLSunLight, {});
+    int sizeCV = CityComponents.size();
     for (int i = 0; i < sizeCV - 1; i++) {
-      ComponentVector[i].DS.init(this, &DSLBlinn, {&ComponentVector[i].texture});
+      CityComponents[i].DS.init(this, &DSLMatricesAndTextures, {&CityComponents[i].texture});
     }
-    ComponentVector[sizeCV - 1].DS.init(this, &DSLemission, { &ComponentVector[sizeCV - 1].texture });
+    CityComponents[sizeCV - 1].DS.init(this, &DSLemission, { &CityComponents[sizeCV - 1].texture });
 
     //SHOP
     int sizeSHOP, j;
     for (j = 0; j < Shop.size() - 4; j++) {
-        Shop[j].DS.init(this, &DSLshop, { &Shop[j].texture });
+        Shop[j].DS.init(this, &DSLMatricesAndTextures, { &Shop[j].texture });
     }
     for (; j < Shop.size(); j++) {
         Shop[j].DS.init(this, &DSLemission, { &Shop[j].texture });
@@ -492,7 +467,7 @@ protected:
 
     //APARTMENT
     for (j = 0; j < Apartment.size()-1; j++) {
-        Apartment[j].DS.init(this, &DSLshop, { &Apartment[j].texture });
+        Apartment[j].DS.init(this, &DSLMatricesAndTextures, { &Apartment[j].texture });
     }
     Apartment[j].DS.init(this, &DSLemission, { &Apartment[j].texture });
     DStoonLight.init(this, &DSLapartmentLight, {});
@@ -508,11 +483,10 @@ protected:
     Pipapartment.cleanup();
 
     //CITY
-    for (int i = 0; i < ComponentVector.size(); i++) {
-      ComponentVector[i].DS.cleanup();
+    for (int i = 0; i < CityComponents.size(); i++) {
+      CityComponents[i].DS.cleanup();
     }
-    DS.cleanup();
-
+    DSSunLight.cleanup();
 
     //SHOP
     for (int i = 0; i < Shop.size(); i++) {
@@ -532,9 +506,9 @@ protected:
   void localCleanup() {
 
     //CITY
-    for (int i = 0; i < ComponentVector.size(); i++) {
-      ComponentVector[i].model.cleanup();
-      ComponentVector[i].texture.cleanup();
+    for (int i = 0; i < CityComponents.size(); i++) {
+      CityComponents[i].model.cleanup();
+      CityComponents[i].texture.cleanup();
     }
 
     //SHOP
@@ -549,11 +523,10 @@ protected:
         Apartment[i].texture.cleanup();
     }
 
-    DSL.cleanup();
+    DSLSunLight.cleanup();
     DSLemission.cleanup();
-    DSLshop.cleanup();
+    DSLMatricesAndTextures.cleanup();
     DSLShopLight.cleanup();
-    DSLBlinn.cleanup();
     DSLapartmentLight.cleanup();
 
     PipEmission.destroy();
@@ -569,22 +542,22 @@ protected:
       if (currentScene == CITY) {
           PipBlinn.bind(commandBuffer);
 
-          DS.bind(commandBuffer, PipBlinn, 0, currentImage);
+          DSSunLight.bind(commandBuffer, PipBlinn, 0, currentImage);
           int i = 0;
-          for (; i < ComponentVector.size() - 1; i++) {
+          for (; i < CityComponents.size() - 1; i++) {
 
-              ComponentVector[i].model.bind(commandBuffer);
-              ComponentVector[i].DS.bind(commandBuffer, PipBlinn, 1, currentImage);
+              CityComponents[i].model.bind(commandBuffer);
+              CityComponents[i].DS.bind(commandBuffer, PipBlinn, 1, currentImage);
 
               // The actual draw call.
               vkCmdDrawIndexed(commandBuffer,
-                  static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
+                  static_cast<uint32_t>(CityComponents[i].model.indices.size()), 1, 0, 0, 0);
           }
           PipEmission.bind(commandBuffer);
-          ComponentVector[i].model.bind(commandBuffer);
-          ComponentVector[i].DS.bind(commandBuffer, PipEmission, 0, currentImage);
+          CityComponents[i].model.bind(commandBuffer);
+          CityComponents[i].DS.bind(commandBuffer, PipEmission, 0, currentImage);
           vkCmdDrawIndexed(commandBuffer,
-              static_cast<uint32_t>(ComponentVector[i].model.indices.size()), 1, 0, 0, 0);
+              static_cast<uint32_t>(CityComponents[i].model.indices.size()), 1, 0, 0, 0);
       }//SHOP
       else if (currentScene == SHOP) {
           int j;
@@ -680,13 +653,13 @@ protected:
         CamPos.y = vec3(0, 1, 0).y;
     }
     else if(isInsideCar) {
-        float carCurrAngle = ComponentVector[0].angle[0];
+        float carCurrAngle = CityComponents[0].angle[0];
         CarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
-        ComponentVector[0].pos.x = CarPos.x;
-        ComponentVector[0].pos.y = CarPos.y;
-        ComponentVector[0].pos.z = CarPos.z;
-        ComponentVector[0].angle[0] += rotAngleCar;
+        CityComponents[0].pos.x = CarPos.x;
+        CityComponents[0].pos.y = CarPos.y;
+        CityComponents[0].pos.z = CarPos.z;
+        CityComponents[0].angle[0] += rotAngleCar;
 
         CamYaw += rotSpeed * deltaT * r.y;
         CamPitch -= rotSpeed * deltaT * r.x;
@@ -965,7 +938,7 @@ protected:
   }
 
   void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
-      UniformBufferObject ubo{};
+      MatricesUniformBufferObject ubo{};
       for (int i = start; i < end; i++) {
           mat4 transform = translate(mat4(1), vec[i].pos + traslation);
           transform = scale(transform, vec[i].scale);
@@ -984,7 +957,7 @@ protected:
   void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation, bool flag, vec4 colorLight) {
       EmissionUniformBufferObject eubo{};
       EmissionColorUniformBuffer ecubo{};
-      for (int j = start; j < vec.size(); j++) {
+      for (int j = start; j < end; j++) {
           mat4 transform = translate(mat4(1), vec[j].pos + traslation);
           transform = scale(transform, vec[j].scale);
           if (!vec[j].rot.empty()) {
@@ -1084,17 +1057,14 @@ protected:
 
       BlinnUbo.lightColor = interpolatedColor;
       BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
-      DS.map(currentImage, &BlinnUbo, 0);
+      DSSunLight.map(currentImage, &BlinnUbo, 0);
 
       BlinnMatParUniformBufferObject blinnMatParUbo{};
       blinnMatParUbo.Power = 100.0;
-      DS.map(currentImage, &blinnMatParUbo, 1);
+      DSSunLight.map(currentImage, &blinnMatParUbo, 1);
 
-      fillUniformBuffer(0, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(0.0f));
-
-      int index = ComponentVector.size() - 1;
-
-      fillEmissionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
+      fillUniformBuffer(0, CityComponents.size() - 1, CityComponents, ViewPrj, currentImage, vec3(0.0f));
+      fillEmissionBuffer(CityComponents.size() - 1, CityComponents.size(), CityComponents, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
   }
 
 };
