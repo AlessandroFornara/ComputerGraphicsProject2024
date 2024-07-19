@@ -30,9 +30,16 @@ struct spotLightUBO {
     alignas(16) vec4 InOutDecayTarget;
 };
 
+
 struct EmissionUniformBufferObject {
     alignas(16) mat4 mvpMat;
 };
+
+
+struct EmissionColorUniformBuffer {
+    alignas(16) vec4 color;
+};
+
 
 struct EmissionVertex {
     glm::vec3 pos;
@@ -78,7 +85,7 @@ struct Vertex {
 enum Scene { CITY, SHOP, APARTMENT };
 
 vector<Component> Apartment = {
-/*    //PAVIMENTO
+/*   //PAVIMENTO
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -116,7 +123,7 @@ vector<Component> Apartment = {
     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
-    {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
+    {"models/Apartment/Sphere.obj", "textures/sunTexture.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
        
 };
 
@@ -326,17 +333,16 @@ protected:
 
   //car set up
   vec3 CarPos = vec3(0.0f, 0.0f, -24.0f);
-  // X: 1.20916, Y : 1, Z : -24.3505, CameraAngle : 85.2512
   bool isInsideCar = false;
-  float carSpeed = 10.0f;
-  const float carRotSpeed = 60.0f;  //IDEA: rotation slower when you are in the car
+  const float CAR_SPEED = 1.0f;
+  const float MAX_CAR_SPEED = 15.0f;
 
   bool autoTime = true;
   const float ROT_SPEED = radians(120.0f);
-  const float WALK_SPEED = 5.0f;
-  const float RUN_SPEED = WALK_SPEED * 2;
+  const float WALK_SPEED = 2.5f;
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
+  float moveSpeed;
 
   bool showCommands = false;
 
@@ -384,8 +390,9 @@ protected:
       });
 
       DSLemission.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(EmissionUniformBufferObject), 1},
-            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1}
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(EmissionUniformBufferObject), 1},
+            {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1},
+            {2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(EmissionColorUniformBuffer), 1}
           });
 
 
@@ -620,14 +627,16 @@ protected:
   void updateUniformBuffer(uint32_t currentImage) {
     float deltaT, cameraAngle = 0.0;
     float rotAngleCar = 0.0f;
-    float MOVE_SPEED = WALK_SPEED;
+    float rotSpeed = ROT_SPEED;
+
+    if (!isInsideCar)
+        moveSpeed = WALK_SPEED;
 
     vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = { 0.0,0.0,0.0 }, CamPosOld, tmpCamPos;
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
 
-    // test
     static float CamPitch = glm::radians(20.0f);
     static float CamYaw = M_PI;
     static float CamDist = 10.0f;
@@ -635,14 +644,18 @@ protected:
     const glm::vec3 CamTargetDelta = glm::vec3(0, 2, 0);
     static float dampedVel = 0.0f;
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
-        MOVE_SPEED = RUN_SPEED;
+    if(!isInsideCar){
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+            moveSpeed = moveSpeed * 2;
+    }
+    else {
+        moveSpeed = accelerateCar(moveSpeed, m.z);
     }
 
     mat4 Mv;
 
-    CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
-    CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
+    CamAlpha = CamAlpha - rotSpeed * deltaT * r.y;
+    CamBeta = CamBeta - rotSpeed * deltaT * r.x;
     CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
 
     vec3 ux = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(1, 0, 0, 1);
@@ -651,8 +664,8 @@ protected:
     
     tmpCamPos = CamPos;
     CamPosOld = CamPos;
-    tmpCamPos = tmpCamPos + MOVE_SPEED * m.x * ux * deltaT;
-    tmpCamPos = tmpCamPos - MOVE_SPEED * m.z * uz * deltaT;
+    tmpCamPos = tmpCamPos + moveSpeed * m.x * ux * deltaT;
+    tmpCamPos = tmpCamPos - moveSpeed * m.z * uz * deltaT;
 
     if (!checkLimits(tmpCamPos)) {
         CamPos = CamPosOld;
@@ -662,24 +675,24 @@ protected:
     }
 
     if (spectatorMode) {
-        CamPos = CamPos + MOVE_SPEED * m.y * uy * deltaT;
+        CamPos = CamPos + moveSpeed * m.y * uy * deltaT;
     }
     else if(!isInsideCar) {
         CamPos.y = vec3(0, 1, 0).y;
     }
     else if(isInsideCar) {
         float carCurrAngle = ComponentVector[0].angle[0];
-        CarPos = CarPos - MOVE_SPEED * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
+        CarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
         ComponentVector[0].pos.x = CarPos.x;
         ComponentVector[0].pos.y = CarPos.y;
         ComponentVector[0].pos.z = CarPos.z;
         ComponentVector[0].angle[0] += rotAngleCar;
 
-        CamYaw += ROT_SPEED * deltaT * r.y;
-        CamPitch -= ROT_SPEED * deltaT * r.x;
-        CamRoll -= ROT_SPEED * deltaT * r.z;
-        CamDist -= MOVE_SPEED * deltaT * m.y;
+        CamYaw += rotSpeed * deltaT * r.y;
+        CamPitch -= rotSpeed * deltaT * r.x;
+        CamRoll -= rotSpeed * deltaT * r.z;
+        CamDist -= moveSpeed * deltaT * m.y;
 
         CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
         CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
@@ -717,11 +730,9 @@ protected:
             printCordinates(360.0 - tmp);
         }
     }
-
     if (glfwGetKey(window, GLFW_KEY_P)) {
         spectatorMode = true;
     }
-
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
@@ -744,12 +755,14 @@ protected:
         if (isInsideCar == false) {
             if (isNearCar()) {
                 enterCar();
+                moveSpeed = CAR_SPEED;
             }
         }
     }
     if (glfwGetKey(window, GLFW_KEY_J)) {
         if (isInsideCar == true) {
             exitCar();
+            moveSpeed = WALK_SPEED;
         }
     }
 
@@ -777,6 +790,25 @@ protected:
     else if (currentScene == APARTMENT) {
         buildApartment(currentImage, ViewPrj);
     }
+  }
+
+  float accelerateCar(float speed, float acc) {
+      float speed2;
+      if (acc < 0)
+          acc = -acc;
+      if (acc != 0) {
+        speed2 = speed + acc * 0.1f;
+        if (speed2 > MAX_CAR_SPEED)
+            speed2 = MAX_CAR_SPEED;
+        else if(speed2 < CAR_SPEED)
+            speed2 = CAR_SPEED;
+      }
+      else {
+          speed2 = speed - 0.3f;
+          if (speed2 < CAR_SPEED)
+              speed2 = CAR_SPEED;
+      }
+      return speed2;
   }
 
   void exitCar() {
@@ -950,8 +982,9 @@ protected:
       }
   }
 
-  void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
+  void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation, bool flag, vec4 colorLight) {
       EmissionUniformBufferObject eubo{};
+      EmissionColorUniformBuffer ecubo{};
       for (int j = start; j < vec.size(); j++) {
           mat4 transform = translate(mat4(1), vec[j].pos + traslation);
           transform = scale(transform, vec[j].scale);
@@ -961,9 +994,18 @@ protected:
               }
           }
           eubo.mvpMat = ViewPrj * transform;
+          if (flag) {
+              ecubo.color = colorLight;
+              ecubo.color.w = 1.0f;
+          }
+          else
+              ecubo.color = vec4(1.0);
+
           vec[j].DS.map(currentImage, &eubo, 0);
+          vec[j].DS.map(currentImage, &ecubo, 2);
       }
   }
+
 
   void buildApartment(int currentImage, mat4 ViewPrj) {
       ApartmentUniBuffer tubo{};
@@ -976,8 +1018,7 @@ protected:
 
       fillUniformBuffer(0, Apartment.size() - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f));
-      
+      fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
   }
 
   void buildShop(int currentImage, mat4 ViewPrj) {
@@ -997,8 +1038,7 @@ protected:
 
       fillUniformBuffer(0, Shop.size() - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmissionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f));
-
+      fillEmissionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
   }
 
   void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
@@ -1055,8 +1095,7 @@ protected:
 
       int index = ComponentVector.size() - 1;
 
-      fillEmissionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3 (x,y,z));
-
+      fillEmissionBuffer(ComponentVector.size() - 1, ComponentVector.size() - 1, ComponentVector, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
   }
 
 };
