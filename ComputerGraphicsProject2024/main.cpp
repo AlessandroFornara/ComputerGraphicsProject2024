@@ -508,10 +508,11 @@ protected:
     Pipapartment.cleanup();
 
     //CITY
-    DS.cleanup();
     for (int i = 0; i < ComponentVector.size(); i++) {
       ComponentVector[i].DS.cleanup();
     }
+    DS.cleanup();
+
 
     //SHOP
     for (int i = 0; i < Shop.size(); i++) {
@@ -548,6 +549,7 @@ protected:
         Apartment[i].texture.cleanup();
     }
 
+    DSL.cleanup();
     DSLemission.cleanup();
     DSLshop.cleanup();
     DSLShopLight.cleanup();
