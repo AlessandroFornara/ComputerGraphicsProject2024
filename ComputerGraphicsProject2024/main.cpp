@@ -717,9 +717,10 @@ protected:
                 enterCar();
             }
         }
-        else if (isInsideCar == true) {
-            // isInsideCar = false;
-            //todo: create method: exitCar
+    }
+    if (glfwGetKey(window, GLFW_KEY_J)) {
+        if (isInsideCar == true) {
+            exitCar();
         }
     }
 
@@ -747,6 +748,12 @@ protected:
     else if (currentScene == APARTMENT) {
         buildApartment(currentImage, ViewPrj);
     }
+  }
+
+  void exitCar() {
+      isInsideCar = false;
+      CamPos = CarPos + (-2.0f, 0.0f, -2.0f);
+      CamPos.y = 1.0f;
   }
 
   bool isNearCar() {
