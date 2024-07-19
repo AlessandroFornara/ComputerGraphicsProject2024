@@ -767,7 +767,7 @@ protected:
             speed2 = CAR_SPEED;
       }
       else {
-          speed2 = speed - 0.2f;
+          speed2 = speed - 0.3f;
           if (speed2 < CAR_SPEED)
               speed2 = CAR_SPEED;
       }
