@@ -607,6 +607,7 @@ protected:
     vec3 r = vec3(0.0f);
     vec3 cameraPosition = { 0.0,0.0,0.0 };
     vec3 CarPosOld, tmpCarPos;
+    vec3 CamPosOld, tmpCamPos;
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
@@ -636,10 +637,14 @@ protected:
     vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
     vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
     
-    CamPos = CamPos + moveSpeed * m.x * ux * deltaT;
-    CamPos = CamPos - moveSpeed * m.z * uz * deltaT;
+    tmpCamPos = CamPos + moveSpeed * m.x * ux * deltaT;
+    tmpCamPos = tmpCamPos - moveSpeed * m.z * uz * deltaT;
 
-    if (spectatorMode) {
+    if (checkLimits(tmpCamPos)) {
+        CamPos = tmpCamPos;
+    }
+
+    if (spectatorMode && currentScene == CITY) {
         CamPos = CamPos + moveSpeed * m.y * uy * deltaT;
     }
     else if(!isInsideCar) {
@@ -710,6 +715,8 @@ protected:
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
+
+
     if (glfwGetKey(window, GLFW_KEY_K)) {
         if (cameraAngle > 0 && !isInsideCar) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
