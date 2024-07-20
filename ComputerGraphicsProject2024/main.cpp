@@ -46,9 +46,9 @@ struct EmissionVertex {
 };
 
 struct BlinnUniformBufferObject {
-    alignas(16) glm::vec3 lightDir;
-    alignas(16) glm::vec4 lightColor;
-    alignas(16) glm::vec3 eyePos;
+    alignas(16) vec3 lightDir;
+    alignas(16) vec4 lightColor;
+    alignas(16) vec3 eyePos;
 };
 
 struct BlinnMatParUniformBufferObject {
@@ -181,7 +181,7 @@ vector<Component> Shop = {
 
 
 std::vector<Component> CityComponents = {
-    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {0.0f}}, // DRIVEABLE CAR MODEL;
+    {"models/apecar.obj", "textures/apecar.png",OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -216,11 +216,12 @@ std::vector<Component> CityComponents = {
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {-8.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}},
 
     {"models/landscape_entertainments_007.mgcg", "textures/Textures_City.png",MGCG, {4 + 5 * 8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
     {"models/landscape_entertainments_003.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
     {"models/landscape_entertainments_008.mgcg", "textures/Textures_City.png", MGCG,{20+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f},
-        { {0.0f, 1.0f, 0.0f} }, {-90.0f}}, //foot
+        { {0.0f, 1.0f, 0.0f} }, {-90.0f}}, //football
     {"models/landscape_entertainments_010.mgcg", "textures/Textures_City.png", MGCG,{20+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {90.0f}}, //basket
     
@@ -243,7 +244,7 @@ std::vector<Component> CityComponents = {
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
     {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -9*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
-
+/*
     {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png",MGCG, {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4+4*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -281,10 +282,10 @@ std::vector<Component> CityComponents = {
     
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
+*/
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
     
 };
-//    {"models/dwelling_004.mgcg", "textures/Textures_City.png", {0.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}
 
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
@@ -318,15 +319,17 @@ protected:
   VertexDescriptor VDemission;
 
   vec3 CamPos = vec3(0.0, 1.0, -8.0);
+  vec3 Cam1Pos;
   float CamAlpha = 0.0f, CamBeta = 0.0f;
   float CamRoll = 0.0f;
   mat4 ViewMatrix;
 
   bool spectatorMode = false;
   bool cityWithLimits = false;
+  bool thirdViewCar = false;
 
   //car set up
-  vec3 CarPos = vec3(0.0f, 0.0f, -24.0f);
+  vec3 CarPos = vec3(0.0f, 0.6f, -24.0f);
   bool isInsideCar = false;
   const float CAR_SPEED = 1.0f;
   const float MAX_CAR_SPEED = 15.0f;
@@ -337,7 +340,7 @@ protected:
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
   float moveSpeed;
-  float Yaw = 0.0f;
+  float Yaw = radians(0.0f);
   bool showCommands = false;
 
   void setWindowParameters() {
@@ -612,12 +615,14 @@ protected:
 
     getSixAxis(deltaT, m, r, fire);
 
-    static float CamPitch = glm::radians(20.0f);
+    static float CamPitch = radians(20.0f);
     static float CamYaw = M_PI;
     static float CamDist = 10.0f;
     static float CamRoll = 0.0f;
-    const glm::vec3 CamTargetDelta = glm::vec3(0, 2, 0);
+    const vec3 CamTargetDelta = vec3(0, 2, 0);
     static float dampedVel = 0.0f;
+    const vec3 Cam1stPos = vec3(0.0f, 1.0f, 0.1f);
+
 
     if(!isInsideCar){
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
@@ -653,6 +658,7 @@ protected:
     else if(isInsideCar) {
         float carCurrAngle = CityComponents[0].angle[0];
         CarPosOld = CarPos;
+        m.z = -m.z;
         tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
         
@@ -668,18 +674,33 @@ protected:
         CityComponents[0].pos.z = CarPos.z;
         CityComponents[0].angle[0] += rotAngleCar;
 
-        CamYaw += rotSpeed * deltaT * r.y;
-        CamPitch -= rotSpeed * deltaT * r.x;
-        CamRoll -= rotSpeed * deltaT * r.z;
-        CamDist -= moveSpeed * deltaT * m.y;
+        if (thirdViewCar) {
+            CamYaw += rotSpeed * deltaT * r.y;
+            CamPitch -= rotSpeed * deltaT * r.x;
+            CamRoll -= rotSpeed * deltaT * r.z;
+            CamDist -= moveSpeed * deltaT * m.y;
 
-        CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
-        CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
-        CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
-        CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
+            CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
+            CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
+            CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
+            CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
 
-        vec3 CamTarget = CarPos;
-        CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
+            vec3 CamTarget = CarPos;
+            CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
+        }
+        else {
+            CamYaw -= rotSpeed * deltaT * r.y;
+            CamPitch -= rotSpeed * deltaT * r.x;
+            CamRoll -= rotSpeed * deltaT * r.z;
+
+            // 0° <= CamYaw <= 360°
+            CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2.0f * M_PI ? 2.0f * M_PI : CamYaw));
+            CamPitch = (CamPitch < -0.25 * M_PI ? -0.25 * M_PI : (CamPitch > 0.25 * M_PI ? 0.25 * M_PI : CamPitch));
+            CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
+
+            CamPos = CarPos + vec3(rotate(mat4(1), Yaw, vec3(0, 1, 0)) * vec4(Cam1stPos, 1));
+        }
+
     }
 
     cameraPosition = CamPos;
@@ -754,7 +775,9 @@ protected:
         ViewPrj = M * Mv;
     }
     else {
-        ViewPrj = updateViewMatrix();
+        //cambio per testare prima persona; qui andra' updViewMatrix e il metodo sceglierà se prima o terza pers., riceve come parametro
+        //ViewPrj = updateViewMatrix();
+        ViewPrj = MakeViewProjectionLookInDirection(CamPos, Yaw + CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
     }
     mat4 baseTr = mat4(1.0f);
 
@@ -802,22 +825,39 @@ protected:
 
   void enterCar() {
       isInsideCar = true;
-      CamPos = CarPos + vec3(0.0f, 2.0f, -5.0f);
+//      CamPos = CarPos + vec3(0.0f, 2.0f, -5.0f);
   }
 
   mat4 updateViewMatrix() {
       if (isInsideCar) {
-          return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0,1,0), CamRoll, glm::radians(90.0f), Ar, 0.1f, 500.0f);
+          return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0,1,0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
       }
   }
 
-  glm::mat4 MakeViewProjectionLookAt(glm::vec3 Pos, glm::vec3 Target, glm::vec3 Up, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
-      glm::mat4 M = glm::perspective(FOVy, Ar, nearPlane, farPlane);
+  mat4 MakeViewProjectionLookAt(vec3 Pos, vec3 Target, vec3 Up, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
+
+      mat4 M = perspective(FOVy, Ar, nearPlane, farPlane);
       M[1][1] *= -1;
 
       M = M *
-          glm::rotate(glm::mat4(1.0), -Roll, glm::vec3(0, 0, 1)) *
-          glm::lookAt(Pos, Target, Up);
+          rotate(mat4(1.0), -Roll, vec3(0, 0, 1)) *
+          lookAt(Pos, Target, Up);
+      return M;
+  }
+
+  mat4 MakeViewProjectionLookInDirection(vec3 Pos, float Yaw, float Pitch, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
+
+      // Mvp = Mprj * Mv
+      mat4 M = perspective(FOVy, Ar, nearPlane, farPlane);
+      M[1][1] *= -1;
+
+      M = M *
+          rotate(mat4(1.0), -Roll, vec3(0, 0, 1)) *
+          rotate(mat4(1.0), -Pitch, vec3(1, 0, 0)) *
+          rotate(mat4(1.0), -Yaw, vec3(0, 1, 0)) *
+          translate(mat4(1.0), -Pos) *
+          mat4(1.0f);
+
       return M;
   }
 
@@ -1033,38 +1073,38 @@ protected:
       x = 26.5852f + r * cos(radians(sunAng)) * cos(radians(45.0f)); // Inclinazione di 45 gradi per simulare un percorso ellittico
       y = r * sin(radians(sunAng)) * sin(radians(45.0f)); // La componente y varia tra -r/2 e r/2
       z = -35.3748f + r * cos(radians(sunAng)) * sin(radians(45.0f)); // Inclinazione di 45 gradi per simulare un percorso ellittico
-      BlinnUbo.lightDir = glm::vec3(x, y, z);
+      BlinnUbo.lightDir = vec3(x, y, z);
 
-      glm::vec4 dawnColor = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
-      glm::vec4 dayColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
-      glm::vec4 duskColor = glm::vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
-      glm::vec4 nightColor = glm::vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
+      vec4 dawnColor = vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
+      vec4 dayColor = vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
+      vec4 duskColor = vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
+      vec4 nightColor = vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
 
       float normalizedTime = sunAng;
-      glm::vec4 interpolatedColor;
+      vec4 interpolatedColor;
 
       if (normalizedTime < 15.0f) {
           float t = normalizedTime / 15.0f;
-          interpolatedColor = glm::mix(nightColor, dawnColor, t);
+          interpolatedColor = mix(nightColor, dawnColor, t);
       }
       else if (normalizedTime < 40.0f) {
           float t = (normalizedTime - 15.0f) / 25.0f;
-          interpolatedColor = glm::mix(dawnColor, dayColor, t);
+          interpolatedColor = mix(dawnColor, dayColor, t);
       }
       else if (normalizedTime < 165.0f) {
           float t = (normalizedTime - 40.0f) / 125.0f;
-          interpolatedColor = glm::mix(dayColor, duskColor, t);
+          interpolatedColor = mix(dayColor, duskColor, t);
       }
       else if (normalizedTime < 180.0f) {
           float t = (normalizedTime - 165.0f) / 25.0f;
-          interpolatedColor = glm::mix(duskColor, nightColor, t);
+          interpolatedColor = mix(duskColor, nightColor, t);
       }
       else {
           interpolatedColor = nightColor;
       }
 
       BlinnUbo.lightColor = interpolatedColor;
-      BlinnUbo.eyePos = glm::vec3(glm::inverse(ViewMatrix) * glm::vec4(0, 0, 0, 1));
+      BlinnUbo.eyePos = vec3(inverse(ViewMatrix) * vec4(0, 0, 0, 1));
       DSSunLight.map(currentImage, &BlinnUbo, 0);
 
       BlinnMatParUniformBufferObject blinnMatParUbo{};
