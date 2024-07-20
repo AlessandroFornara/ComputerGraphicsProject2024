@@ -661,6 +661,8 @@ protected:
         m.z = -m.z;
         tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
+        if (m.z < 0.0f)
+            rotAngleCar = -rotAngleCar;
         
         if (checkLimits(tmpCarPos)) {
             CarPos = tmpCarPos;
@@ -693,8 +695,8 @@ protected:
             CamPitch -= rotSpeed * deltaT * r.x;
             CamRoll -= rotSpeed * deltaT * r.z;
 
-            // 0° <= CamYaw <= 360°
-            CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2.0f * M_PI ? 2.0f * M_PI : CamYaw));
+            // -180° <= CamYaw <= 540°;
+            CamYaw = (CamYaw < -M_PI ? -M_PI : (CamYaw > 2.5f * M_PI ? 2.5f * M_PI : CamYaw));
             CamPitch = (CamPitch < -0.25 * M_PI ? -0.25 * M_PI : (CamPitch > 0.25 * M_PI ? 0.25 * M_PI : CamPitch));
             CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
 
