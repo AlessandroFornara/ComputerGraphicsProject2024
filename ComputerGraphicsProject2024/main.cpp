@@ -326,7 +326,7 @@ protected:
 
   bool spectatorMode = false;
   bool cityWithLimits = false;
-  bool thirdViewCar = false;
+  bool thirdViewCar = true;
 
   //car set up
   vec3 CarPos = vec3(0.0f, 0.6f, -24.0f);
@@ -341,6 +341,8 @@ protected:
   const float sunRotSpeed = 3.3333f;
   float moveSpeed;
   float Yaw = radians(0.0f);
+  float CamPitch = radians(20.0f);
+  float CamYaw = M_PI;
   bool showCommands = false;
 
   void setWindowParameters() {
@@ -603,9 +605,6 @@ protected:
     float rotAngleCar = 0.0f;
     float rotSpeed = ROT_SPEED;
 
-    if (!isInsideCar)
-        moveSpeed = WALK_SPEED;
-
     vec3 m = vec3(0.0f);
     vec3 r = vec3(0.0f);
     vec3 cameraPosition = { 0.0,0.0,0.0 };
@@ -615,14 +614,16 @@ protected:
 
     getSixAxis(deltaT, m, r, fire);
 
-    static float CamPitch = radians(20.0f);
-    static float CamYaw = M_PI;
+    //CamPitch = radians(20.0f);
+    //CamYaw = M_PI;
     static float CamDist = 10.0f;
     static float CamRoll = 0.0f;
     const vec3 CamTargetDelta = vec3(0, 2, 0);
     static float dampedVel = 0.0f;
-    const vec3 Cam1stPos = vec3(0.0f, 1.0f, 0.1f);
+    vec3 Cam1stPos = vec3(0.0f, 1.0f, 0.0f);
 
+    if (!isInsideCar)
+        moveSpeed = WALK_SPEED;
 
     if(!isInsideCar){
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
@@ -661,6 +662,7 @@ protected:
         m.z = -m.z;
         tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
+
         if (m.z < 0.0f)
             rotAngleCar = -rotAngleCar;
         
@@ -688,6 +690,7 @@ protected:
             CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
 
             vec3 CamTarget = CarPos;
+            //Yaw is useless;
             CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
         }
         else {
@@ -699,8 +702,7 @@ protected:
             CamYaw = (CamYaw < -M_PI ? -M_PI : (CamYaw > 2.5f * M_PI ? 2.5f * M_PI : CamYaw));
             CamPitch = (CamPitch < -0.25 * M_PI ? -0.25 * M_PI : (CamPitch > 0.25 * M_PI ? 0.25 * M_PI : CamPitch));
             CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
-
-            CamPos = CarPos + vec3(rotate(mat4(1), Yaw, vec3(0, 1, 0)) * vec4(Cam1stPos, 1));
+            CamPos = CarPos + Cam1stPos;
         }
 
     }
@@ -738,8 +740,6 @@ protected:
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
-
-
     if (glfwGetKey(window, GLFW_KEY_K)) {
         if (cameraAngle > 0 && !isInsideCar) {
             checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
@@ -765,6 +765,13 @@ protected:
             cityWithLimits = false;
         }
     }
+    if (glfwGetKey(window, GLFW_KEY_V)) {
+        thirdViewCar = true;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_B)) {
+        thirdViewCar = false;
+    }
+
 
     Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
     ViewMatrix = Mv;
@@ -777,9 +784,8 @@ protected:
         ViewPrj = M * Mv;
     }
     else {
-        //cambio per testare prima persona; qui andra' updViewMatrix e il metodo sceglierà se prima o terza pers., riceve come parametro
-        //ViewPrj = updateViewMatrix();
-        ViewPrj = MakeViewProjectionLookInDirection(CamPos, Yaw + CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+        ViewPrj = updateViewMatrix();
+        //ViewPrj = MakeViewProjectionLookInDirection(CamPos, Yaw + CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
     }
     mat4 baseTr = mat4(1.0f);
 
@@ -815,6 +821,7 @@ protected:
 
   void exitCar() {
       isInsideCar = false;
+      thirdViewCar = true;
       CamPos = CarPos + (-2.0f, 0.0f, -2.0f);
       CamPos.y = 1.0f;
   }
@@ -832,7 +839,10 @@ protected:
 
   mat4 updateViewMatrix() {
       if (isInsideCar) {
-          return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0,1,0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+          if (thirdViewCar)
+              return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+          else
+              return MakeViewProjectionLookInDirection(CamPos, Yaw + CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
       }
   }
 
