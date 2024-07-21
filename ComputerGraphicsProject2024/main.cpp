@@ -655,7 +655,7 @@ protected:
     if (spectatorMode && currentScene == CITY) {
         CamPos = CamPos + moveSpeed * m.y * uy * deltaT;
     }
-    else if(!isInsideCar) {
+    else if(!isInsideCar && !jumpUp && !jumpDown) {
         CamPos.y = vec3(0, 1, 0).y;
     }
     else if(isInsideCar) {
@@ -827,8 +827,8 @@ protected:
 
   void jump() {
       if (jumpUp) {
-          if (CamPos.y < 2.0f)
-              CamPos.y += 0.05f;
+          if (CamPos.y < 2.2f)
+              CamPos.y += 0.1f;
           else {
               jumpUp = false;
               jumpDown = true;
@@ -836,7 +836,7 @@ protected:
       }
       else if(jumpDown) {
           if (CamPos.y > 1.0f)
-              CamPos.y -= 0.05f;
+              CamPos.y -= 0.1f;
           else
               jumpDown = false;
       }
