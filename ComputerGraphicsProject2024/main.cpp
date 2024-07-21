@@ -620,7 +620,7 @@ protected:
     static float CamRoll = 0.0f;
     const vec3 CamTargetDelta = vec3(0, 2, 0);
     static float dampedVel = 0.0f;
-    vec3 Cam1stPos = vec3(0.0f, 1.0f, 0.0f);
+    vec3 Cam1stPos = vec3(0.0f, 1.0f, 0.4f);
 
     if (!isInsideCar)
         moveSpeed = WALK_SPEED;
@@ -658,7 +658,6 @@ protected:
     }
     else if(isInsideCar) {
         float carCurrAngle = CityComponents[0].angle[0];
-        CarPosOld = CarPos;
         m.z = -m.z;
         tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
@@ -668,9 +667,6 @@ protected:
         
         if (checkLimits(tmpCarPos)) {
             CarPos = tmpCarPos;
-        }
-        else {
-            CarPos = CarPosOld;
         }
 
         CityComponents[0].pos.x = CarPos.x;
