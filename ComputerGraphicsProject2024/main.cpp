@@ -620,7 +620,7 @@ protected:
     static float CamRoll = 0.0f;
     const vec3 CamTargetDelta = vec3(0, 2, 0);
     static float dampedVel = 0.0f;
-    vec3 Cam1stPos = vec3(0.0f, 1.0f, 0.4f);
+    vec3 Cam1stPos = vec3(0.0f, 1.0f, -0.4f);
 
     if (!isInsideCar)
         moveSpeed = WALK_SPEED;
@@ -698,7 +698,7 @@ protected:
             CamYaw = (CamYaw < -M_PI ? -M_PI : (CamYaw > 2.5f * M_PI ? 2.5f * M_PI : CamYaw));
             CamPitch = (CamPitch < -0.25 * M_PI ? -0.25 * M_PI : (CamPitch > 0.25 * M_PI ? 0.25 * M_PI : CamPitch));
             CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
-            CamPos = CarPos + Cam1stPos;
+            CamPos = CarPos + vec3(rotate(mat4(1.0f), radians(CityComponents[0].angle[0]), vec3(0.0f, 1.0f, 0.0f)) * vec4(Cam1stPos, 1.0f));
         }
 
     }
