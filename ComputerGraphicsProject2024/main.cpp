@@ -84,7 +84,7 @@ struct Vertex {
 enum Scene { CITY, SHOP, APARTMENT };
 
 vector<Component> Apartment = {
-/*   //PAVIMENTO
+   //PAVIMENTO
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -118,7 +118,7 @@ vector<Component> Apartment = {
     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-*/
+
     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
@@ -244,7 +244,7 @@ std::vector<Component> CityComponents = {
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
     {"models/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -9*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
-/*
+
     {"models/road_tile_2x2_006.mgcg", "textures/Textures_City.png",MGCG, {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4+4*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -282,7 +282,7 @@ std::vector<Component> CityComponents = {
     
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
-*/
+
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
     
 };
@@ -317,6 +317,10 @@ protected:
   DescriptorSetLayout DSLemission;
   Pipeline PipEmission;
   VertexDescriptor VDemission;
+
+  int citySize = CityComponents.size();
+  int shopSize = Shop.size();
+  int apartmentSize = Apartment.size();
 
   vec3 CamPos = vec3(0.0, 1.0, -8.0);
   vec3 Cam1Pos;
@@ -404,7 +408,7 @@ protected:
 
       //City
       int i = 0;
-      for (; i < CityComponents.size() - 1; i++) {
+      for (; i < citySize - 1; i++) {
           CityComponents[i].model.init(this, &VDWorld, CityComponents[i].ObjPath, CityComponents[i].type);
           CityComponents[i].texture.init(this, CityComponents[i].TexturePath);
       }
@@ -412,28 +416,27 @@ protected:
       CityComponents[i].texture.init(this, CityComponents[i].TexturePath);
       
       //SHOP
-      int j;
-      for (j = 0; j < Shop.size()-4; j++) {
-          Shop[j].model.init(this, &VDWorld, Shop[j].ObjPath, Shop[j].type);
-          Shop[j].texture.init(this, Shop[j].TexturePath);
+      for (i = 0; i < shopSize-4; i++) {
+          Shop[i].model.init(this, &VDWorld, Shop[i].ObjPath, Shop[i].type);
+          Shop[i].texture.init(this, Shop[i].TexturePath);
       }
-      for (; j < Shop.size(); j++) {
-          Shop[j].model.init(this, &VDemission, Shop[j].ObjPath, Shop[j].type);
-          Shop[j].texture.init(this, Shop[j].TexturePath);
+      for (; i < shopSize; i++) {
+          Shop[i].model.init(this, &VDemission, Shop[i].ObjPath, Shop[i].type);
+          Shop[i].texture.init(this, Shop[i].TexturePath);
       }
 
       //APARTMENT
-      for (j = 0; j < Apartment.size()-1; j++) {
-          Apartment[j].model.init(this, &VDWorld, Apartment[j].ObjPath, Apartment[j].type);
-          Apartment[j].texture.init(this, Apartment[j].TexturePath);
+      for (i = 0; i < apartmentSize-1; i++) {
+          Apartment[i].model.init(this, &VDWorld, Apartment[i].ObjPath, Apartment[i].type);
+          Apartment[i].texture.init(this, Apartment[i].TexturePath);
       }
-      Apartment[j].model.init(this, &VDemission, Apartment[j].ObjPath, Apartment[j].type);
-      Apartment[j].texture.init(this, Apartment[j].TexturePath);
+      Apartment[i].model.init(this, &VDemission, Apartment[i].ObjPath, Apartment[i].type);
+      Apartment[i].texture.init(this, Apartment[i].TexturePath);
 
       //DA CAMBIARE
-      DPSZs.uniformBlocksInPool = CityComponents.size() * 2 + Shop.size() + 2 + Apartment.size() + 1;
-      DPSZs.texturesInPool = CityComponents.size() + Shop.size() + Apartment.size();
-      DPSZs.setsInPool = CityComponents.size() + Shop.size() + 3 + Apartment.size() + 1;
+      DPSZs.uniformBlocksInPool = citySize * 2 + shopSize + 2 + apartmentSize + 1;
+      DPSZs.texturesInPool = citySize + shopSize + apartmentSize;
+      DPSZs.setsInPool = citySize + shopSize + 3 + apartmentSize + 1;
 
       cout << "Initializing text\n";
       outTxt.init(this, &outText);
@@ -455,27 +458,26 @@ protected:
 
     //CITY
     DSSunLight.init(this, &DSLSunLight, {});
-    int sizeCV = CityComponents.size();
-    for (int i = 0; i < sizeCV - 1; i++) {
+    int i;
+    for (i = 0; i < citySize - 1; i++) {
       CityComponents[i].DS.init(this, &DSLMatricesAndTextures, {&CityComponents[i].texture});
     }
-    CityComponents[sizeCV - 1].DS.init(this, &DSLemission, { &CityComponents[sizeCV - 1].texture });
+    CityComponents[citySize - 1].DS.init(this, &DSLemission, { &CityComponents[citySize - 1].texture });
 
     //SHOP
-    int sizeSHOP, j;
-    for (j = 0; j < Shop.size() - 4; j++) {
-        Shop[j].DS.init(this, &DSLMatricesAndTextures, { &Shop[j].texture });
+    for (i = 0; i < shopSize - 4; i++) {
+        Shop[i].DS.init(this, &DSLMatricesAndTextures, { &Shop[i].texture });
     }
-    for (; j < Shop.size(); j++) {
-        Shop[j].DS.init(this, &DSLemission, { &Shop[j].texture });
+    for (; i < shopSize; i++) {
+        Shop[i].DS.init(this, &DSLemission, { &Shop[i].texture });
     }
     DSlight.init(this, &DSLShopLight, {});
 
     //APARTMENT
-    for (j = 0; j < Apartment.size()-1; j++) {
-        Apartment[j].DS.init(this, &DSLMatricesAndTextures, { &Apartment[j].texture });
+    for (i = 0; i < apartmentSize-1; i++) {
+        Apartment[i].DS.init(this, &DSLMatricesAndTextures, { &Apartment[i].texture });
     }
-    Apartment[j].DS.init(this, &DSLemission, { &Apartment[j].texture });
+    Apartment[i].DS.init(this, &DSLemission, { &Apartment[i].texture });
     DSApartmentLight.init(this, &DSLApartmentLight, {});
 
     outTxt.pipelinesAndDescriptorSetsInit();
@@ -489,19 +491,20 @@ protected:
     PipApartment.cleanup();
 
     //CITY
-    for (int i = 0; i < CityComponents.size(); i++) {
+    int i;
+    for (i = 0; i < citySize; i++) {
       CityComponents[i].DS.cleanup();
     }
     DSSunLight.cleanup();
 
     //SHOP
-    for (int i = 0; i < Shop.size(); i++) {
+    for (i = 0; i < shopSize; i++) {
         Shop[i].DS.cleanup();
     }
     DSlight.cleanup();
 
     //APARTMENT
-    for (int i = 0; i < Apartment.size(); i++) {
+    for (i = 0; i < apartmentSize; i++) {
         Apartment[i].DS.cleanup();
     }
     DSApartmentLight.cleanup();
@@ -512,19 +515,19 @@ protected:
   void localCleanup() {
 
     //CITY
-    for (int i = 0; i < CityComponents.size(); i++) {
+    for (int i = 0; i < citySize; i++) {
       CityComponents[i].model.cleanup();
       CityComponents[i].texture.cleanup();
     }
 
     //SHOP
-    for (int i = 0; i < Shop.size(); i++) {
+    for (int i = 0; i < shopSize; i++) {
         Shop[i].model.cleanup();
         Shop[i].texture.cleanup();
     }
 
     //APARTMENT
-    for (int i = 0; i < Apartment.size(); i++) {
+    for (int i = 0; i < apartmentSize; i++) {
         Apartment[i].model.cleanup();
         Apartment[i].texture.cleanup();
     }
@@ -550,7 +553,7 @@ protected:
 
           DSSunLight.bind(commandBuffer, PipCity, 0, currentImage);
           int i = 0;
-          for (; i < CityComponents.size() - 1; i++) {
+          for (; i < citySize - 1; i++) {
 
               CityComponents[i].model.bind(commandBuffer);
               CityComponents[i].DS.bind(commandBuffer, PipCity, 1, currentImage);
@@ -569,13 +572,13 @@ protected:
           int j;
           PipShop.bind(commandBuffer);
           DSlight.bind(commandBuffer, PipShop, 0, currentImage);
-          for (j = 0; j < Shop.size() - 4; j++) {
+          for (j = 0; j < shopSize - 4; j++) {
               Shop[j].model.bind(commandBuffer);
               Shop[j].DS.bind(commandBuffer, PipShop, 1, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
           }
           PipEmission.bind(commandBuffer);
-          for (; j < Shop.size(); j++) {
+          for (; j < shopSize; j++) {
               Shop[j].model.bind(commandBuffer);
               Shop[j].DS.bind(commandBuffer, PipEmission, 0, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Shop[j].model.indices.size()), 1, 0, 0, 0);
@@ -585,7 +588,7 @@ protected:
           int j;
           PipApartment.bind(commandBuffer);
           DSApartmentLight.bind(commandBuffer, PipApartment, 0, currentImage);
-          for (j = 0; j < Apartment.size() - 1; j++) {
+          for (j = 0; j < apartmentSize - 1; j++) {
               Apartment[j].model.bind(commandBuffer);
               Apartment[j].DS.bind(commandBuffer, PipApartment, 1, currentImage);
               vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
@@ -596,10 +599,7 @@ protected:
           vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
       }
 
-      if (!showCommands)
-          outTxt.populateCommandBuffer(commandBuffer, currentImage, 0);
-      else
-          outTxt.populateCommandBuffer(commandBuffer, currentImage, 1);
+      outTxt.populateCommandBuffer(commandBuffer, currentImage, !showCommands ? 0 : 1);
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
@@ -634,8 +634,6 @@ protected:
     else {
         moveSpeed = accelerateCar(moveSpeed, m.z);
     }
-
-    mat4 Mv;
 
     CamAlpha = CamAlpha - rotSpeed * deltaT * r.y;
     CamBeta = CamBeta - rotSpeed * deltaT * r.x;
@@ -779,21 +777,17 @@ protected:
     }
 
 
-    Mv = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
-    ViewMatrix = Mv;
-    // Here is where you actually update your uniforms
+    ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
     mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
     M[1][1] *= -1;
     mat4 ViewPrj;
     
     if (!isInsideCar) {
-        ViewPrj = M * Mv;
+        ViewPrj = M * ViewMatrix;
     }
     else {
         ViewPrj = updateViewMatrix();
-        //ViewPrj = MakeViewProjectionLookInDirection(CamPos, Yaw + CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
     }
-    mat4 baseTr = mat4(1.0f);
 
     if (currentScene == CITY) {
         buildCity(currentImage, ViewPrj, deltaT);
@@ -1071,9 +1065,9 @@ protected:
       tubo.eyePos = CamPos;
       DSApartmentLight.map(currentImage, &tubo, 0);
 
-      fillUniformBuffer(0, Apartment.size() - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
+      fillUniformBuffer(0, apartmentSize - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmissionBuffer(Apartment.size() - 1, Apartment.size(), Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
+      fillEmissionBuffer(apartmentSize - 1, apartmentSize, Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
   }
 
   void buildShop(int currentImage, mat4 ViewPrj) {
@@ -1091,9 +1085,9 @@ protected:
       subo.eyePos = CamPos;
       DSlight.map(currentImage, &subo, 0);
 
-      fillUniformBuffer(0, Shop.size() - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
+      fillUniformBuffer(0, shopSize - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
 
-      fillEmissionBuffer(Shop.size() - 4, Shop.size(), Shop, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
+      fillEmissionBuffer(shopSize - 4, shopSize, Shop, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
   }
 
   void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
@@ -1146,8 +1140,8 @@ protected:
       blinnMatParUbo.Power = 100.0;
       DSSunLight.map(currentImage, &blinnMatParUbo, 1);
 
-      fillUniformBuffer(0, CityComponents.size() - 1, CityComponents, ViewPrj, currentImage, vec3(0.0f));
-      fillEmissionBuffer(CityComponents.size() - 1, CityComponents.size(), CityComponents, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
+      fillUniformBuffer(0, citySize - 1, CityComponents, ViewPrj, currentImage, vec3(0.0f));
+      fillEmissionBuffer(citySize - 1, citySize, CityComponents, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
   }
 
 };
