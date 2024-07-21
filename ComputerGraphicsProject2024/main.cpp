@@ -327,6 +327,8 @@ protected:
   bool spectatorMode = false;
   bool cityWithLimits = false;
   bool thirdViewCar = true;
+  bool jumpUp = false;
+  bool jumpDown = false;
 
   //car set up
   vec3 CarPos = vec3(0.0f, 0.6f, -24.0f);
@@ -700,8 +702,16 @@ protected:
             CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
             CamPos = CarPos + vec3(rotate(mat4(1.0f), radians(CityComponents[0].angle[0]), vec3(0.0f, 1.0f, 0.0f)) * vec4(Cam1stPos, 1.0f));
         }
-
     }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) && !jumpUp && !jumpDown) {
+        if (!isInsideCar && !spectatorMode) {
+            jumpUp = true;
+            jump();
+        }
+    }
+
+    if (jumpUp || jumpDown)
+        jump();
 
     cameraPosition = CamPos;
     cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2*M_PI);
@@ -813,6 +823,23 @@ protected:
               speed2 = CAR_SPEED;
       }
       return speed2;
+  }
+
+  void jump() {
+      if (jumpUp) {
+          if (CamPos.y < 2.0f)
+              CamPos.y += 0.05f;
+          else {
+              jumpUp = false;
+              jumpDown = true;
+          }
+      }
+      else if(jumpDown) {
+          if (CamPos.y > 1.0f)
+              CamPos.y -= 0.05f;
+          else
+              jumpDown = false;
+      }
   }
 
   void exitCar() {
