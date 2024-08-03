@@ -323,16 +323,16 @@ protected:
   int apartmentSize = Apartment.size();
 
   vec3 CamPos = vec3(0.0, 1.0, -8.0);
-  vec3 Cam1Pos;
-  float CamAlpha = 0.0f, CamBeta = 0.0f;
-  float CamRoll = 0.0f;
+  float CamAlpha = 0.0f, CamBeta = 0.0f, CamRoll = 0.0f, CamDist = 10.0f;;
   mat4 ViewMatrix;
 
-  bool spectatorMode = false;
+  bool autoTime = true;
   bool cityWithLimits = false;
-  bool thirdViewCar = true;
-  bool jumpUp = false;
   bool jumpDown = false;
+  bool jumpUp = false;
+  bool showCommands = false;
+  bool spectatorMode = false;
+  bool thirdViewCar = true;
 
   //car set up
   vec3 CarPos = vec3(0.0f, 0.6f, -24.0f);
@@ -340,16 +340,13 @@ protected:
   const float CAR_SPEED = 1.0f;
   const float MAX_CAR_SPEED = 15.0f;
 
-  bool autoTime = true;
   const float ROT_SPEED = radians(120.0f);
   const float WALK_SPEED = 2.5f;
   float sunAng = 0.0f;
   const float sunRotSpeed = 3.3333f;
   float moveSpeed;
-  float Yaw = radians(0.0f);
   float CamPitch = radians(20.0f);
   float CamYaw = M_PI;
-  bool showCommands = false;
 
   void setWindowParameters() {
     windowWidth = 800;
@@ -603,58 +600,40 @@ protected:
   }
 
   void updateUniformBuffer(uint32_t currentImage) {
-    float deltaT, cameraAngle = 0.0;
-    float rotAngleCar = 0.0f;
-    float rotSpeed = ROT_SPEED;
-
-    vec3 m = vec3(0.0f);
-    vec3 r = vec3(0.0f);
-    vec3 cameraPosition = { 0.0,0.0,0.0 };
-    vec3 CarPosOld, tmpCarPos;
-    vec3 CamPosOld, tmpCamPos;
+    float deltaT, cameraAngle = 0.0, rotAngleCar = 0.0f;
+    vec3 Cam1stPos = vec3(0.0f, 1.0f, -0.4f);
+    vec3 m = vec3(0.0f), r = vec3(0.0f), cameraPosition = vec3(0.0f);
+    vec3 tmpCarPos, tmpCamPos;
     bool fire = false;
 
     getSixAxis(deltaT, m, r, fire);
 
-    //CamPitch = radians(20.0f);
-    //CamYaw = M_PI;
-    static float CamDist = 10.0f;
-    static float CamRoll = 0.0f;
-    const vec3 CamTargetDelta = vec3(0, 2, 0);
-    static float dampedVel = 0.0f;
-    vec3 Cam1stPos = vec3(0.0f, 1.0f, -0.4f);
-
-    if (!isInsideCar)
+    if (!isInsideCar) {
         moveSpeed = WALK_SPEED;
-
-    if(!isInsideCar){
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
-            moveSpeed = moveSpeed * 2;
+            moveSpeed *= 2;
     }
-    else {
+    else
         moveSpeed = accelerateCar(moveSpeed, m.z);
-    }
 
-    CamAlpha = CamAlpha - rotSpeed * deltaT * r.y;
-    CamBeta = CamBeta - rotSpeed * deltaT * r.x;
+    CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
+    CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
     CamBeta = CamBeta < radians(-90.0f) ? radians(-90.0f) : (CamBeta > radians(90.0f) ? radians(90.0f) : CamBeta);
 
     vec3 ux = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(1, 0, 0, 1);
     vec3 uz = rotate(mat4(1.0f), CamAlpha, vec3(0, 1, 0)) * vec4(0, 0, -1, 1);
     vec3 uy = rotate(mat4(1.0f), CamBeta, vec3(1, 0, 1)) * vec4(0, 1, 0, 1);
-    
-    tmpCamPos = CamPos + moveSpeed * m.x * ux * deltaT;
-    tmpCamPos = tmpCamPos - moveSpeed * m.z * uz * deltaT;
 
-    if (checkLimits(tmpCamPos)) {
+    tmpCamPos = CamPos + moveSpeed * m.x * ux * deltaT - moveSpeed * m.z * uz * deltaT;
+
+    if (checkLimits(tmpCamPos))
         CamPos = tmpCamPos;
-    }
 
     if (spectatorMode && currentScene == CITY) {
         CamPos = CamPos + moveSpeed * m.y * uy * deltaT;
     }
     else if(!isInsideCar && !jumpUp && !jumpDown) {
-        CamPos.y = vec3(0, 1, 0).y;
+        CamPos.y = 1.0f;
     }
     else if(isInsideCar) {
         float carCurrAngle = CityComponents[0].angle[0];
@@ -669,35 +648,28 @@ protected:
             CarPos = tmpCarPos;
         }
 
-        CityComponents[0].pos.x = CarPos.x;
-        CityComponents[0].pos.y = CarPos.y;
-        CityComponents[0].pos.z = CarPos.z;
+        CityComponents[0].pos = CarPos;
         CityComponents[0].angle[0] += rotAngleCar;
 
         if (thirdViewCar) {
-            CamYaw += rotSpeed * deltaT * r.y;
-            CamPitch -= rotSpeed * deltaT * r.x;
-            CamRoll -= rotSpeed * deltaT * r.z;
+            CamYaw += ROT_SPEED * deltaT * r.y;
+            CamPitch -= ROT_SPEED * deltaT * r.x;
             CamDist -= moveSpeed * deltaT * m.y;
 
             CamYaw = (CamYaw < 0.0f ? 0.0f : (CamYaw > 2 * M_PI ? 2 * M_PI : CamYaw));
             CamPitch = (CamPitch < 0.0f ? 0.0f : (CamPitch > M_PI_2 - 0.01f ? M_PI_2 - 0.01f : CamPitch));
-            CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
             CamDist = (CamDist < 7.0f ? 7.0f : (CamDist > 15.0f ? 15.0f : CamDist));
 
-            vec3 CamTarget = CarPos;
-            //Yaw is useless;
-            CamPos = CamTarget + vec3(rotate(mat4(1), Yaw + CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
+            CamPos = CarPos + vec3(rotate(mat4(1), CamYaw, vec3(0, 1, 0)) * rotate(mat4(1), -CamPitch, vec3(1, 0, 0)) * vec4(0, 0, CamDist, 1));
         }
         else {
-            CamYaw -= rotSpeed * deltaT * r.y;
-            CamPitch -= rotSpeed * deltaT * r.x;
-            CamRoll -= rotSpeed * deltaT * r.z;
+            CamYaw -= ROT_SPEED * deltaT * r.y;
+            CamPitch -= ROT_SPEED * deltaT * r.x;
 
             // -180° <= CamYaw <= 540°;
             CamYaw = (CamYaw < -M_PI ? -M_PI : (CamYaw > 2.5f * M_PI ? 2.5f * M_PI : CamYaw));
             CamPitch = (CamPitch < -0.25 * M_PI ? -0.25 * M_PI : (CamPitch > 0.25 * M_PI ? 0.25 * M_PI : CamPitch));
-            CamRoll = (CamRoll < -M_PI ? -M_PI : (CamRoll > M_PI ? M_PI : CamRoll));
+
             CamPos = CarPos + vec3(rotate(mat4(1.0f), radians(CityComponents[0].angle[0]), vec3(0.0f, 1.0f, 0.0f)) * vec4(Cam1stPos, 1.0f));
         }
     }
@@ -738,36 +710,32 @@ protected:
             printCordinates(360.0 - tmp);
         }
     }
-    if (glfwGetKey(window, GLFW_KEY_P)) {
+    if (glfwGetKey(window, GLFW_KEY_P) && !isInsideCar) {
         spectatorMode = true;
     }
     if (glfwGetKey(window, GLFW_KEY_O)) {
         spectatorMode = false;
     }
+
     if (glfwGetKey(window, GLFW_KEY_K)) {
-        if (cameraAngle > 0 && !isInsideCar) {
-            checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
-        }
-        else {
-            if(!isInsideCar){
+        if (!isInsideCar) {
+            if (cameraAngle > 0)
+                checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+            else {
                 tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
                 checkDoors(cameraPosition, 360.0 + tmp);
             }
-        }
-        if (isInsideCar == false) {
-            if (isNearCar()) {
-                enterCar();
+            if (distance(CamPos, CarPos) < 2.0f) {
+                isInsideCar = true;
                 moveSpeed = CAR_SPEED;
                 cityWithLimits = true;
+                spectatorMode = false;
             }
         }
     }
     if (glfwGetKey(window, GLFW_KEY_J)) {
-        if (isInsideCar == true) {
+        if (isInsideCar == true)
             exitCar();
-            moveSpeed = WALK_SPEED;
-            cityWithLimits = false;
-        }
     }
     if (glfwGetKey(window, GLFW_KEY_V)) {
         thirdViewCar = true;
@@ -776,18 +744,7 @@ protected:
         thirdViewCar = false;
     }
 
-
-    ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
-    mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
-    M[1][1] *= -1;
-    mat4 ViewPrj;
-    
-    if (!isInsideCar) {
-        ViewPrj = M * ViewMatrix;
-    }
-    else {
-        ViewPrj = updateViewMatrix();
-    }
+    mat4 ViewPrj = updateViewMatrix();
 
     if (currentScene == CITY) {
         buildCity(currentImage, ViewPrj, deltaT);
@@ -841,25 +798,19 @@ protected:
       thirdViewCar = true;
       CamPos = CarPos + (-2.0f, 0.0f, -2.0f);
       CamPos.y = 1.0f;
-  }
-
-  bool isNearCar() {
-      float dist;
-      dist = distance(CamPos, CarPos);
-      return dist < 2.0f;
-  }
-
-  void enterCar() {
-      isInsideCar = true;
-//      CamPos = CarPos + vec3(0.0f, 2.0f, -5.0f);
+      moveSpeed = WALK_SPEED;
+      cityWithLimits = false;
   }
 
   mat4 updateViewMatrix() {
-      if (isInsideCar) {
-          if (thirdViewCar)
-              return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
-          else
-              return MakeViewProjectionLookInDirection(CamPos, Yaw + CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+      if (isInsideCar)
+          return thirdViewCar ? MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f) 
+                              : MakeViewProjectionLookInDirection(CamPos, CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+      else {
+          ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
+          mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
+          M[1][1] *= -1;
+          return M * ViewMatrix;
       }
   }
 
@@ -875,7 +826,6 @@ protected:
   }
 
   mat4 MakeViewProjectionLookInDirection(vec3 Pos, float Yaw, float Pitch, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
-
       // Mvp = Mprj * Mv
       mat4 M = perspective(FOVy, Ar, nearPlane, farPlane);
       M[1][1] *= -1;
@@ -884,9 +834,7 @@ protected:
           rotate(mat4(1.0), -Roll, vec3(0, 0, 1)) *
           rotate(mat4(1.0), -Pitch, vec3(1, 0, 0)) *
           rotate(mat4(1.0), -Yaw, vec3(0, 1, 0)) *
-          translate(mat4(1.0), -Pos) *
-          mat4(1.0f);
-
+          translate(mat4(1.0), -Pos);
       return M;
   }
 
@@ -1002,10 +950,6 @@ protected:
           return ((cameraAngle < left && cameraAngle >= 0) || (cameraAngle <= 360 && cameraAngle > (360 - right)));
       }
       return false;
-  }
-
-  void makeRight(vec3 cameraPosition, vec3 modelRotation, float z) {
-      //DA FARE PIù AVANTI SE C'è TEMPO
   }
 
   void printCordinates(float cameraAngle){
