@@ -5,7 +5,10 @@ using namespace std;
 using namespace glm;
 
 vector<SingleText> outText = {
-  {1, {"Press H to see the command list"}, 0, 0},
+  {2, {
+      "Press H (Keyboard) / Y (Gamepad)", 
+      "to see the command list"
+  }, 0, 0},
   {11, {
       "Press SHIFT to run",
       "Press SPACE to jump",
@@ -19,6 +22,19 @@ vector<SingleText> outText = {
       "Press G to close this text",
       "Press ESC to exit"
   }, 0, 0},
+  {11, {
+      "Press RIGHT BUMPER to run",
+      "Press LEFT BUMPER to jump",
+      "Press BACK BUTTON to print coordinates",
+      "Press D-PAD UP to enter spectator mode",
+      "Press D-PAD DOWN to exit spectator mode",
+      "Press A to interact check doors / enter car",
+      "Press B to exit car", 
+      "Press X to close this text",
+      "In the car:",
+      "Press D-PAD LEFT to switch to first-person view",
+      "Press D-PAD RIGHT to switch to third-person view"   
+  }, 0, 0}
 };
 
 struct MatricesUniformBufferObject {
@@ -333,7 +349,8 @@ protected:
     bool cityWithLimits = false;
     bool isInsideCar = false;
     bool isJumping = false;
-    bool showCommands = false;
+    bool showCommandsGamepad = false;
+    bool showCommandsKeyboard = false;
     bool spectatorMode = false;
     bool thirdViewCar = true;
 
@@ -598,24 +615,34 @@ protected:
             vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Apartment[j].model.indices.size()), 1, 0, 0, 0);
         }
 
-        outTxt.populateCommandBuffer(commandBuffer, currentImage, !showCommands ? 0 : 1);
+        int txtIndex;
+        if (!showCommandsKeyboard && !showCommandsGamepad)
+            txtIndex = 0;
+        else if (showCommandsKeyboard)
+            txtIndex = 1;
+        else if (showCommandsGamepad)
+            txtIndex = 2;
+
+        outTxt.populateCommandBuffer(commandBuffer, currentImage, txtIndex);
     }
 
     void updateUniformBuffer(uint32_t currentImage) {
         float deltaT, cameraAngle = 0.0;
         vec3 m = vec3(0.0f), r = vec3(0.0f);
         bool fire = false;
+        GLFWgamepadstate state;
 
         getSixAxis(deltaT, m, r, fire);
+        int connected = glfwGetGamepadState(GLFW_JOYSTICK_1, &state);
 
         if (!isInsideCar)
-            handleWalkingMovement(m, r, deltaT);
+            handleWalkingMovement(m, r, deltaT, state, connected);
         else
             handleCarMovement(m, r, deltaT);
 
         cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2 * M_PI);
 
-        HandleUserInputs(CamPos, cameraAngle);
+        HandleUserInputs(CamPos, cameraAngle, state, connected);
 
         mat4 ViewPrj = updateViewMatrix();
 
@@ -630,10 +657,14 @@ protected:
         }
     }
 
-    void handleWalkingMovement(vec3 m, vec3 r, float deltaT) {
+    void handleWalkingMovement(vec3 m, vec3 r, float deltaT, GLFWgamepadstate state, int connected) {
         moveSpeed = WALK_SPEED;
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+        bool isShiftPressed = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
+        bool isGamepadRunPressed = (connected && state.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] == GLFW_PRESS);
+
+        if (isShiftPressed || isGamepadRunPressed) {
             moveSpeed *= 2;
+        }
 
         CamAlpha = CamAlpha - ROT_SPEED * deltaT * r.y;
         CamBeta = CamBeta - ROT_SPEED * deltaT * r.x;
@@ -653,7 +684,9 @@ protected:
         }
         else if (!isJumping) {
             CamPos.y = 1.0f;
-            if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+            bool isSpacePressed = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
+            bool isGamepadJumpPressed = (connected && state.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == GLFW_PRESS);
+            if (isSpacePressed || isGamepadJumpPressed) {
                 isJumping = true;
                 jumpDirection = UP_DIRECTION;
             }
@@ -703,7 +736,7 @@ protected:
         }
     }
 
-    void HandleUserInputs(vec3 cameraPosition, float cameraAngle) {
+    void HandleUserInputs(vec3 cameraPosition, float cameraAngle, GLFWgamepadstate state, int connected) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
@@ -711,11 +744,12 @@ protected:
             thirdViewCar = false;
         }
         if (glfwGetKey(window, GLFW_KEY_G)) {
-            showCommands = false;
+            showCommandsKeyboard = false;
             RebuildPipeline();
         }
         if (glfwGetKey(window, GLFW_KEY_H)) {
-            showCommands = true;
+            showCommandsKeyboard = true;
+            showCommandsGamepad = false;
             RebuildPipeline();
         }
         if (glfwGetKey(window, GLFW_KEY_J) && isInsideCar) {
@@ -743,6 +777,47 @@ protected:
         }
         if (glfwGetKey(window, GLFW_KEY_V)) {
             thirdViewCar = true;
+        }
+
+        if (connected) {
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] == GLFW_PRESS) {
+                thirdViewCar = false;
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS) {
+                showCommandsGamepad = false;
+                RebuildPipeline();
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_Y] == GLFW_PRESS) {
+                showCommandsGamepad = true;
+                showCommandsKeyboard = false;
+                RebuildPipeline();
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS && isInsideCar) {
+                exitCar();
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS && !isInsideCar) {
+                if (cameraAngle > 0)
+                    checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+                else {
+                    float tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
+                    checkDoors(cameraPosition, 360.0 + tmp);
+                }
+                if (distance(CamPos, CarPos) < 2.0f) {
+                    enterCar();
+                }
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS) {
+                printCordinates(cameraAngle);
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] == GLFW_PRESS) {
+                spectatorMode = false;
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP] == GLFW_PRESS && !isInsideCar && currentScene == CITY) {
+                spectatorMode = true;
+            }
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] == GLFW_PRESS) {
+                thirdViewCar = true;
+            }        
         }
     }
 
