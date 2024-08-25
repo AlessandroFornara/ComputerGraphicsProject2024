@@ -137,6 +137,9 @@ vector<Component> Apartment = {
      {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+     {"models/Apartment/picture_049_Mesh.465.mgcg", "textures/Textures.png", MGCG,{202.0f, 0.75f, 205.9f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+     {"models/Apartment/musical_instrument_009_Mesh.095.mgcg", "textures/Textures.png", MGCG,{199.0, -1.0f, 202.0f}, {2.0f, 5.0f, 5.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f} },
+     {"models/Apartment/office_chair_021_Mesh.922.mgcg", "textures/Textures.png", MGCG,{204, -1.0f, 201.0f}, {2.0f, 2.0f, 2.0f}, {{0.0, 1.0, 0.0}}, {-45.0f} },
 
      {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
      {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
@@ -152,7 +155,7 @@ vector<Component> Shop = {
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-
+    
     //MURI
     //ALTO SINISTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
@@ -187,7 +190,7 @@ vector<Component> Shop = {
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png",MGCG, {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-
+    
     //LAMPADINE
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
@@ -198,6 +201,7 @@ vector<Component> Shop = {
 
 vector<Component> CityComponents = {
     {"models/apecar.obj", "textures/apecar.png",OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
+    
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -287,7 +291,7 @@ vector<Component> CityComponents = {
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
-
+    
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png",MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -298,7 +302,7 @@ vector<Component> CityComponents = {
 
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
-
+    
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
 
 };
@@ -1089,7 +1093,7 @@ protected:
         ApartmentUniBuffer tubo{};
 
         tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
-        tubo.lightDir = vec3(0.0f, -1.0f, 0.0f);
+        tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
         tubo.lightPos = vec3(202.0f, 2.0f, 202.0f);
         tubo.eyePos = CamPos;
         DSApartmentLight.map(currentImage, &tubo, 0);
