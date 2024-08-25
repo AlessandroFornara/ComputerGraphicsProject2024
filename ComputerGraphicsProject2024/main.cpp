@@ -5,10 +5,17 @@ using namespace std;
 using namespace glm;
 
 vector<SingleText> outText = {
+  {5, {
+      "City Simulator",
+      "",
+      "Alessandro Fornara",
+      "Donato Fiore",
+      "Riccardo Figini"
+  }, 0, 0, 0, 0, 0},
   {2, {
       "Press H (Keyboard) / Y (Gamepad)", 
       "to see the command list"
-  }, 0, 0},
+  }, 0, 0, 0, 0, 1},
   {11, {
       "Press SHIFT to run",
       "Press SPACE to jump",
@@ -21,7 +28,7 @@ vector<SingleText> outText = {
       "Press V to switch to third-person view in the car",
       "Press G to close this text",
       "Press ESC to exit"
-  }, 0, 0},
+  }, 0, 0, 0, 0, 1},
   {11, {
       "Press RIGHT BUMPER to run",
       "Press LEFT BUMPER to jump",
@@ -34,7 +41,7 @@ vector<SingleText> outText = {
       "In the car:",
       "Press D-PAD LEFT to switch to first-person view",
       "Press D-PAD RIGHT to switch to third-person view"   
-  }, 0, 0}
+  }, 0, 0, 0, 0, 1}
 };
 
 struct MatricesUniformBufferObject {
@@ -142,11 +149,11 @@ vector<Component> Apartment = {
      {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
      {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
      {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
-
+     
 };
 
 vector<Component> Shop = {
-
+    
     //PAVIMENTO
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -193,7 +200,7 @@ vector<Component> Shop = {
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
-
+    
 };
 
 vector<Component> CityComponents = {
@@ -300,7 +307,7 @@ vector<Component> CityComponents = {
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
 
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
-
+    
 };
 
 class ComputerGraphicsProject2024 : public BaseProject {
@@ -369,9 +376,12 @@ protected:
     float CamPitch = radians(20.0f);
     float CamYaw = M_PI;
 
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+    bool showStartText = true;
+
     void setWindowParameters() {
-        windowWidth = 800;
-        windowHeight = 600;
+        windowWidth = 1600;
+        windowHeight = 1200;
         windowTitle = "ComputerGraphicsProject2024";
         windowResizable = GLFW_TRUE;
         initialBackgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -465,6 +475,8 @@ protected:
         cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
 
         ViewMatrix = translate(mat4(1), -CamPos);
+
+        startTime = std::chrono::high_resolution_clock::now();
     }
 
     void pipelinesAndDescriptorSetsInit() {
@@ -616,12 +628,14 @@ protected:
         }
 
         int txtIndex;
-        if (!showCommandsKeyboard && !showCommandsGamepad)
+        if (showStartText)
             txtIndex = 0;
-        else if (showCommandsKeyboard)
+        else if (!showCommandsKeyboard && !showCommandsGamepad)
             txtIndex = 1;
-        else if (showCommandsGamepad)
+        else if (showCommandsKeyboard)
             txtIndex = 2;
+        else if (showCommandsGamepad)
+            txtIndex = 3;
 
         outTxt.populateCommandBuffer(commandBuffer, currentImage, txtIndex);
     }
@@ -654,6 +668,16 @@ protected:
         }
         else if (currentScene == APARTMENT) {
             buildApartment(currentImage, ViewPrj);
+        }
+
+        if (showStartText) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
+
+            if (elapsedTime > 5.0f) {
+                showStartText = false;              
+                RebuildPipeline();
+            }
         }
     }
 

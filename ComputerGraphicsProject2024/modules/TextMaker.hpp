@@ -4,6 +4,9 @@ struct SingleText {
 	const char *l[11];
 	int start;
 	int len;
+	float offsetX;
+	float offsetY;
+	int fontId;
 };
 
 	const float VisV[] = {1.0,0.0,0.0,2.0,0.0,1.0,0.0,-1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.707,-0.707,0.0,0.0,0.707,0.707,0.0,0.0,0.0,0.0,1.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,1.0,-1.0,0.0,0.0,0.0,0.0,-1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0};
@@ -111,8 +114,6 @@ struct TextMaker {
 		
 		M.indices.resize(6 * totLen);
 		
-		int FontId = 1;
-		
 		float PtoTdx = -0.95;
 		float PtoTdy = -0.95;
 		float PtoTsx = 2.0/800.0;
@@ -123,12 +124,12 @@ struct TextMaker {
 		int texW = 1024;
 		int texH = 512;
 		
-		int tpx = 0;
-		int tpy = 0;
-		
 		int ib = 0, k = 0;
 		for(auto& Txt : *Texts) {
+			int FontId = Txt.fontId;
 			Txt.start = ib;
+			float tpx = Txt.offsetX;
+			float tpy = Txt.offsetY;
 			for(int i = 0; i < Txt.usedLines; i++) {
 				for(int j = 0; j < strlen(Txt.l[i]); j++) {
 					int c = ((int)Txt.l[i][j]) - minChar;
@@ -194,10 +195,10 @@ struct TextMaker {
 					}
 				}
 				tpy += Fonts[FontId].lineHeight;
-				tpx = 0;	
+				tpx = Txt.offsetX;
 			}
-			tpx = 0;
-			tpy = 0;
+			//tpx = 0;
+			//tpy = 0;
 			Txt.len = ib - Txt.start;
 		}
 		
