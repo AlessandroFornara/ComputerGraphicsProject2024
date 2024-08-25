@@ -713,7 +713,7 @@ protected:
             CamPos = CamPos + moveSpeed * m.y * uy * deltaT;
         }
         else if (!isJumping) {
-            CamPos.y = 1.0f;
+            CamPos.y = computeHeight(CamPos);
             bool isSpacePressed = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
             bool isGamepadJumpPressed = (connected && state.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == GLFW_PRESS);
             if (isSpacePressed || isGamepadJumpPressed) {
@@ -722,7 +722,7 @@ protected:
             }
         }
         if (isJumping)
-            jump();
+            jump(computeHeight(CamPos));
     }
 
     void handleCarMovement(vec3 m, vec3 r, float deltaT) {
@@ -870,13 +870,13 @@ protected:
         return speed2;
     }
 
-    void jump() {
+    void jump(float initialHeight) {
         if (isJumping) {
             CamPos.y += JUMP_SPEED * jumpDirection;
 
-            if (CamPos.y >= 2.0f)
+            if (CamPos.y >= initialHeight + 1.0f)
                 jumpDirection = DOWN_DIRECTION;
-            else if (CamPos.y <= 1.0f) {
+            else if (CamPos.y <= initialHeight) {
                 jumpDirection = 0;
                 isJumping = false;
             }
@@ -989,6 +989,20 @@ protected:
         CamPos = c;
         currentScene = CITY;
         RebuildPipeline();
+    }
+
+    float computeHeight(vec3 cam) {
+        if(cam.z >= -11.57 && cam.z <= 3.46) {
+            if (cam.x <= -7.25159 && cam.x >= -7.60898)
+                return 1.25;
+            else if (cam.x <= -7.60899 && cam.x >= -7.92241)
+                return 1.5;
+            else if (cam.x <= -7.92241 && cam.x >= -8.15)
+                return 1.75;
+            else if (cam.x <= -8.16 && cam.x >= -17.35)
+                return 2.0;
+        }
+        return 1.0;
     }
 
     /*
