@@ -144,6 +144,9 @@ vector<Component> Apartment = {
      {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+     {"models/Apartment/picture_049_Mesh.465.mgcg", "textures/Textures.png", MGCG,{202.0f, 0.75f, 205.9f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+     {"models/Apartment/musical_instrument_009_Mesh.095.mgcg", "textures/Textures.png", MGCG,{199.0, -1.0f, 202.0f}, {2.0f, 5.0f, 5.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f} },
+     {"models/Apartment/office_chair_021_Mesh.922.mgcg", "textures/Textures.png", MGCG,{204, -1.0f, 201.0f}, {2.0f, 2.0f, 2.0f}, {{0.0, 1.0, 0.0}}, {-45.0f} },
 
      {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
      {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
@@ -159,7 +162,7 @@ vector<Component> Shop = {
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-
+    
     //MURI
     //ALTO SINISTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
@@ -194,7 +197,7 @@ vector<Component> Shop = {
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png",MGCG, {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-
+    
     //LAMPADINE
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
@@ -205,6 +208,7 @@ vector<Component> Shop = {
 
 vector<Component> CityComponents = {
     {"models/apecar.obj", "textures/apecar.png",OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
+    
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -294,7 +298,7 @@ vector<Component> CityComponents = {
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
-
+    
     {"models/apartment_1_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/apartment_1_004.mgcg", "textures/Textures_City.png",MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -305,7 +309,7 @@ vector<Component> CityComponents = {
 
     {"models/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
-
+    
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
     
 };
@@ -405,10 +409,10 @@ protected:
             {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1}
             });
         DSLShopLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(spotLightUBO), 1 } }
         );
         DSLApartmentLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(ApartmentUniBuffer), 1 }
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(ApartmentUniBuffer), 1 }
             });
 
         DSLemission.init(this, {
@@ -434,6 +438,8 @@ protected:
         PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
         PipApartment.init(this, &VDWorld, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLApartmentLight, &DSLMatricesAndTextures });
 
+        //first elements are "normal" components,the seconds are light (emission components)
+        // 
         //City
         int i = 0;
         for (; i < citySize - 1; i++) {
@@ -1052,6 +1058,7 @@ protected:
         cout << "________________________________________________________________________________" << '\n';
     }
 
+
     void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
         MatricesUniformBufferObject ubo{};
         for (int i = start; i < end; i++) {
@@ -1069,6 +1076,18 @@ protected:
         }
     }
 
+    /*
+        General method for building the lights in the various environments. 
+        It is possible to change the color of the light emitted and also the position of the bulbs/ sun.
+        @param start: initial index of light components
+        @param end: final index of light components
+        @param vec: list of component
+        @param ViewPrj: view projection matrix
+        @param currentImage: scene shown 
+        @param traslation: translation of the luminous object if necessary
+        @param flag: Signal if the light color has changed 
+        @param colorLught: new light color
+    */
     void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation, bool flag, vec4 colorLight) {
         EmissionUniformBufferObject eubo{};
         EmissionColorUniformBuffer ecubo{};
@@ -1093,11 +1112,12 @@ protected:
         }
     }
 
+
     void buildApartment(int currentImage, mat4 ViewPrj) {
         ApartmentUniBuffer tubo{};
 
         tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
-        tubo.lightDir = vec3(0.0f, -1.0f, 0.0f);
+        tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
         tubo.lightPos = vec3(202.0f, 2.0f, 202.0f);
         tubo.eyePos = CamPos;
         DSApartmentLight.map(currentImage, &tubo, 0);
@@ -1107,6 +1127,13 @@ protected:
         fillEmissionBuffer(apartmentSize - 1, apartmentSize, Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
     }
 
+    /*
+        Builds the shop. 
+        Creates the four lights via the emission pipeline, 
+        while the lighting is given by spot light and lambert  
+        @param currentImage: current scene
+        @param ViewPrj: view projection matrix
+    */
     void buildShop(int currentImage, mat4 ViewPrj) {
         spotLightUBO subo{};
         for (int i = 0; i < 4; i++) {
@@ -1126,6 +1153,13 @@ protected:
         fillEmissionBuffer(shopSize - 4, shopSize, Shop, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
     }
 
+    /*
+        Builds the main city and the sun. 
+        It uses two pipelines, one for the sun’s emission and one for the main components exploiting blinn. 
+        @param currentImage: current scene 
+        @param ViewPrj: view projection matrix
+        @param deltaT: time difference from last update
+    */
     void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
         BlinnUniformBufferObject BlinnUbo{};
 

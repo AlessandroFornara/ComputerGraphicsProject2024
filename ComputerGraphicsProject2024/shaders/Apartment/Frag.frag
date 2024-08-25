@@ -12,41 +12,24 @@ layout(set = 1, binding = 1) uniform sampler2D tex;
 layout(set = 0, binding = 0) uniform ToonUniformBufferObject {
 	vec3 lightDir;
 	vec3 lightColor;
-	vec3 lightpos;
+	vec3 lightPos;
 	vec3 eyePos;
 	vec3 diffSpecJolly;
 }tubo;
 
-vec3 diffuseWithToon(vec3 Norm, vec3 lightdir, vec3 color){
-	float percentage;
-	
-	float cosAlpha = dot(tubo.lightDir, Norm);
-	
-	if(cosAlpha == 0.0){
-		percentage = 0.5;
-	}else if(cosAlpha == 1.0){
-		percentage = 0.2;
-	}else if(cosAlpha == -1.0){
-		percentage = 0.8;
-	}
-		
-	return color * percentage;
+vec3 diffuse(vec3 Norm, vec3 lightPos, vec3 Color, vec3 fragmentPosition) {
+    vec3 direction = normalize(lightPos - fragmentPosition);
+    vec3 diffuse = Color * clamp(dot(Norm, direction), 0, 1);
+    return diffuse;
 }
 
-vec3 spectPhon(vec3 Norm, vec3 eyeDir, vec3 color){
-	if(Norm.y == 1.0f){
-		vec3 direction = normalize(tubo.lightpos - fragPos);
-		vec3 f_specular = color * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0, 1), 10.0f);
-		return color * f_specular;
-	}
-	return vec3(0.0, 0.0, 0.0);
-}
+
 
 void main() {
 	vec3 Albedo = texture(tex, fragUV).rgb;
 	vec3 Norm = normalize(fragNorm);
-	vec3 diffElement = diffuseWithToon( normalize(fragNorm), tubo.lightDir , Albedo);
-	vec3 speElement = spectPhon(normalize(fragNorm), normalize(tubo.eyePos - fragPos), vec3(0.6, 0.6, 0.6));
-	vec3 col  =  (diffElement+speElement) * tubo.lightColor.xyz;
-	outColor = vec4(col, 1.0f);	
+	
+	vec3 diff = diffuse(Norm, tubo.lightpos ,tubo.lightColor, fragPos);
+	
+	outColor = vec4(Albedo * diff, 1.0f);	
 }
