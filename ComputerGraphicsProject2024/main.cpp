@@ -395,10 +395,10 @@ protected:
             {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1}
             });
         DSLShopLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(spotLightUBO), 1 } }
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(spotLightUBO), 1 } }
         );
         DSLApartmentLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL, sizeof(ApartmentUniBuffer), 1 }
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(ApartmentUniBuffer), 1 }
             });
 
         DSLemission.init(this, {
@@ -424,6 +424,8 @@ protected:
         PipEmission.init(this, &VDemission, "shaders/generalEmissionVert.spv", "shaders/generalEmissionFrag.spv", { &DSLemission });
         PipApartment.init(this, &VDWorld, "shaders/Apartment/Vert.spv", "shaders/Apartment/Frag.spv", { &DSLApartmentLight, &DSLMatricesAndTextures });
 
+        //first elements are "normal" components,the seconds are light (emission components)
+        // 
         //City
         int i = 0;
         for (; i < citySize - 1; i++) {
@@ -1028,6 +1030,7 @@ protected:
         cout << "________________________________________________________________________________" << '\n';
     }
 
+
     void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
         MatricesUniformBufferObject ubo{};
         for (int i = start; i < end; i++) {
@@ -1045,6 +1048,18 @@ protected:
         }
     }
 
+    /*
+        General method for building the lights in the various environments. 
+        It is possible to change the color of the light emitted and also the position of the bulbs/ sun.
+        @param start: initial index of light components
+        @param end: final index of light components
+        @param vec: list of component
+        @param ViewPrj: view projection matrix
+        @param currentImage: scene shown 
+        @param traslation: translation of the luminous object if necessary
+        @param flag: Signal if the light color has changed 
+        @param colorLught: new light color
+    */
     void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation, bool flag, vec4 colorLight) {
         EmissionUniformBufferObject eubo{};
         EmissionColorUniformBuffer ecubo{};
@@ -1069,6 +1084,7 @@ protected:
         }
     }
 
+
     void buildApartment(int currentImage, mat4 ViewPrj) {
         ApartmentUniBuffer tubo{};
 
@@ -1083,6 +1099,13 @@ protected:
         fillEmissionBuffer(apartmentSize - 1, apartmentSize, Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
     }
 
+    /*
+        Builds the shop. 
+        Creates the four lights via the emission pipeline, 
+        while the lighting is given by spot light and lambert  
+        @param currentImage: current scene
+        @param ViewPrj: view projection matrix
+    */
     void buildShop(int currentImage, mat4 ViewPrj) {
         spotLightUBO subo{};
         for (int i = 0; i < 4; i++) {
@@ -1102,6 +1125,13 @@ protected:
         fillEmissionBuffer(shopSize - 4, shopSize, Shop, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
     }
 
+    /*
+        Builds the main city and the sun. 
+        It uses two pipelines, one for the sun’s emission and one for the main components exploiting blinn. 
+        @param currentImage: current scene 
+        @param ViewPrj: view projection matrix
+        @param deltaT: time difference from last update
+    */
     void buildCity(int currentImage, mat4 ViewPrj, float deltaT) {
         BlinnUniformBufferObject BlinnUbo{};
 
