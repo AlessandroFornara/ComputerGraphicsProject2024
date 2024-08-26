@@ -903,9 +903,25 @@ protected:
     }
 
     mat4 updateViewMatrix() {
-        if (isInsideCar)
-            return thirdViewCar ? MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f)
-                                : MakeViewProjectionLookInDirection(CamPos, CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+        if (isInsideCar) {
+            //TODO: FINIRE
+            if (true) {
+               mat4 M = glm::mat4(1.0f / 20.0f, 0, 0, 0, 0, -4.0f / 60.0f, 0, 0, 0, 0, 1.0f / (-500.0f - 500.0f), 0, 0, 0, -500.0f / (-500.0f - 500.0f), 1) *
+                    glm::rotate(glm::mat4(1.0f), glm::radians(35.26f), glm::vec3(1.0f, 0.0f, 0.0f)) *
+                    glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+               mat4 Mv = glm::inverse(
+                   glm::translate(glm::mat4(1), CamPos) *
+                   glm::rotate(glm::mat4(1), radians(0.0f), glm::vec3(0, 1, 0)) *
+                   glm::translate(glm::mat4(1), glm::vec3(0, 2, 8))
+               );
+               return M * Mv;
+            }
+            else if (thirdViewCar)
+                return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+            else
+                return MakeViewProjectionLookInDirection(CamPos, CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
+            
+        }
         else {
             ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
             mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
