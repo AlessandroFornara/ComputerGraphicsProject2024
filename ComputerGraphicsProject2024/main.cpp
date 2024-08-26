@@ -360,14 +360,18 @@ protected:
     const vec3 Cam1stPos = vec3(0.0f, 1.0f, -0.4f);
     vec3 CarPos = vec3(0.0f, 0.6f, -24.0f);
 
+    float lookAng = 0;
+    float DlookAng = 0;
+
     bool autoTime = true;
     bool cityWithLimits = false;
     bool isInsideCar = false;
     bool isJumping = false;
+    bool isometricViewCar = true;
     bool showCommandsGamepad = false;
     bool showCommandsKeyboard = false;
     bool spectatorMode = false;
-    bool thirdViewCar = true;
+    bool thirdViewCar = false;
 
     const float CAR_SPEED = 1.0f;
     const float MAX_CAR_SPEED = 15.0f;
@@ -731,7 +735,7 @@ protected:
 
     void handleCarMovement(vec3 m, vec3 r, float deltaT) {
         float rotAngleCar, carCurrAngle = CityComponents[0].angle[0];
-
+        
         moveSpeed = accelerateCar(moveSpeed, m.z);
         m.z = -m.z;
         vec3 tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
@@ -747,7 +751,13 @@ protected:
         CityComponents[0].pos = CarPos;
         CityComponents[0].angle[0] += rotAngleCar;
 
-        if (thirdViewCar) {
+        if (isometricViewCar) {
+            lookAng -= r.y * radians(360.0f) * deltaT;
+            lookAng = (lookAng < -3.1416) ? lookAng + 2 * 3.1416 : ((lookAng > 3.1416) ? lookAng - 2 * 3.1416 : lookAng);
+            DlookAng = 3.1416 / 2 * round(2 * lookAng / 3.1416);
+            CamPos = CarPos;
+        }
+        else if (thirdViewCar) {
             CamYaw += ROT_SPEED * deltaT * r.y;
             CamPitch -= ROT_SPEED * deltaT * r.x;
             CamDist -= moveSpeed * deltaT * m.y;
@@ -905,17 +915,8 @@ protected:
     mat4 updateViewMatrix() {
         if (isInsideCar) {
             //TODO: FINIRE
-            if (true) {
-               mat4 M = glm::mat4(1.0f / 20.0f, 0, 0, 0, 0, -4.0f / 60.0f, 0, 0, 0, 0, 1.0f / (-500.0f - 500.0f), 0, 0, 0, -500.0f / (-500.0f - 500.0f), 1) *
-                    glm::rotate(glm::mat4(1.0f), glm::radians(35.26f), glm::vec3(1.0f, 0.0f, 0.0f)) *
-                    glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-               mat4 Mv = glm::inverse(
-                   glm::translate(glm::mat4(1), CamPos) *
-                   glm::rotate(glm::mat4(1), radians(0.0f), glm::vec3(0, 1, 0)) *
-                   glm::translate(glm::mat4(1), glm::vec3(0, 2, 8))
-               );
-               return M * Mv;
-            }
+            if (isometricViewCar)
+                return makeViewProjectionIsometric(CamPos, 20.0f, Ar, -500.0f, 500.0f);
             else if (thirdViewCar)
                 return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
             else
@@ -928,6 +929,18 @@ protected:
             M[1][1] *= -1;
             return M * ViewMatrix;
         }
+    }
+
+    mat4 makeViewProjectionIsometric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
+        mat4 M = glm::mat4(1.0f/halfWidth, 0, 0, 0, 0, -Ar/halfWidth, 0, 0, 0, 0, 1.0f /(nearPlane - farPlane), 0, 0, 0, nearPlane/(nearPlane - farPlane), 1) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(35.26f), glm::vec3(1.0f, 0.0f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        mat4 Mv = glm::inverse(
+            glm::translate(glm::mat4(1), Pos) *
+            glm::rotate(glm::mat4(1), DlookAng, glm::vec3(0, 1, 0)) *
+            glm::translate(glm::mat4(1), glm::vec3(0, 2, 8))
+        );
+        return M * Mv;
     }
 
     mat4 MakeViewProjectionLookAt(vec3 Pos, vec3 Target, vec3 Up, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
