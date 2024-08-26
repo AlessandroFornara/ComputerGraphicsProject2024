@@ -19,10 +19,19 @@ layout(set = 0, binding = 0) uniform spotLightUBO {
 layout(set = 1, binding = 1) uniform sampler2D tex;
 
 
+vec3 spot(vec3 lightPos, vec3 fragPos, vec3 lightDir, vec3 lightColor) {
+	vec3 L0 = lightColor * pow( (subo.InOutDecayTarget.w / distance(lightPos, fragPos) ), subo.InOutDecayTarget.z);
+	float alfa = dot(normalize(lightPos-fragPos), lightDir);
+	float cout = subo.InOutDecayTarget.y;
+	float cin = subo.InOutDecayTarget.x;
+	float cosalfa = alfa;
+	return L0*(1.0-clamp((cosalfa-cout)/(cin - cout), 0.0f, 1.0f));
+}
+
 vec3 spot_light_color(vec3 lightPos, vec3 pos, vec3 lightDir, vec3 lightColor) {
     vec3 L0 = lightColor * pow(subo.InOutDecayTarget.w / length(pos - lightPos), subo.InOutDecayTarget.z);
     float clampValue = clamp((dot(normalize(lightPos - pos), lightDir) - subo.InOutDecayTarget.y) / (subo.InOutDecayTarget.x - subo.InOutDecayTarget.y), 0.0f, 1.0f);
-    return L0 * clampValue;
+    return vec3(1.0f) * clampValue;
 }
 
 vec3 lambertDiffuse(vec3 Norm, vec3 lightPos, vec3 Color, vec3 fragmentPosition) {
@@ -52,9 +61,9 @@ void main() {
     for (int i = 0; i < 4; ++i) {
         diffSpot[i] = lambertDiffuse(norm, subo.lightPos[i], Albedo, fragPos);
         spec[i] = phongSpecular(norm, subo.lightPos[i], specularColor, EyeDir);
-        spotColor[i] = spot_light_color(subo.lightPos[i], fragPos, subo.lightDir[i], subo.lightColor[i]);
-        finalResult += (spec[i]+diffSpot[i])*spotColor[i] ;
+        spotColor[i] = spot(subo.lightPos[i], fragPos, subo.lightDir[i], subo.lightColor[i]);
+        finalResult += (diffSpot[i]+spec[i]) * spotColor[i] ;
     }
 	
-    outColor = vec4(finalResult, 1.0f) + vec4( vec3(0.1f, 0.1f, 0.1f) * Albedo, 1.0f); 
+    outColor = vec4(finalResult, 1.0f) + vec4( vec3(0.2f, 0.2f, 0.2f) * Albedo, 1.0f); 
 }
