@@ -200,7 +200,7 @@ vector<Component> Shop = {
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     
     //LAMPADINE
-    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ,{100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
@@ -208,7 +208,7 @@ vector<Component> Shop = {
 };
 
 vector<Component> CityComponents = {
-    {"models/apecar.obj", "textures/apecar.png",OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
+    {"models/ape2.obj", "textures/trasparent.png",OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
     
     {"models/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
     {"models/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
@@ -979,6 +979,11 @@ protected:
         return vec3(cam.z, cam.y, cam.x);
     }
 
+    /*
+        This method allows you to enter by setting the correct scene 
+        @param ty: scene
+        @param cor: coordinates of the interior of buildings 
+    */
     void goTo(Scene ty, vec3 cor) {
         CamPos = cor;
         currentScene = ty;
@@ -986,11 +991,16 @@ protected:
         RebuildPipeline();
     }
 
+    /*
+        This method exit from apartment or shop
+        @param c: city's position
+    */
     void exit(vec3 c) {
         CamPos = c;
         currentScene = CITY;
         RebuildPipeline();
     }
+
 
     float computeHeight(vec3 cam) {
         if(cam.z >= -11.57 && cam.z <= 3.46) {
@@ -1007,12 +1017,16 @@ protected:
     }
 
     /*
-      * Deve essere passato in ingresso la variabile "cameraPosition" e "cameraAngle" che sono presenti nella funzione updateUniformBuffer.
-      * Le variabili x1,x2,z invece sono rispettivamente la coordinita più a sinistra dell'oggetto, più a destra (dimensioni del modello) e la sua profondità (posizione
-      * in cui è rispetto asse Z).
-      * Per avviare questo metodo devi immaginarti l'oggetto dritto, senza alcuna rotazione, prima di effettuare effettivamente il check infatti raddrizzo tutto.
-      * Ecco spiegato il motivo di "modelRotation", mi serve per raddrizzare
-      */
+        Method for interacting with objects. Each time the "k" button is pressed, the method checks the camera’s position and angle to see if it can interact. 
+        The object with which you want to interact is placed along the x-axis, otherwise it is necessary to invert the coordinates. 
+        The method defines an angle within which the object is clickable based on its distance from it. 
+        @param camera position: camera position
+        @param camera angle: camera angle
+        @param x1: left end point object
+        @param x2: right end point object
+        @param z: deep object
+        @param switchView: true if z of the object is lower than camera
+    */
     bool checkSingleDoor(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z, bool switchView) {
         float Zmax, Zmin;
         if (switchView) {
@@ -1032,16 +1046,8 @@ protected:
         center = (x2 + x1) / 2;
         halfSide = (x2 - x1) / 2;
         distance = sqrt(pow(center - cameraPosition.x, 2) + pow(Zmin - Zmax, 2));
-        /*
-        cout << "Center: " << center << '\n';
-        cout << "X: " << cameraPosition.x << '\n';
-        cout << "Zmin: " << Zmin << '\n';
-        cout << "Zmax: " << Zmax << '\n';
-        cout << "distance: " << distance << '\n';
-        */
         if (distance < minDistance && cameraPosition.x >= x1 && cameraPosition.x <= x2 && Zmin < Zmax) {
             alpha = 60 - (Zmax - Zmin) / minDistance * 60;
-            //cout << "ALPHA: " << alpha <<'\n';
             if (center < cameraPosition.x) {
                 beta = alpha * (cameraPosition.x - center) / halfSide;
                 left = alpha + beta;
@@ -1052,12 +1058,14 @@ protected:
                 left = alpha - beta;
                 right = alpha + beta / 2;
             }
-            //cout << "ANGOLO VA TRA: " << left << " - " << 360 - right << ", Angolo attuale: " << cameraAngle << '\n';
             return ((cameraAngle < left && cameraAngle >= 0) || (cameraAngle <= 360 && cameraAngle > (360 - right)));
         }
         return false;
     }
 
+    /* This method print the coordinates
+        @param camAngle: camera's angle
+    */
     void printCordinates(float camAngle) {
         float adjustedAngle;
         if (camAngle > 0) {
@@ -1073,7 +1081,15 @@ protected:
         cout << "________________________________________________________________________________" << '\n';
     }
 
-
+    /*
+        This method places every object in the world, generalizing the function of positioning an object
+        @param start: initial index of light components
+        @param end: final index of light components
+        @param vec: list of component
+        @param ViewPrj: view projection matrix
+        @param currentImage: scene shown 
+        @param traslation: translation of the luminous object if necessary
+    */
     void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
         MatricesUniformBufferObject ubo{};
         for (int i = start; i < end; i++) {
@@ -1127,8 +1143,13 @@ protected:
         }
     }
 
-
-
+    /*
+     Builds the apartment. 
+        Creates one light via the emission pipeline, 
+        while the lighting is given by Oner-nayar and phnog  
+        @param currentImage: current scene
+        @param ViewPrj: view projection matrix
+    */
     void buildApartment(int currentImage, mat4 ViewPrj) {
         ApartmentUniBuffer subo{};
 
@@ -1238,7 +1259,9 @@ protected:
 
 };
 
-
+/*
+    Main
+*/
 int main() {
     ComputerGraphicsProject2024 app;
 
