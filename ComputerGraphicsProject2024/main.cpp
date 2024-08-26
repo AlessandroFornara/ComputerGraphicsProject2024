@@ -384,8 +384,8 @@ protected:
     bool showStartText = true;
 
     void setWindowParameters() {
-        windowWidth = 1600;
-        windowHeight = 1200;
+        windowWidth = 800;
+        windowHeight = 600;
         windowTitle = "ComputerGraphicsProject2024";
         windowResizable = GLFW_TRUE;
         initialBackgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
