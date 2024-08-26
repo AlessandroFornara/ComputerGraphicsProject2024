@@ -315,6 +315,9 @@ vector<Component> CityComponents = {
     
 };
 
+vector<vec3> StreetLightsPositions = {
+};
+
 class ComputerGraphicsProject2024 : public BaseProject {
 protected:
 
