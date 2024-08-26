@@ -1213,14 +1213,16 @@ protected:
         spotLightUBO subo{};
         for (int i = 0; i < 4; i++) {
             subo.lightPos[i] = Shop[23 + i].pos;
-            subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
-            subo.lightColor[i] = vec3(0.6f, 0.6f, 0.6f);
+            subo.lightPos[i].y = 1.0f;
+            subo.lightDir[i] = vec3(0.0, 1.0, 0.0);
+            subo.lightColor[i] = vec3(0.8f, 0.8f, 0.8f);
         }
-        subo.InOutDecayTarget.x = 0.90f;
-        subo.InOutDecayTarget.y = 0.92f;
+        subo.InOutDecayTarget.x = 0.7f;
+        subo.InOutDecayTarget.y = 0.8f;
         subo.InOutDecayTarget.z = 2.0f;
-        subo.InOutDecayTarget.w = 2.0f;
-        subo.eyePos = CamPos;
+        subo.InOutDecayTarget.w = 1.8f;
+
+        subo.eyePos = vec3(inverse(ViewMatrix) * vec4(0, 0, 0, 1));
         DSShopLight.map(currentImage, &subo, 0);
 
         fillUniformBuffer(0, shopSize - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
