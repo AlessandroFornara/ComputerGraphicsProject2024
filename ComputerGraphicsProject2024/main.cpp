@@ -83,10 +83,12 @@ struct BlinnMatParUniformBufferObject {
 
 struct ApartmentUniBuffer {
     alignas(16) vec3 lightDir;
-    alignas(16) vec3 lightColor;
     alignas(16) vec3 lightPos;
+    alignas(16) vec3 lightColor;
     alignas(16) vec3 eyePos;
+    alignas(16) vec3 rff;
 };
+
 
 struct Component {
     const string ObjPath;
@@ -145,7 +147,6 @@ vector<Component> Apartment = {
      {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
      {"models/Apartment/picture_049_Mesh.465.mgcg", "textures/Textures.png", MGCG,{202.0f, 0.75f, 205.9f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-     {"models/Apartment/musical_instrument_009_Mesh.095.mgcg", "textures/Textures.png", MGCG,{199.0, -1.0f, 202.0f}, {2.0f, 5.0f, 5.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f} },
      {"models/Apartment/office_chair_021_Mesh.922.mgcg", "textures/Textures.png", MGCG,{204, -1.0f, 201.0f}, {2.0f, 2.0f, 2.0f}, {{0.0, 1.0, 0.0}}, {-45.0f} },
 
      {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
@@ -1127,19 +1128,26 @@ protected:
     }
 
 
-    void buildApartment(int currentImage, mat4 ViewPrj) {
-        ApartmentUniBuffer tubo{};
 
-        tubo.lightColor = vec3(0.5f, 0.5f, 0.5f);
-        tubo.lightDir = vec3(0.0f, 1.0f, 0.0f);
-        tubo.lightPos = vec3(202.0f, 2.0f, 202.0f);
-        tubo.eyePos = CamPos;
-        DSApartmentLight.map(currentImage, &tubo, 0);
+    void buildApartment(int currentImage, mat4 ViewPrj) {
+        ApartmentUniBuffer subo{};
+
+        subo.lightPos = vec3(202.0, 1.75, 202.0);
+        subo.lightDir = vec3(0.0, -1.0, 0.0);
+        subo.lightColor = vec3(0.6f, 0.6f, 0.6f);
+        subo.eyePos = CamPos;
+        subo.rff.x = 0.2;
+        subo.rff.y = 180.0f;
+
+        DSShopLight.map(currentImage, &subo, 0);
+
+        DSApartmentLight.map(currentImage, &subo, 0);
 
         fillUniformBuffer(0, apartmentSize - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
         fillEmissionBuffer(apartmentSize - 1, apartmentSize, Apartment, ViewPrj, currentImage, vec3(0.0f), false, vec4(0.0));
     }
+
 
     /*
         Builds the shop. 
