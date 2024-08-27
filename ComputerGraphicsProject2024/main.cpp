@@ -192,7 +192,7 @@ vector<Component> Shop = {
     {"models/Shop/door_011_Mesh.116.mgcg", "textures/Textures.png",MGCG, {101.0f, -1.0f, 105.7f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
     {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{105.7f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{98.3f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-
+    
     //LAMPADE 
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -1294,7 +1294,7 @@ protected:
         for (int i = 0; i < 4; i++) {
             subo.lightPos[i] = Shop[23 + i].pos;
             subo.lightPos[i].y = 1.0f;
-            subo.lightDir[i] = vec3(0.0, 1.0, 0.0);
+            subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
             subo.lightColor[i] = vec3(0.8f, 0.8f, 0.8f);
         }
         subo.InOutDecayTarget.x = 0.7f;
