@@ -367,13 +367,13 @@ protected:
     bool cityWithLimits = false;
     bool isInsideCar = false;
     bool isJumping = false;
-    bool isometricViewCar = true;
+    bool isometricViewCar = false;
     bool dimetricViewCar = false;
     bool trimetricViewCar = false;
     bool showCommandsGamepad = false;
     bool showCommandsKeyboard = false;
     bool spectatorMode = false;
-    bool thirdViewCar = false;
+    bool thirdViewCar = true;
 
     const float CAR_SPEED = 1.0f;
     const float MAX_CAR_SPEED = 15.0f;
@@ -807,9 +807,6 @@ protected:
         if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
-        if (glfwGetKey(window, GLFW_KEY_B)) {
-            thirdViewCar = false;
-        }
         if (glfwGetKey(window, GLFW_KEY_G)) {
             showCommandsKeyboard = false;
             RebuildPipeline();
@@ -829,9 +826,35 @@ protected:
                 float tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
                 checkDoors(cameraPosition, 360.0 + tmp);
             }
+            //TODO: controllare questi rami if; forse meglio else if
             if (distance(CamPos, CarPos) < 2.0f) {
                 enterCar();
             } 
+        }
+        if (isInsideCar) {
+            if (glfwGetKey(window, GLFW_KEY_1)) {
+                isometricViewCar = true;
+                dimetricViewCar = false;
+                trimetricViewCar = false;
+            }
+            else if (glfwGetKey(window, GLFW_KEY_2)) {
+                isometricViewCar = false;
+                dimetricViewCar = true;
+                trimetricViewCar = false;
+            }
+            else if (glfwGetKey(window, GLFW_KEY_3)) {
+                isometricViewCar = false;
+                dimetricViewCar = false;
+                trimetricViewCar = true;
+            }
+            else if (glfwGetKey(window, GLFW_KEY_V)) {
+                thirdViewCar = true;
+                resetParallelProjections();
+            }
+            else if (glfwGetKey(window, GLFW_KEY_B)) {
+                thirdViewCar = false;
+                resetParallelProjections();
+            }
         }
         if (glfwGetKey(window, GLFW_KEY_L)) {
             printCordinates(cameraAngle);
@@ -841,9 +864,6 @@ protected:
         }
         if (glfwGetKey(window, GLFW_KEY_P) && !isInsideCar && currentScene == CITY) {
             spectatorMode = true;
-        }
-        if (glfwGetKey(window, GLFW_KEY_V)) {
-            thirdViewCar = true;
         }
 
         if (connected) {
@@ -886,6 +906,12 @@ protected:
                 thirdViewCar = true;
             }        
         }
+    }
+
+    void resetParallelProjections() {
+        isometricViewCar = false;
+        dimetricViewCar = false;
+        trimetricViewCar = false;
     }
 
     /*
@@ -948,6 +974,7 @@ protected:
         cityWithLimits = false;
         CamPos = CarPos + (-2.0f, 0.0f, -2.0f);
         CamPos.y = 1.0f;
+        resetParallelProjections();
     }
 
     /*
