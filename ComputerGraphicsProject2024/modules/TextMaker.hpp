@@ -1,7 +1,7 @@
 
 struct SingleText {
 	int usedLines;
-	const char *l[11];
+	const char *l[13];
 	int start;
 	int len;
 	float offsetX;

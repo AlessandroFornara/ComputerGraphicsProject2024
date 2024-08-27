@@ -13,10 +13,10 @@ vector<SingleText> outText = {
       "Riccardo Figini"
   }, 0, 0, 0, 0, 0},
   {2, {
-      "Press H (Keyboard) / Y (Gamepad)", 
+      "Press H (Keyboard) / START (Gamepad)", 
       "to see the command list"
   }, 0, 0, 0, 0, 1},
-  {11, {
+  {13, {
       "Press SHIFT to run",
       "Press SPACE to jump",
       "Press L to print coordinates",
@@ -24,23 +24,27 @@ vector<SingleText> outText = {
       "Press O to exit spectator mode",
       "Press K to check doors / enter car",
       "Press J to exit car",
-      "Press B to switch to first-person view in the car",
-      "Press V to switch to third-person view in the car",
+      "In the car:",
+      "Press B to switch to first-person view",
+      "Press V to switch to third-person view",
+      "Press 1/2/3 to switch to isometric/dimetric/trimetric view",
       "Press G to close this text",
       "Press ESC to exit"
   }, 0, 0, 0, 0, 1},
-  {11, {
+  {13, {
       "Press RIGHT BUMPER to run",
       "Press LEFT BUMPER to jump",
-      "Press BACK BUTTON to print coordinates",
       "Press D-PAD UP to enter spectator mode",
       "Press D-PAD DOWN to exit spectator mode",
       "Press A to interact check doors / enter car",
       "Press B to exit car", 
-      "Press X to close this text",
+      "Press BACK to close this text",
       "In the car:",
       "Press D-PAD LEFT to switch to first-person view",
-      "Press D-PAD RIGHT to switch to third-person view"   
+      "Press D-PAD RIGHT to switch to third-person view",
+      "Press X to switch to isometric view",
+      "Press Y to switch to dimetric view",
+      "Press RIGHT-THUMB to switch to dimetric view"
   }, 0, 0, 0, 0, 1}
 };
 
@@ -820,7 +824,6 @@ protected:
             exitCar();
         }
         if (glfwGetKey(window, GLFW_KEY_K) && !isInsideCar) {
-            //TODO: controllare questi rami if; forse meglio else if
             if (distance(CamPos, CarPos) < 2.0f) {
                 enterCar();
             }
@@ -872,14 +875,11 @@ protected:
         }
 
         if (connected) {
-            if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] == GLFW_PRESS) {
-                thirdViewCar = false;
-            }
-            if (state.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS) {
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS) {
                 showCommandsGamepad = false;
                 RebuildPipeline();
             }
-            if (state.buttons[GLFW_GAMEPAD_BUTTON_Y] == GLFW_PRESS) {
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_START] == GLFW_PRESS) {
                 showCommandsGamepad = true;
                 showCommandsKeyboard = false;
                 RebuildPipeline();
@@ -900,18 +900,40 @@ protected:
                     }
                 }
             }
-            if (state.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS) {
-                printCordinates(cameraAngle);
+            if (isInsideCar) {
+                if (state.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS) {
+                    isometricViewCar = true;
+                    dimetricViewCar = false;
+                    trimetricViewCar = false;
+                    thirdViewCar = false;
+                }
+                else if (state.buttons[GLFW_GAMEPAD_BUTTON_Y] == GLFW_PRESS) {
+                    isometricViewCar = false;
+                    dimetricViewCar = true;
+                    trimetricViewCar = false;
+                    thirdViewCar = false;
+                }
+                else if (state.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_THUMB] == GLFW_PRESS) {
+                    isometricViewCar = false;
+                    dimetricViewCar = false;
+                    trimetricViewCar = true;
+                    thirdViewCar = false;
+                }
+                else if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] == GLFW_PRESS) {
+                    thirdViewCar = true;
+                    resetParallelProjections();
+                }
+                else if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] == GLFW_PRESS) {
+                    thirdViewCar = false;
+                    resetParallelProjections();
+                }
             }
             if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] == GLFW_PRESS) {
                 spectatorMode = false;
             }
             if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP] == GLFW_PRESS && !isInsideCar && currentScene == CITY) {
                 spectatorMode = true;
-            }
-            if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] == GLFW_PRESS) {
-                thirdViewCar = true;
-            }        
+            }    
         }
     }
 
