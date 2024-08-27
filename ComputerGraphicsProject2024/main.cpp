@@ -1062,6 +1062,11 @@ protected:
                 || (newPos.x >= 12.5f && newPos.x <= 13.5f && newPos.z >= -27.0f && newPos.z <= -21.0f) //10
                 || (newPos.x >= -16.0f && newPos.x < 12.5f && newPos.z >= -28.0f && newPos.z <= -21.0f); //11
         }
+        else if (currentScene == CITY && !cityWithLimits) {
+            return (newPos.x > -20.0 && newPos.x < 68.0 && newPos.z>-92.0 && newPos.z <= -4.0) //1
+                || (newPos.x > 37.0 && newPos.x < 68.0 && newPos.z >= -4.0 && newPos.z < 12.0) //2
+                || (newPos.x > -20.0 && newPos.x < -4.0 && newPos.z >= -4.0 && newPos.z < 4.0);//3
+        }
         return true;
     }
 
