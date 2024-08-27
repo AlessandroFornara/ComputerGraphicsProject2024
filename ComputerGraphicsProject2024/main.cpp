@@ -368,6 +368,8 @@ protected:
     bool isInsideCar = false;
     bool isJumping = false;
     bool isometricViewCar = true;
+    bool dimetricViewCar = false;
+    bool trimetricViewCar = false;
     bool showCommandsGamepad = false;
     bool showCommandsKeyboard = false;
     bool spectatorMode = false;
@@ -956,6 +958,10 @@ protected:
             //TODO: FINIRE
             if (isometricViewCar)
                 return makeViewProjectionIsometric(CamPos, 20.0f, Ar, -500.0f, 500.0f);
+            else if (dimetricViewCar)
+                return makeViewProjectionDimetric(CamPos, 20.0f, Ar, -500.0f, 500.0f);
+            else if (trimetricViewCar)
+                return makeViewProjectionTrimetric(CamPos, 20.0f, Ar, -500.0f, 500.0f);
             else if (thirdViewCar)
                 return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
             else
@@ -979,17 +985,40 @@ protected:
         @param farPlane: far plane
     */
     mat4 makeViewProjectionIsometric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
-        mat4 M = glm::mat4(1.0f/halfWidth, 0, 0, 0, 0, -Ar/halfWidth, 0, 0, 0, 0, 1.0f /(nearPlane - farPlane), 0, 0, 0, nearPlane/(nearPlane - farPlane), 1) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(35.26f), glm::vec3(1.0f, 0.0f, 0.0f)) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        mat4 Mv = glm::inverse(
-            glm::translate(glm::mat4(1), Pos) *
-            glm::rotate(glm::mat4(1), DlookAng, glm::vec3(0, 1, 0)) *
-            glm::translate(glm::mat4(1), glm::vec3(0, 2, 8))
+        mat4 M = mat4(1.0f/halfWidth, 0, 0, 0, 0, -Ar/halfWidth, 0, 0, 0, 0, 1.0f /(nearPlane - farPlane), 0, 0, 0, nearPlane/(nearPlane - farPlane), 1) *
+            rotate(mat4(1.0f), radians(35.26f), vec3(1.0f, 0.0f, 0.0f)) *
+            rotate(mat4(1.0f), radians(45.0f), vec3(0.0f, 1.0f, 0.0f));
+        mat4 Mv = inverse(
+            translate(mat4(1), Pos) *
+            rotate(mat4(1), DlookAng, vec3(0, 1, 0)) *
+            translate(mat4(1), vec3(0, 2, 8))
         );
         return M * Mv;
     }
 
+    mat4 makeViewProjectionDimetric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
+        mat4 M = mat4(1.0f/halfWidth,0,0,0, 0,-Ar/halfWidth,0,0, 0,0,1.0f/(nearPlane - farPlane),0, 0,0,nearPlane/(nearPlane - farPlane),1.0f) *
+            rotate(mat4(1.0f), radians(20.0f), vec3(1.0f, 0.0f, 0.0f)) *
+            rotate(mat4(1.0f), radians(45.0f), vec3(0.0f, 1.0f, 0.0f));
+        mat4 Mv = inverse(
+            translate(mat4(1), Pos) *
+            rotate(mat4(1), DlookAng, vec3(0, 1, 0)) *
+            translate(mat4(1), vec3(0, 2, 8))
+        );
+        return M * Mv;
+    }
+
+    mat4 makeViewProjectionTrimetric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
+        mat4 M = mat4(1.0f / halfWidth, 0, 0, 0, 0, -Ar / halfWidth, 0, 0, 0, 0, 1.0f / (nearPlane - farPlane), 0, 0, 0, nearPlane / (nearPlane - farPlane), 1.0f) *
+            rotate(mat4(1.0f), radians(30.0f), vec3(1.0f, 0.0f, 0.0f)) *
+            rotate(mat4(1.0f), radians(60.0f), vec3(0.0f, 1.0f, 0.0f));
+        mat4 Mv = inverse(
+            translate(mat4(1), Pos) *
+            rotate(mat4(1), DlookAng, vec3(0, 1, 0)) *
+            translate(mat4(1), vec3(0, 2, 8))
+        );
+        return M * Mv;
+    }
     /*
         It defines the view projection matrix with look at and perspective
         @param Pos: camera position
