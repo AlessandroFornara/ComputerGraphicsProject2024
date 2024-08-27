@@ -695,6 +695,14 @@ protected:
         }
     }
 
+    /*
+       Manage the player's movement when outside the vehicle
+       @param m: player moviment
+       @param r: player rotation
+       @param deltaT: time difference since last update
+       @param connected: indicates if the player is using a joystick
+       @param state: handles joystick's buttons
+   */
     void handleWalkingMovement(vec3 m, vec3 r, float deltaT, GLFWgamepadstate state, int connected) {
         moveSpeed = WALK_SPEED;
         bool isShiftPressed = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
@@ -733,6 +741,12 @@ protected:
             jump(computeHeight(CamPos));
     }
 
+    /*
+        Manage the player's movement when inside the vehicle
+        @param m: player moviment
+        @param r: player rotation
+        @param deltaT: time difference since last update
+    */
     void handleCarMovement(vec3 m, vec3 r, float deltaT) {
         float rotAngleCar, carCurrAngle = CityComponents[0].angle[0];
         
@@ -780,6 +794,13 @@ protected:
         }
     }
 
+    /*
+        It handles every user input from keyboard or joystick
+        @param cameraPosition: camera position
+        @param cameraAngle: camera angle
+        @param connected: indicates if the player is using a joystick
+        @param state: handles joystick's buttons 
+    */
     void HandleUserInputs(vec3 cameraPosition, float cameraAngle, GLFWgamepadstate state, int connected) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window, GL_TRUE);
@@ -865,6 +886,11 @@ protected:
         }
     }
 
+    /*
+        It handles the acceleration of the car, the speed increases up to a certain limit
+        @param speed: actual speed
+        @param acc: acceleration ratio
+    */
     float accelerateCar(float speed, float acc) {
         float speed2;
         if (acc < 0)
@@ -884,6 +910,10 @@ protected:
         return speed2;
     }
 
+    /*
+        It Allows the player to jump
+        @param initialHeight: initial height of the jump
+    */
     void jump(float initialHeight) {
         if (isJumping) {
             CamPos.y += JUMP_SPEED * jumpDirection;
@@ -897,6 +927,9 @@ protected:
         }
     }
 
+    /*
+        It enters the player in the car    
+    */
     void enterCar() {
         isInsideCar = true;
         moveSpeed = CAR_SPEED;
@@ -904,6 +937,9 @@ protected:
         spectatorMode = false;
     }
 
+    /*
+        It exits the player from the car 
+    */
     void exitCar() {
         isInsideCar = false;
         //thirdViewCar = true;
@@ -912,6 +948,9 @@ protected:
         CamPos.y = 1.0f;
     }
 
+    /*
+        It updates the view matrix according to the user movements 
+    */
     mat4 updateViewMatrix() {
         if (isInsideCar) {
             //TODO: FINIRE
@@ -931,6 +970,14 @@ protected:
         }
     }
 
+    /*
+        It defines the view projection matrix with isometric
+        @param Pos: camera position
+        @param halfWidth: half width
+        param Ar: aspect ratio
+        @param nearPlane: near plane
+        @param farPlane: far plane
+    */
     mat4 makeViewProjectionIsometric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
         mat4 M = glm::mat4(1.0f/halfWidth, 0, 0, 0, 0, -Ar/halfWidth, 0, 0, 0, 0, 1.0f /(nearPlane - farPlane), 0, 0, 0, nearPlane/(nearPlane - farPlane), 1) *
             glm::rotate(glm::mat4(1.0f), glm::radians(35.26f), glm::vec3(1.0f, 0.0f, 0.0f)) *
@@ -943,6 +990,17 @@ protected:
         return M * Mv;
     }
 
+    /*
+        It defines the view projection matrix with look at and perspective
+        @param Pos: camera position
+        @param target: target on the screen (the object that "follow" the camera)
+        @param Up: vertical distance from the target
+        @param Roll: rotation 
+        @param FOVy: field of the view, angle of the frustum 
+        @param ar: aspect ration
+        @param nearPlane: near plane
+        @param far plane: far plane
+    */
     mat4 MakeViewProjectionLookAt(vec3 Pos, vec3 Target, vec3 Up, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
 
         mat4 M = perspective(FOVy, Ar, nearPlane, farPlane);
@@ -954,6 +1012,17 @@ protected:
         return M;
     }
 
+    /*
+        It defines the view - projection matrx with look in direction and perspective
+        @param Pos: position of the camera
+        @param Yaw: rotation on axis y
+        @param Pitch: rotation on axis z
+        @param Roll: rotation on axis x
+        @param FOVy: field of the view, angle of the frustum 
+        @param Ar: aspect ration
+        @param nearPlane: near plane
+        @param farPlane: far plane
+    */
     mat4 MakeViewProjectionLookInDirection(vec3 Pos, float Yaw, float Pitch, float Roll, float FOVy, float Ar, float nearPlane, float farPlane) {
         // Mvp = Mprj * Mv
         mat4 M = perspective(FOVy, Ar, nearPlane, farPlane);
@@ -967,6 +1036,10 @@ protected:
         return M;
     }
 
+    /*
+        It return true if the player enters in a valid zone of the map
+        @param newPos: new position of the player
+    */
     bool checkLimits(vec3 newPos) {
         if (currentScene == SHOP) {
             return (newPos.z > 100.1 && newPos.z <= 105.5 && newPos.x < 105 && newPos.x >= 98.60)
@@ -992,23 +1065,25 @@ protected:
         return true;
     }
 
+    /*
+        This method is called when the player click "k", it checks if he click on something clickable. 
+        It switch x-z coordinates where necessary.
+        @param cameraPosition: camera position
+        @param cameraAngle: camera angle
+    */
     void checkDoors(vec3 cameraPosition, float cameraAngle) {
         //Check porta negozio 
         if (checkSingleDoor(cameraPosition, cameraAngle, 7.5, 8.8, -12.8404, true))
             goTo(SHOP, { 100.0f, 1.0f, 104.0f });
         if (checkSingleDoor(cameraPosition, cameraAngle, 99.63, 100.86, 105, false))
             exit({ 7.0f, 1.0f, -12.0f });
-        vec3 tmpcam = invertXZ(cameraPosition);
+        vec3 tmpcam = vec3(cameraPosition.z, cameraPosition.y, cameraPosition.x);
         if (checkSingleDoor(tmpcam, (cameraAngle-90.0 > 0.0) ? (cameraAngle-90.0) : 360.0 +(cameraAngle-90.0), -15.0f, -12.0f, 23.0f, true)) {
             goTo(APARTMENT, { 198.5f, 1.0f, 198.5f });
         }
         if (checkSingleDoor(tmpcam, (cameraAngle - 90.0 > 0.0) ? (cameraAngle - 90.0) : 360.0 + (cameraAngle - 90.0), 196.70f, 197.90f, 198.2f, true)) {
             exit({ 26.5f, 1.0f, -14.0f });
         }
-    }
-
-    vec3 invertXZ(vec3 cam) {
-        return vec3(cam.z, cam.y, cam.x);
     }
 
     /*
@@ -1049,8 +1124,8 @@ protected:
     }
 
     /*
-        Method for interacting with objects. Each time the "k" button is pressed, the method checks the camera’s position and angle to see if it can interact. 
-        The object with which you want to interact is placed along the x-axis, otherwise it is necessary to invert the coordinates. 
+        Method for interacting with objects. Each time the "k" button is pressed, the method checks the camera’s position and angle to see if the player can interact. 
+        The object with which you want to interact must be placed along the x-axis, otherwise it is necessary to invert the coordinates. 
         The method defines an angle within which the object is clickable based on its distance from it. 
         @param camera position: camera position
         @param camera angle: camera angle

@@ -42,7 +42,7 @@ vec3 lambertDiffuse(vec3 Norm, vec3 lightPos, vec3 Color, vec3 fragmentPosition)
 
 vec3 phongSpecular(vec3 Norm, vec3 lightPos, vec3 specularColor, vec3 eyeDir) {
     vec3 direction = normalize(lightPos - fragPos);
-    vec3 f_specular = specularColor * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0, 1), 150.0f);
+    vec3 f_specular = specularColor * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0, 1), 350.0f);
     return f_specular;
 }
 
@@ -62,7 +62,7 @@ void main() {
         diffSpot[i] = lambertDiffuse(norm, subo.lightPos[i], Albedo, fragPos);
         spec[i] = phongSpecular(norm, subo.lightPos[i], specularColor, EyeDir);
         spotColor[i] = spot(subo.lightPos[i], fragPos, subo.lightDir[i], subo.lightColor[i]);
-        finalResult += (diffSpot[i]+spec[i]) * spotColor[i] ;
+        finalResult += spec[i] + (diffSpot[i]) * spotColor[i] ;
     }
 	
     outColor = vec4(finalResult, 1.0f) + vec4( vec3(0.2f, 0.2f, 0.2f) * Albedo, 1.0f); 
