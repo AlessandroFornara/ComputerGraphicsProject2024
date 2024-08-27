@@ -767,7 +767,7 @@ protected:
         CityComponents[0].pos = CarPos;
         CityComponents[0].angle[0] += rotAngleCar;
 
-        if (isometricViewCar) {
+        if (isometricViewCar || dimetricViewCar || trimetricViewCar) {
             lookAng -= r.y * radians(360.0f) * deltaT;
             lookAng = (lookAng < -3.1416) ? lookAng + 2 * 3.1416 : ((lookAng > 3.1416) ? lookAng - 2 * 3.1416 : lookAng);
             DlookAng = 3.1416 / 2 * round(2 * lookAng / 3.1416);
@@ -836,16 +836,19 @@ protected:
                 isometricViewCar = true;
                 dimetricViewCar = false;
                 trimetricViewCar = false;
+                thirdViewCar = false;
             }
             else if (glfwGetKey(window, GLFW_KEY_2)) {
                 isometricViewCar = false;
                 dimetricViewCar = true;
                 trimetricViewCar = false;
+                thirdViewCar = false;
             }
             else if (glfwGetKey(window, GLFW_KEY_3)) {
                 isometricViewCar = false;
                 dimetricViewCar = false;
                 trimetricViewCar = true;
+                thirdViewCar = false;
             }
             else if (glfwGetKey(window, GLFW_KEY_V)) {
                 thirdViewCar = true;
@@ -974,7 +977,6 @@ protected:
         cityWithLimits = false;
         CamPos = CarPos + (-2.0f, 0.0f, -2.0f);
         CamPos.y = 1.0f;
-        resetParallelProjections();
     }
 
     /*
