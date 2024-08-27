@@ -820,16 +820,18 @@ protected:
             exitCar();
         }
         if (glfwGetKey(window, GLFW_KEY_K) && !isInsideCar) {
-            if (cameraAngle > 0)
-                checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
-            else {
-                float tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
-                checkDoors(cameraPosition, 360.0 + tmp);
-            }
             //TODO: controllare questi rami if; forse meglio else if
             if (distance(CamPos, CarPos) < 2.0f) {
                 enterCar();
-            } 
+            }
+            else{
+                if (cameraAngle > 0)
+                    checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+                else {
+                    float tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
+                    checkDoors(cameraPosition, 360.0 + tmp);
+                }
+            }
         }
         if (isInsideCar) {
             if (glfwGetKey(window, GLFW_KEY_1)) {
@@ -886,14 +888,16 @@ protected:
                 exitCar();
             }
             if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS && !isInsideCar) {
-                if (cameraAngle > 0)
-                    checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
-                else {
-                    float tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
-                    checkDoors(cameraPosition, 360.0 + tmp);
-                }
                 if (distance(CamPos, CarPos) < 2.0f) {
                     enterCar();
+                }
+                else {
+                    if (cameraAngle > 0)
+                        checkDoors(cameraPosition, cameraAngle - 360.0 * floor(cameraAngle / 360.0));
+                    else {
+                        float tmp = cameraAngle - 360.0 * (floor(cameraAngle / 360.0) + 1);
+                        checkDoors(cameraPosition, 360.0 + tmp);
+                    }
                 }
             }
             if (state.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS) {
@@ -973,7 +977,6 @@ protected:
     */
     void exitCar() {
         isInsideCar = false;
-        //thirdViewCar = true;
         cityWithLimits = false;
         CamPos = CarPos + (-2.0f, 0.0f, -2.0f);
         CamPos.y = 1.0f;
