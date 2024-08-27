@@ -1377,13 +1377,13 @@ protected:
         for (int i = 0; i < 4; i++) {
             subo.lightPos[i] = Shop[23 + i].pos;
             subo.lightPos[i].y = 1.0f;
-            subo.lightDir[i] = vec3(0.0, -1.0, 0.0);
+            subo.lightDir[i] = vec3(0.0, 1.0, 0.0);
             subo.lightColor[i] = vec3(0.8f, 0.8f, 0.8f);
         }
-        subo.InOutDecayTarget.x = 0.7f;
-        subo.InOutDecayTarget.y = 0.8f;
-        subo.InOutDecayTarget.z = 2.0f;
-        subo.InOutDecayTarget.w = 1.8f;
+        subo.InOutDecayTarget.x = 0.9f; 
+        subo.InOutDecayTarget.y = 0.7f;  
+        subo.InOutDecayTarget.z = 2.0f;  
+        subo.InOutDecayTarget.w = 2.5f;  
 
         subo.eyePos = vec3(inverse(ViewMatrix) * vec4(0, 0, 0, 1));
         DSShopLight.map(currentImage, &subo, 0);
