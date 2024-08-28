@@ -1005,7 +1005,6 @@ protected:
     */
     mat4 updateViewMatrix() {
         if (isInsideCar) {
-            //TODO: FINIRE
             if (isometricViewCar)
                 return makeViewProjectionIsometric(CamPos, 20.0f, Ar, -500.0f, 500.0f);
             else if (dimetricViewCar)
@@ -1437,7 +1436,14 @@ protected:
         }
 
         BlinnUbo.lightColor = interpolatedColor;
-        BlinnUbo.eyePos = CamPos;
+        if (isometricViewCar || dimetricViewCar || trimetricViewCar) {
+            mat4 inverseView = inverse(ViewPrj);
+            vec3 cameraPosition = vec3(inverseView[3]);
+            BlinnUbo.eyePos = cameraPosition;
+        }
+        else
+            BlinnUbo.eyePos = CamPos;
+
         DSSunLight.map(currentImage, &BlinnUbo, 0);
 
         BlinnMatParUniformBufferObject blinnMatParUbo{};
