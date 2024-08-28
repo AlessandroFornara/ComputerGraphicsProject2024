@@ -86,7 +86,6 @@ struct BlinnMatParUniformBufferObject {
 };
 
 struct ApartmentUniBuffer {
-    alignas(16) vec3 lightDir;
     alignas(16) vec3 lightPos;
     alignas(16) vec3 lightColor;
     alignas(16) vec3 eyePos;
@@ -1344,7 +1343,6 @@ protected:
         ApartmentUniBuffer subo{};
 
         subo.lightPos = vec3(202.0, 1.75, 202.0);
-        subo.lightDir = vec3(0.0, -1.0, 0.0);
         subo.lightColor = vec3(0.6f, 0.6f, 0.6f);
         subo.eyePos = CamPos;
         subo.rff.x = 0.2;

@@ -9,7 +9,6 @@ layout(location = 0) out vec4 outColor;
 
 
 layout(set = 0, binding = 0) uniform ApartmentUniBuffer {
-    vec3 lightDir;
     vec3 lightPos;
     vec3 lightColor;
 	vec3 eyePos;
@@ -62,7 +61,7 @@ void main() {
 	
 	vec3 spec = Specular(norm, subo.lightPos, subo.lightColor ,EyeDir);
 	
-    vec3 finalResult = diff + spec ;
+    vec3 finalResult = (diff + spec)* lightColor * pow( (2.0f / distance(lightPos, fragPos) ), 0.5); ;
 	
-    outColor = vec4(finalResult, 1.0f) ; 
+    outColor = vec4(finalResult + Albedo * 0.1f, 1.0f) ; 
 }
