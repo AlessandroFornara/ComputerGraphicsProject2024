@@ -1355,8 +1355,6 @@ protected:
         subo.rff.x = 0.2;
         subo.rff.y = 180.0f;
 
-        DSShopLight.map(currentImage, &subo, 0);
-
         DSApartmentLight.map(currentImage, &subo, 0);
 
         fillUniformBuffer(0, apartmentSize - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
