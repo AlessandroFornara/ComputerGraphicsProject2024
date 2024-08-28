@@ -357,8 +357,6 @@ protected:
     int const shopSize = Shop.size();
     int const apartmentSize = Apartment.size();
 
-    mat4 ViewMatrix;
-
     vec3 CamPos = vec3(0.0, 1.0, -8.0);
     float CamAlpha = 0.0f, CamBeta = 0.0f, CamRoll = 0.0f, CamDist = 10.0f;
     const vec3 Cam1stPos = vec3(0.0f, 1.0f, -0.4f);
@@ -493,8 +491,6 @@ protected:
         cout << "Uniform Blocks in the Pool  : " << DPSZs.uniformBlocksInPool << "\n";
         cout << "Textures in the Pool        : " << DPSZs.texturesInPool << "\n";
         cout << "Descriptor Sets in the Pool : " << DPSZs.setsInPool << "\n";
-
-        ViewMatrix = translate(mat4(1), -CamPos);
 
         startTime = std::chrono::high_resolution_clock::now();
     }
@@ -1023,7 +1019,7 @@ protected:
             
         }
         else {
-            ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
+            mat4 ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
             mat4 M = perspective(radians(45.0f), Ar, 0.1f, 160.0f);
             M[1][1] *= -1;
             return M * ViewMatrix;
@@ -1383,7 +1379,7 @@ protected:
         subo.InOutDecayTarget.z = 2.0f;  
         subo.InOutDecayTarget.w = 2.5f;  
 
-        subo.eyePos = vec3(inverse(ViewMatrix) * vec4(0, 0, 0, 1));
+        subo.eyePos = CamPos;
         DSShopLight.map(currentImage, &subo, 0);
 
         fillUniformBuffer(0, shopSize - 4, Shop, ViewPrj, currentImage, vec3(0.0f));
@@ -1415,7 +1411,7 @@ protected:
         vec4 dawnColor = vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
         vec4 dayColor = vec4(1.0f, 1.0f, 1.0f, 1.0f); // Giorno
         vec4 duskColor = vec4(1.0f, 0.2f, 0.0f, 1.0f); // Tramonto
-        vec4 nightColor = vec4(0.0f, 0.0f, 0.1f, 1.0f); // Notte
+        vec4 nightColor = vec4(0.0f, 0.0f, 0.0f, 0.0f); // Notte
 
         float normalizedTime = sunAng;
         vec4 interpolatedColor;
@@ -1428,12 +1424,12 @@ protected:
             float t = (normalizedTime - 15.0f) / 25.0f;
             interpolatedColor = mix(dawnColor, dayColor, t);
         }
-        else if (normalizedTime < 165.0f) {
-            float t = (normalizedTime - 40.0f) / 125.0f;
-            interpolatedColor = mix(dayColor, duskColor, t);
+        else if (normalizedTime < 175.0f) {
+            float t = (normalizedTime - 40.0f) / 135.0f;
+            interpolatedColor = mix(dayColor, duskColor, t); ;
         }
-        else if (normalizedTime < 180.0f) {
-            float t = (normalizedTime - 165.0f) / 25.0f;
+        else if (normalizedTime < 200.0f) {
+            float t = (normalizedTime - 165.0f) / 35.0f;
             interpolatedColor = mix(duskColor, nightColor, t);
         }
         else {
@@ -1441,7 +1437,7 @@ protected:
         }
 
         BlinnUbo.lightColor = interpolatedColor;
-        BlinnUbo.eyePos = vec3(inverse(ViewMatrix) * vec4(0, 0, 0, 1));
+        BlinnUbo.eyePos = CamPos;
         DSSunLight.map(currentImage, &BlinnUbo, 0);
 
         BlinnMatParUniformBufferObject blinnMatParUbo{};
