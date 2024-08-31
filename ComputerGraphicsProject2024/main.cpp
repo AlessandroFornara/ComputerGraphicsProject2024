@@ -92,10 +92,14 @@ struct ApartmentUniBuffer {
     alignas(16) vec3 rff;
 };
 
+enum Scene { CITY, SHOP, APARTMENT };
+enum TextureIndex {
+    APARTMENT_SHOP_TEXTURE, LAMP_TEXTURE, WALL_SHOP_TEXTURE, APECAR_TEXTURE, CITY_TEXTURE
+};
 
 struct Component {
     const string ObjPath;
-    const string TexturePath;
+    const TextureIndex TexturePath;
     ModelType type;
     vec3 pos;
     const vec3 scale;
@@ -112,209 +116,208 @@ struct Vertex {
     vec2 UV;
 };
 
-enum Scene { CITY, SHOP, APARTMENT };
+vector <string> TexturePaths = { "textures/Textures_Apartment_Shop.png", "textures/Lamp.png", "textures/Wall_Shop.png", "textures/ape.jpg", "textures/Textures_City.png" };
 
 vector<Component> Apartment = {
     //PAVIMENTO
-     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{204.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-     {"models/Apartment/floor_016_Mesh.338.mgcg", "textures/Textures.png", MGCG,{199.0f, -1.0f, 197.0f}, {0.5f, 2.0f, 0.5f}, {}, {}},
+     {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+     {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+     {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+     {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+     {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{199.0f, -1.0f, 197.0f}, {0.5f, 2.0f, 0.5f}, {}, {}},
 
      //SOFFITTO
-     {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{200.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
-     {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{204.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
-     {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{200.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
-     {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{204.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
-     {"models/Apartment/Walls_009_Plane.003.mgcg", "textures/Textures.png", MGCG,{199.0f, 3.0f, 196.0f}, {0.5f, 1.0f, 0.5f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+     {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+     {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+     {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+     {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
+     {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{199.0f, 3.0f, 196.0f}, {0.5f, 1.0f, 0.5f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
 
      //MURI
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{202.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{198.0f, -1.0f, 200.0f},{1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{198.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{206.0f, 1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{202.0f, 1.0f, 198.0f}, {0.5f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{200.0f, 1.0f, 196.0f}, {0.5f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{200.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/Walls_116_Plane.057.mgcg", "textures/Textures.png", MGCG,{198.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{206.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{202.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{206.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{206.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.0f, -1.0f, 200.0f},{1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{206.0f, 1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{202.0f, 1.0f, 198.0f}, {0.5f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, 1.0f, 196.0f}, {0.5f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
 
      //ACCESSORI
-     {"models/Apartment/door_005_Mesh.119.mgcg", "textures/Textures.png", MGCG,{198.15f, -1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{205.8f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{205.8f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/window_003_Mesh.125.mgcg", "textures/Textures.png", MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-     {"models/Apartment/sofa_007_Mesh.158.mgcg", "textures/Textures.png", MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-     {"models/Apartment/picture_049_Mesh.465.mgcg", "textures/Textures.png", MGCG,{202.0f, 0.75f, 205.9f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-     {"models/Apartment/office_chair_021_Mesh.922.mgcg", "textures/Textures.png", MGCG,{204, -1.0f, 201.0f}, {2.0f, 2.0f, 2.0f}, {{0.0, 1.0, 0.0}}, {-45.0f} },
+     {"models/Apartment/door_005_Mesh.119.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.15f, -1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/window_003_Mesh.125.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{205.8f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/window_003_Mesh.125.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{205.8f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/window_003_Mesh.125.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.2f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/window_003_Mesh.125.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.2f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+     {"models/Apartment/sofa_007_Mesh.158.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{203.0f, -0.8f, 204.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+     {"models/Apartment/picture_049_Mesh.465.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{202.0f, 0.75f, 205.9f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+     {"models/Apartment/office_chair_021_Mesh.922.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204, -1.0f, 201.0f}, {2.0f, 2.0f, 2.0f}, {{0.0, 1.0, 0.0}}, {-45.0f} },
 
-     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", "textures/Textures.png", MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
-     {"models/Apartment/flower_010_Mesh.287.mgcg", "textures/Textures.png", MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
-     {"models/Apartment/lamp_018_Mesh.6631.mgcg", "textures/Textures.png", MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
-     {"models/Apartment/Sphere.obj", "textures/Lamp.png", OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
+     {"models/Apartment/tv_wall_003_Mesh.184.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
+     {"models/Apartment/flower_010_Mesh.287.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
+     {"models/Apartment/lamp_018_Mesh.6631.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
+     {"models/Apartment/Sphere.obj", LAMP_TEXTURE, OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
      
 };
 
-vector<Component> Shop = {
-    
-    //PAVIMENTO
-    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/floor_001_Mesh.640.mgcg", "textures/Textures.png", MGCG,{104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    
+vector<Component> Shop = {  
     //MURI
     //ALTO SINISTRA
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
     //ALTO DESTRA
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{106.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{104.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{106.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
     //BASSO DESTRA
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{104.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f}},
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{106.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f},  { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{106.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f},  { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     //BASSO SINISTRA
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{98.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f} , { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/Shop/Walls_029_Plane.016.mgcg", "textures/Wall_Shop.png", MGCG,{100.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f} },
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{98.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f} , { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
+    {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f} },
+
+    //PAVIMENTO
+    {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
 
     //TETTO
-    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
-    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
-    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
-    {"models/Shop/Walls_036_Plane.019.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
 
     //ACCESSORI
-    {"models/Shop/shop_003_Mesh.4875.mgcg", "textures/Textures.png", MGCG,{105.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/shop_003_Mesh.4875.mgcg", "textures/Textures.png", MGCG,{103.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/shop_004_Mesh.4923.mgcg", "textures/Textures.png", MGCG,{100.0f, 0.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/shop_002_Mesh.5167.mgcg", "textures/Textures.png", MGCG,{104.0f, 0.0f, 105.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-    {"models/Shop/door_011_Mesh.116.mgcg", "textures/Textures.png",MGCG, {101.0f, -1.0f, 105.7f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
-    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{105.7f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
-    {"models/Shop/window_006_Mesh.654.mgcg", "textures/Textures.png", MGCG,{98.3f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/shop_003_Mesh.4875.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{105.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/shop_003_Mesh.4875.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{103.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/shop_004_Mesh.4923.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 0.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/shop_002_Mesh.5167.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 0.0f, 105.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+    {"models/Shop/door_011_Mesh.116.mgcg", APARTMENT_SHOP_TEXTURE, MGCG, {101.0f, -1.0f, 105.7f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}},
+    {"models/Shop/window_006_Mesh.654.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{105.7f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
+    {"models/Shop/window_006_Mesh.654.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{98.3f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     
     //LAMPADE 
-    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png",MGCG, {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
-    {"models/Shop/lamp_026_Mesh.6700.mgcg", "textures/Textures.png", MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG, {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
+    {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     
     //LAMPADINE
-    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
-    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
-    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
-    {"models/Shop/Sphere.obj", "textures/Lamp.png", OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
+    {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     
 };
 
 vector<Component> CityComponents = {
-    {"models/City/ape.obj", "textures/ape.jpg",OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
+    {"models/City/ape.obj", APECAR_TEXTURE,OBJ, {0.0f, 0.6f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {180.0f}}, // DRIVEABLE CAR MODEL;
     
-    {"models/City/beach_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/beach_tile_1x1_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/beach_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/beach_tile_1x1_006.mgcg", "textures/Textures_City.png",MGCG, {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/beach_tile_1x1_002.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/beach_tile_1x1_007.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, 8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/beach_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/beach_tile_1x1_003.mgcg", CITY_TEXTURE, MGCG,{8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/beach_tile_1x1_004.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/beach_tile_1x1_006.mgcg", CITY_TEXTURE, MGCG, {3*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/beach_tile_1x1_002.mgcg", CITY_TEXTURE, MGCG, {4*8.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/beach_tile_1x1_007.mgcg", CITY_TEXTURE, MGCG, {4*8.0f, 0.0f, 8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
-    {"models/City/beach_tile_1x1_007.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/beach_tile_1x1_007.mgcg", CITY_TEXTURE, MGCG, {4*8.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
-    {"models/City/beach_tile_1x1_007.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, 8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/beach_tile_1x1_007.mgcg", CITY_TEXTURE, MGCG, {0.0f, 0.0f, 8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/City/beach_tile_1x1_007.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/beach_tile_1x1_007.mgcg", CITY_TEXTURE, MGCG,{0.0f, 0.0f, 2*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/City/landscape_entertainments_006.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/landscape_entertainments_006.mgcg", CITY_TEXTURE, MGCG,{-12.0f, 0.0f, -4.0f}, {1.0f, 1.0f, 1.0f}},
 
-    {"models/City/tile_river_2x2_001.mgcg", "textures/Textures_City.png",MGCG, {10.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/tile_river_2x2_001.mgcg", "textures/Textures_City.png",MGCG, {20.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/tile_river_2x2_001.mgcg", CITY_TEXTURE, MGCG, {10.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/tile_river_2x2_001.mgcg", CITY_TEXTURE, MGCG, {20.0f, -1.2f, 10.0f}, {1.0f, 1.0f, 1.0f}},
 
-    {"models/City/road_tile_1x1_008.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {3*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {5*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {6*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {7*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {8*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_008.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG,{8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {3*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {4*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {5*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {6*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {7*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_1x1_004.mgcg", CITY_TEXTURE, MGCG, {8*8.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f}}, {-90.0f}},
-    {"models/City/road_tile_1x1_004.mgcg", "textures/Textures_City.png",MGCG, {0.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_004.mgcg", CITY_TEXTURE, MGCG, {0.0f, 0.0f, -8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {90.0f}},
 
-    {"models/City/store_003.mgcg", "textures/Textures_City.png", MGCG,{8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{-12.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/transport_bus_005_transport_bus_005.001.mgcg", "textures/Textures_City.png", MGCG,{0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/transport_sport_001_transport_sport_001.001.mgcg", "textures/Textures_City.png",MGCG, {-8.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/store_003.mgcg", CITY_TEXTURE, MGCG,{8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/tile_for_home_2x2_007.mgcg", CITY_TEXTURE, MGCG,{4.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/tile_for_home_2x2_007.mgcg", CITY_TEXTURE, MGCG,{-12.0f, 0.0f, -2.5 * 8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/transport_bus_005_transport_bus_005.001.mgcg", CITY_TEXTURE, MGCG,{0.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/transport_sport_001_transport_sport_001.001.mgcg", CITY_TEXTURE, MGCG, {-8.0f, 0.0f, -3 * 8.0f}, {1.0f, 1.0f, 1.0f}},
 
-    {"models/City/landscape_entertainments_007.mgcg", "textures/Textures_City.png",MGCG, {4 + 5 * 8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
-    {"models/City/landscape_entertainments_003.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
-    {"models/City/landscape_entertainments_008.mgcg", "textures/Textures_City.png", MGCG,{20+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/landscape_entertainments_007.mgcg", CITY_TEXTURE, MGCG, {4 + 5 * 8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f}}, //tennis
+    {"models/City/landscape_entertainments_003.mgcg", CITY_TEXTURE, MGCG,{4+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}}, //gym
+    {"models/City/landscape_entertainments_008.mgcg", CITY_TEXTURE, MGCG,{20+5*8.0f, 0.0f, 4.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {-90.0f}}, //football
-    {"models/City/landscape_entertainments_010.mgcg", "textures/Textures_City.png", MGCG,{20+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/landscape_entertainments_010.mgcg", CITY_TEXTURE, MGCG,{20+5*8.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {90.0f}}, //basket
 
-    {"models/City/apartment_008.mgcg", "textures/Textures_City.png",MGCG, {3*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/apartment_008.mgcg", "textures/Textures_City.png",MGCG, {3*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f}, { {0.0f, 1.0f, 0.0f} }, {180.0f}},
-    {"models/City/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{28.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/apartment_012.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/apartment_012.mgcg", "textures/Textures_City.png",MGCG, {4*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/apartment_008.mgcg", CITY_TEXTURE, MGCG, {3*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/apartment_008.mgcg", CITY_TEXTURE, MGCG, {3*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f}, { {0.0f, 1.0f, 0.0f} }, {180.0f}},
+    {"models/City/tile_for_home_2x2_003.mgcg", CITY_TEXTURE, MGCG,{28.0f, 0.0f, -20.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/apartment_012.mgcg", CITY_TEXTURE, MGCG, {4*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/apartment_012.mgcg", CITY_TEXTURE, MGCG, {4*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {180.0f}},
 
-    {"models/City/road_tile_1x1_010.mgcg", "textures/Textures_City.png", MGCG,{2*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_010.mgcg", CITY_TEXTURE, MGCG,{2*8.0f, 0.0f, -2*8.0f}, {1.0f, 1.0f, 1.0f},
         { {0.0f, 1.0f, 0.0f} }, {90.0f}},
-    {"models/City/road_tile_1x1_010.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_010.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}},
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png", MGCG,{2*8.0f, 0.0f, -6*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG,{2*8.0f, 0.0f, -6*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png", MGCG,{2*8.0f, 0.0f, -7*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG,{2*8.0f, 0.0f, -7*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -8*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -8*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
-    {"models/City/road_tile_1x1_001.mgcg", "textures/Textures_City.png",MGCG, {2*8.0f, 0.0f, -9*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -9*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
 
-    {"models/City/road_tile_2x2_006.mgcg", "textures/Textures_City.png",MGCG, {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4+4*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_2x2_003.mgcg", "textures/Textures_City.png",MGCG, {4+7*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_006.mgcg", CITY_TEXTURE, MGCG, {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {4+4*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG,{4+5*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_003.mgcg", CITY_TEXTURE, MGCG, {4+7*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {270.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4+7*8.0f, 0.0f, -4-6*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {4+7*8.0f, 0.0f, -4-6*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/City/road_tile_2x2_003.mgcg", "textures/Textures_City.png",MGCG, {-4-1*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_003.mgcg", CITY_TEXTURE, MGCG, {-4-1*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {180.0f}},
 
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {4+7*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {4+7*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {-4-1*8.0f, 0.0f, -4-6*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {-4-1*8.0f, 0.0f, -4-6*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png",MGCG, {-4-1*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {-4-1*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {-90.0f}},
 
-    {"models/City/road_tile_2x2_003.mgcg", "textures/Textures_City.png",MGCG, {-4-1*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f},
+    {"models/City/road_tile_2x2_003.mgcg", CITY_TEXTURE, MGCG, {-4-1*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f},
         { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    {"models/City/road_tile_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4+7*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_003.mgcg", CITY_TEXTURE, MGCG,{4+7*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
 
-    {"models/City/road_tile_2x2_002.mgcg", "textures/Textures_City.png", MGCG,{4+2*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/road_tile_2x2_005.mgcg", "textures/Textures_City.png", MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_002.mgcg", CITY_TEXTURE, MGCG,{4+2*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG,{4.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG,{4+4*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG,{4+5*8.0f, 0.0f, -4-10*8.0f}, {1.0f, 1.0f, 1.0f}},
     
-    {"models/City/apartment_1_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/tile_for_home_2x2_003.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/apartment_1_004.mgcg", "textures/Textures_City.png",MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{28.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/apartment_1_003.mgcg", "textures/Textures_City.png",MGCG, {5+5*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}, //001 or 003;
-    {"models/City/tile_for_home_2x2_007.mgcg", "textures/Textures_City.png", MGCG,{44.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/parking_tile_2x2_002.mgcg", "textures/Textures_City.png", MGCG,{4.0f, 0.0f, -68.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/apartment_1_002.mgcg", CITY_TEXTURE, MGCG,{4.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/tile_for_home_2x2_003.mgcg", CITY_TEXTURE, MGCG,{4.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/apartment_1_004.mgcg", CITY_TEXTURE, MGCG, {4+3*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/tile_for_home_2x2_007.mgcg", CITY_TEXTURE, MGCG,{28.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/apartment_1_003.mgcg", CITY_TEXTURE, MGCG, {5+5*8.0f, 0.0f, -10-5*8.0f}, {1.0f, 1.0f, 1.0f}}, //001 or 003;
+    {"models/City/tile_for_home_2x2_007.mgcg", CITY_TEXTURE, MGCG,{44.0f, 0.0f, -52.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/parking_tile_2x2_002.mgcg", CITY_TEXTURE, MGCG,{4.0f, 0.0f, -68.0f}, {1.0f, 1.0f, 1.0f}},
 
-    {"models/City/park_002.mgcg", "textures/Textures_City.png", MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
-    {"models/City/park_006.mgcg", "textures/Textures_City.png", MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
+    {"models/City/park_002.mgcg", CITY_TEXTURE, MGCG,{4+3*8.0f, 0.0f, -4-8*8.0f}, {1.0f, 1.0f, 1.0f}},
+    {"models/City/park_006.mgcg", CITY_TEXTURE, MGCG, { 20 + 3 * 8.0f, 0.0f, -4 - 8 * 8.0f }, { 1.0f, 1.0f, 1.0f }},
     
-    {"models/City/Sphere.obj", "textures/Lamp.png", OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
+    {"models/City/Sphere.obj", LAMP_TEXTURE, OBJ,{0.0f, 20.0f, 0.0f}, {3.0f, 3.0f, 3.0f}, {}, {} }
     
 };
 
@@ -348,6 +351,8 @@ protected:
     DescriptorSetLayout DSLemission;
     Pipeline PipEmission;
     VertexDescriptor VDemission;
+
+    vector <Texture> Textures;
 
     int const citySize = CityComponents.size();
     int const shopSize = Shop.size();
@@ -447,33 +452,32 @@ protected:
         PipApartment.init(this, &VDWorld, "shaders/Apartment/ApartmentVert.spv", "shaders/Apartment/ApartmentFrag.spv", { &DSLApartmentLight, &DSLMatricesAndTextures });
 
         //first elements are "normal" components,the seconds are light (emission components)
-        // 
-        //City
+        
+        //Texures vector
         int i = 0;
-        for (; i < citySize - 1; i++) {
-            CityComponents[i].model.init(this, &VDWorld, CityComponents[i].ObjPath, CityComponents[i].type);
-            CityComponents[i].texture.init(this, CityComponents[i].TexturePath);
+        for (; i < TexturePaths.size(); i++) {
+            Texture tempTexture; 
+            tempTexture.init(this, TexturePaths[i]);
+            Textures.push_back(tempTexture);
         }
-        CityComponents[i].model.init(this, &VDemission, CityComponents[i].ObjPath, CityComponents[i].type);
-        CityComponents[i].texture.init(this, CityComponents[i].TexturePath);
+
+        //CITY
+        for (i = 0; i < citySize; i++) {
+            CityComponents[i].model.init(this, &VDWorld, CityComponents[i].ObjPath, CityComponents[i].type);
+            CityComponents[i].texture = Textures[CityComponents[i].TexturePath];
+        }
 
         //SHOP
-        for (i = 0; i < shopSize-4; i++) {
+        for (i = 0; i < shopSize; i++) {
             Shop[i].model.init(this, &VDWorld, Shop[i].ObjPath, Shop[i].type);
-            Shop[i].texture.init(this, Shop[i].TexturePath);
-        }
-        for (; i < shopSize; i++) {
-            Shop[i].model.init(this, &VDemission, Shop[i].ObjPath, Shop[i].type);
-            Shop[i].texture.init(this, Shop[i].TexturePath);
+            Shop[i].texture = Textures[Shop[i].TexturePath];
         }
 
         //APARTMENT
-        for (i = 0; i < apartmentSize-1; i++) {
+        for (i = 0; i < apartmentSize; i++) {
             Apartment[i].model.init(this, &VDWorld, Apartment[i].ObjPath, Apartment[i].type);
-            Apartment[i].texture.init(this, Apartment[i].TexturePath);
+            Apartment[i].texture = Textures[Apartment[i].TexturePath];
         }
-        Apartment[i].model.init(this, &VDemission, Apartment[i].ObjPath, Apartment[i].type);
-        Apartment[i].texture.init(this, Apartment[i].TexturePath);
 
         //DA CAMBIARE
         DPSZs.uniformBlocksInPool = citySize * 2 + shopSize + apartmentSize;
@@ -554,23 +558,22 @@ protected:
     }
 
     void localCleanup() {
+
         //CITY
-        for (int i = 0; i < citySize; i++) {
+        for (int i = 0; i < citySize; i++)
             CityComponents[i].model.cleanup();
-            CityComponents[i].texture.cleanup();
-        }
 
         //SHOP
-        for (int i = 0; i < shopSize; i++) {
+        for (int i = 0; i < shopSize; i++)
             Shop[i].model.cleanup();
-            Shop[i].texture.cleanup();
-        }
 
         //APARTMENT
-        for (int i = 0; i < apartmentSize; i++) {
+        for (int i = 0; i < apartmentSize; i++)
             Apartment[i].model.cleanup();
-            Apartment[i].texture.cleanup();
-        }
+
+        //Textures Vector
+        for (int i = 0; i < Textures.size(); i++)
+            Textures[i].cleanup();
 
         DSLSunLight.cleanup();
         DSLemission.cleanup();
