@@ -54,7 +54,7 @@ struct MatricesUniformBufferObject {
     alignas(16) mat4 nMat;
 };
 
-struct spotLightUBO {
+struct SpotLightUBO {
     alignas(16) vec3 lightDir[4];
     alignas(16) vec3 lightPos[4];
     alignas(16) vec3 lightColor[4];
@@ -85,7 +85,7 @@ struct BlinnMatParUniformBufferObject {
     alignas(4)  float Power;
 };
 
-struct ApartmentUniBuffer {
+struct ApartmentLightBuffer {
     alignas(16) vec3 lightPos;
     alignas(16) vec3 lightColor;
     alignas(16) vec3 eyePos;
@@ -271,13 +271,13 @@ vector<Component> CityComponents = {
     {"models/City/road_tile_1x1_010.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -3*8.0f}, {1.0f, 1.0f, 1.0f},
         {{0.0f, 1.0f, 0.0f} }, {90.0f}},
     {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG,{2*8.0f, 0.0f, -6*8.0f}, {1.0f, 1.0f, 1.0f},
-        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}},
     {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG,{2*8.0f, 0.0f, -7*8.0f}, {1.0f, 1.0f, 1.0f},
-        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}},
     {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -8*8.0f}, {1.0f, 1.0f, 1.0f},
-        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, 
     {"models/City/road_tile_1x1_001.mgcg", CITY_TEXTURE, MGCG, {2*8.0f, 0.0f, -9*8.0f}, {1.0f, 1.0f, 1.0f},
-        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, //change with 011 maybe
+        {{0.0f, 1.0f, 0.0f} }, {90.0f}}, 
 
     {"models/City/road_tile_2x2_006.mgcg", CITY_TEXTURE, MGCG, {4+2*8.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}}, // big road
     {"models/City/road_tile_2x2_005.mgcg", CITY_TEXTURE, MGCG, {4.0f, 0.0f, -4-4*8.0f}, {1.0f, 1.0f, 1.0f}},
@@ -422,10 +422,10 @@ protected:
             {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1}
             });
         DSLShopLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(spotLightUBO), 1 } }
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(SpotLightUBO), 1 } }
         );
         DSLApartmentLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(ApartmentUniBuffer), 1 }
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(ApartmentLightBuffer), 1 }
             });
 
         DSLemission.init(this, {
@@ -479,7 +479,6 @@ protected:
             Apartment[i].texture = Textures[Apartment[i].TexturePath];
         }
 
-        //DA CAMBIARE
         DPSZs.uniformBlocksInPool = citySize * 2 + shopSize + apartmentSize;
         DPSZs.texturesInPool = citySize + shopSize + apartmentSize;
         DPSZs.setsInPool = citySize +1 + shopSize + 1 + apartmentSize + 1;
@@ -1340,15 +1339,15 @@ protected:
         @param ViewPrj: view projection matrix
     */
     void buildApartment(int currentImage, mat4 ViewPrj) {
-        ApartmentUniBuffer subo{};
+        ApartmentLightBuffer aubo{};
 
-        subo.lightPos = vec3(202.0, 1.75, 202.0);
-        subo.lightColor = vec3(0.6f, 0.6f, 0.6f);
-        subo.eyePos = CamPos;
-        subo.rff.x = 0.2;
-        subo.rff.y = 180.0f;
+        aubo.lightPos = vec3(202.0, 1.75, 202.0);
+        aubo.lightColor = vec3(0.6f, 0.6f, 0.6f);
+        aubo.eyePos = CamPos;
+        aubo.rff.x = 0.2;
+        aubo.rff.y = 180.0f;
 
-        DSApartmentLight.map(currentImage, &subo, 0);
+        DSApartmentLight.map(currentImage, &aubo, 0);
 
         fillUniformBuffer(0, apartmentSize - 1, Apartment, ViewPrj, currentImage, vec3(0.0f));
 
@@ -1364,7 +1363,7 @@ protected:
         @param ViewPrj: view projection matrix
     */
     void buildShop(int currentImage, mat4 ViewPrj) {
-        spotLightUBO subo{};
+        SpotLightUBO subo{};
         for (int i = 0; i < 4; i++) {
             subo.lightPos[i] = Shop[23 + i].pos;
             subo.lightPos[i].y = 1.0f;
