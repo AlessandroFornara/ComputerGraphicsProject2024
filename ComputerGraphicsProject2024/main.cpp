@@ -377,6 +377,7 @@ protected:
     bool showCommandsKeyboard = false;
     bool spectatorMode = false;
     bool thirdViewCar = true;
+    bool changedDirection = false;
 
     const float CAR_SPEED = 1.0f;
     const float MAX_CAR_SPEED = 15.0f;
@@ -944,8 +945,14 @@ protected:
     */
     float accelerateCar(float speed, float acc) {
         float speed2;
-        if (acc < 0)
+        bool inverse = false;
+        if (acc < 0) {
+            if (changedDirection){
+                changedDirection = false;
+                inverse = true;
+            }
             acc = -acc;
+        }
         if (acc != 0) {
             speed2 = speed + acc * 0.1f;
             if (speed2 > MAX_CAR_SPEED)
