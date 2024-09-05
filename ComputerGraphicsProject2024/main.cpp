@@ -377,7 +377,7 @@ protected:
     bool showCommandsKeyboard = false;
     bool spectatorMode = false;
     bool thirdViewCar = true;
-    bool changedDirection = false;
+    bool goAhead = false;
 
     const float CAR_SPEED = 1.0f;
     const float MAX_CAR_SPEED = 15.0f;
@@ -386,7 +386,7 @@ protected:
     const float SUN_ROT_SPEED = 3.3333f;
     const float UP_DIRECTION = 1.0f;
     const float DOWN_DIRECTION = -1.0f;
-    const float JUMP_SPEED = 0.05f;
+    const float JUMP_SPEED = 0.12f;
 
     float jumpDirection;    
     float sunAng = 0.0f;   
@@ -947,18 +947,29 @@ protected:
         float speed2;
         bool inverse = false;
         if (acc < 0) {
-            if (changedDirection){
-                changedDirection = false;
+            if (goAhead){
+                goAhead = false;
                 inverse = true;
             }
             acc = -acc;
         }
+        else if(acc>0) {
+            if (!goAhead) {
+                goAhead = true;
+                inverse = true;
+            }
+        }
         if (acc != 0) {
-            speed2 = speed + acc * 0.1f;
-            if (speed2 > MAX_CAR_SPEED)
-                speed2 = MAX_CAR_SPEED;
-        else if(speed2 < CAR_SPEED)
+            if (!inverse) {
+                speed2 = speed + acc * 0.12f;
+                if (speed2 >= MAX_CAR_SPEED)
+                    speed2 = MAX_CAR_SPEED;
+                else if(speed2 < CAR_SPEED)
+                    speed2 = CAR_SPEED;
+            }
+            else {
                 speed2 = CAR_SPEED;
+            }
         }
         else {
             speed2 = speed - 0.3f;
