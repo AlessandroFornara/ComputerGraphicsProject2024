@@ -157,7 +157,7 @@ vector<Component> Apartment = {
      {"models/Apartment/office_chair_021_Mesh.922.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204, -1.0f, 201.0f}, {2.0f, 2.0f, 2.0f}, {{0.0, 1.0, 0.0}}, {-45.0f} },
 
      {"models/Apartment/tv_wall_003_Mesh.184.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{203.0f, -1.0f, 198.5f}, {1.2f, 1.2f, 1.2f}, {}, {}},
-     {"models/Apartment/flower_010_Mesh.287.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {}, {}},
+     {"models/Apartment/musical_instrument_012_Mesh.306.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.f, -1.0f, 203.0f}, {1.2f, 1.2f, 1.2f}, {{0.0f, 1.0f, 0.0f}}, {-45.0f}},
      {"models/Apartment/lamp_018_Mesh.6631.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{202.0f, 3.0f, 202.0f}, {2.0f, 2.0f, 2.0f}, {}, {}},
      {"models/Apartment/Sphere.obj", LAMP_TEXTURE, OBJ, {202.0f, 2.0f, 202.0f}, {0.15f, 0.15f, 0.15f}, {}, {}},
      
@@ -1345,7 +1345,7 @@ protected:
         aubo.lightColor = vec3(0.6f, 0.6f, 0.6f);
         aubo.eyePos = CamPos;
         aubo.rff.x = 0.2;
-        aubo.rff.y = 180.0f;
+        aubo.rff.y = 64.0f;
 
         DSApartmentLight.map(currentImage, &aubo, 0);
 

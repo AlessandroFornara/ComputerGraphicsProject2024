@@ -25,7 +25,7 @@ vec3 Diffuse(vec3 Norm, vec3 lightPos, vec3 Color) {
 	vec3 vi, vr, L;
 	
 	A = 1.0f - 0.5f * ((subo.rff.x * subo.rff.x) / ((subo.rff.x * subo.rff.x) + 0.33f));
-	B = 0.45 * ((subo.rff.x * subo.rff.x) / ((subo.rff.x * subo.rff.x) + 0.9f));
+	B = 0.45 * ((subo.rff.x * subo.rff.x) / ((subo.rff.x * subo.rff.x) + 0.09f));
 	
 	tethai = acos( dot(direction, Norm) );
 	tethar = acos( dot(directionViewer, Norm) );
@@ -61,7 +61,7 @@ void main() {
 	
 	vec3 spec = Specular(norm, subo.lightPos, subo.lightColor ,EyeDir);
 	
-    vec3 finalResult = (diff + spec)* subo.lightColor * pow( (2.0f / distance(subo.lightPos, fragPos) ), 0.5); ;
+    vec3 finalResult = (diff + spec) * subo.lightColor * pow( (2.0f / distance(subo.lightPos, fragPos) ), 0.5);
 	
-    outColor = vec4(finalResult + Albedo * 0.1f, 1.0f) ; 
+    outColor = vec4(finalResult + Albedo * 0.05f, 1.0f) ; 
 }
