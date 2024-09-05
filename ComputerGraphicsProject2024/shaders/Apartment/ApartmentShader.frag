@@ -12,7 +12,7 @@ layout(set = 0, binding = 0) uniform ApartmentLightBuffer {
     vec3 lightPos;
     vec3 lightColor;
 	vec3 eyePos;
-    vec3 rff;
+    vec3 sigmaGammaBeta;
 } subo;
 
 layout(set = 1, binding = 1) uniform sampler2D tex;
@@ -24,8 +24,8 @@ vec3 Diffuse(vec3 Norm, vec3 lightPos, vec3 Color) {
 	float A, B, G, alpha, beta, tethai, tethar;
 	vec3 vi, vr, L;
 	
-	A = 1.0f - 0.5f * ((subo.rff.x * subo.rff.x) / ((subo.rff.x * subo.rff.x) + 0.33f));
-	B = 0.45 * ((subo.rff.x * subo.rff.x) / ((subo.rff.x * subo.rff.x) + 0.09f));
+	A = 1.0f - 0.5f * ((subo.sigmaGammaBeta.x * subo.sigmaGammaBeta.x) / ((subo.sigmaGammaBeta.x * subo.sigmaGammaBeta.x) + 0.33f));
+	B = 0.45 * ((subo.sigmaGammaBeta.x * subo.sigmaGammaBeta.x) / ((subo.sigmaGammaBeta.x * subo.sigmaGammaBeta.x) + 0.09f));
 	
 	tethai = acos( dot(direction, Norm) );
 	tethar = acos( dot(directionViewer, Norm) );
@@ -46,7 +46,7 @@ vec3 Diffuse(vec3 Norm, vec3 lightPos, vec3 Color) {
 
 vec3 Specular(vec3 Norm, vec3 lightPos, vec3 specularColor, vec3 eyeDir) {
     vec3 direction = normalize(lightPos - fragPos);
-    vec3 f_specular = specularColor * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0.0f, 1.0f), subo.rff.y);
+    vec3 f_specular = specularColor * pow(clamp(dot(eyeDir, -reflect(direction, Norm)), 0.0f, 1.0f), subo.sigmaGammaBeta.y);
     return f_specular;
 }
 
@@ -61,7 +61,7 @@ void main() {
 	
 	vec3 spec = Specular(norm, subo.lightPos, subo.lightColor ,EyeDir);
 	
-    vec3 finalResult = (diff + spec) * subo.lightColor * pow( (2.0f / distance(subo.lightPos, fragPos) ), 0.5);
+    vec3 finalResult = (diff + spec) * subo.lightColor * pow( (2.0f / distance(subo.lightPos, fragPos) ), subo.sigmaGammaBeta.z);
 	
     outColor = vec4(finalResult + Albedo * 0.05f, 1.0f) ; 
 }
