@@ -89,7 +89,7 @@ struct ApartmentLightBuffer {
     alignas(16) vec3 lightPos;
     alignas(16) vec3 lightColor;
     alignas(16) vec3 eyePos;
-    alignas(16) vec3 rff;
+    alignas(16) vec3 sigmaGammaBeta;
 };
 
 enum Scene { CITY, SHOP, APARTMENT };
@@ -1351,8 +1351,9 @@ protected:
         aubo.lightPos = vec3(202.0, 1.75, 202.0);
         aubo.lightColor = vec3(0.6f, 0.6f, 0.6f);
         aubo.eyePos = CamPos;
-        aubo.rff.x = 0.2;
-        aubo.rff.y = 64.0f;
+        aubo.sigmaGammaBeta.x = 0.2;
+        aubo.sigmaGammaBeta.y = 64.0f;
+        aubo.sigmaGammaBeta.z = 0.5f;
 
         DSApartmentLight.map(currentImage, &aubo, 0);
 
