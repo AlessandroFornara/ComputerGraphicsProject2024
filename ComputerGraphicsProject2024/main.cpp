@@ -768,8 +768,8 @@ protected:
 
         if (isometricViewCar || dimetricViewCar || trimetricViewCar) {
             lookAng -= r.y * radians(360.0f) * deltaT;
-            lookAng = (lookAng < -3.1416) ? lookAng + 2 * 3.1416 : ((lookAng > 3.1416) ? lookAng - 2 * 3.1416 : lookAng);
-            DlookAng = 3.1416 / 2 * round(2 * lookAng / 3.1416);
+            lookAng = (lookAng < -M_PI) ? lookAng + 2 * M_PI : ((lookAng > M_PI) ? lookAng - 2 * M_PI : lookAng);
+            DlookAng = M_PI / 2 * round(2 * lookAng / M_PI);
             CamPos = CarPos;
         }
         else if (thirdViewCar) {
