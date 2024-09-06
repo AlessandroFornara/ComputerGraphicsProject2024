@@ -386,7 +386,7 @@ protected:
     const float SUN_ROT_SPEED = 3.3333f;
     const float UP_DIRECTION = 1.0f;
     const float DOWN_DIRECTION = -1.0f;
-    const float JUMP_SPEED = 0.12f;
+    const float JUMP_SPEED = 2.5f;
 
     float jumpDirection;    
     float sunAng = 0.0f;   
@@ -739,7 +739,7 @@ protected:
             }
         }
         if (isJumping)
-            jump(computeHeight(CamPos));
+            jump(computeHeight(CamPos), deltaT);
     }
 
     /*
@@ -983,9 +983,9 @@ protected:
         It Allows the player to jump
         @param initialHeight: initial height of the jump
     */
-    void jump(float initialHeight) {
+    void jump(float initialHeight, float deltaT) {
         if (isJumping) {
-            CamPos.y += JUMP_SPEED * jumpDirection;
+            CamPos.y += JUMP_SPEED * jumpDirection * deltaT;
 
             if (CamPos.y >= initialHeight + 1.0f)
                 jumpDirection = DOWN_DIRECTION;
