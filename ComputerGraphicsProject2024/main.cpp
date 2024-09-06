@@ -386,7 +386,7 @@ protected:
     const float SUN_ROT_SPEED = 3.3333f;
     const float UP_DIRECTION = 1.0f;
     const float DOWN_DIRECTION = -1.0f;
-    const float JUMP_SPEED = 2.5f;
+    const float JUMP_SPEED = 3.0f;
 
     float jumpDirection;    
     float sunAng = 0.0f;   
@@ -452,7 +452,7 @@ protected:
         PipEmission.init(this, &VDemission, "shaders/Emission/generalEmissionVert.spv", "shaders/Emission/generalEmissionFrag.spv", { &DSLemission });
         PipApartment.init(this, &VDWorld, "shaders/Apartment/ApartmentVert.spv", "shaders/Apartment/ApartmentFrag.spv", { &DSLApartmentLight, &DSLMatricesAndTextures });
 
-        //first elements are "normal" components,the seconds are light (emission components)
+        //first elements are "normal" components,the second ones are light (emission components)
         
         //Texures vector
         int i = 0;
@@ -669,6 +669,7 @@ protected:
         else
             handleCarMovement(m, r, deltaT);
 
+        //cameraAngle is degree, CamAlpha is radiant
         cameraAngle = cameraAngle + (360.0 * (CamAlpha)) / (2 * M_PI);
 
         HandleUserInputs(CamPos, cameraAngle, state, connected);
