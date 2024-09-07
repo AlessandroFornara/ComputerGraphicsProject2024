@@ -9,14 +9,12 @@ layout(location = 2) in vec2 fragUV;
 layout(location = 0) out vec4 outColor;
 
 layout(set = 0, binding = 0) uniform BlinnUniformBufferObject {
+	float Pow;
 	vec3 lightDir;
 	vec4 lightColor;
 	vec3 eyePos;
 } gubo;
 
-layout(set = 0, binding = 1) uniform BlinnParUniformBufferObject {
-	float Pow;
-} mubo;
 
 layout(set = 1, binding = 1) uniform sampler2D tex;
 
@@ -28,7 +26,7 @@ void main() {
 	vec3 lightColor = gubo.lightColor.rgb;
 
 	vec3 Diffuse = texture(tex, fragUV).rgb * 0.975 * max(dot(Norm, lightDir),0.0);
-	vec3 Specular = vec3(pow(max(dot(Norm, normalize(lightDir + EyeDir)),0.0), mubo.Pow));
+	vec3 Specular = vec3(pow(max(dot(Norm, normalize(lightDir + EyeDir)),0.0), gubo.Pow));
 	vec3 Ambient = texture(tex, fragUV).rgb * 0.15f;
 	
 	vec3 col  = (Diffuse + Specular) * lightColor + Ambient;

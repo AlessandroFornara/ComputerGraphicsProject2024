@@ -76,13 +76,11 @@ struct EmissionVertex {
 };
 
 struct BlinnUniformBufferObject {
+    alignas(4) float Power;
     alignas(16) vec3 lightDir;
     alignas(16) vec4 lightColor;
     alignas(16) vec3 eyePos;
-};
-
-struct BlinnMatParUniformBufferObject {
-    alignas(4)  float Power;
+    
 };
 
 struct ApartmentLightBuffer {
@@ -419,8 +417,7 @@ protected:
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, sizeof(MatricesUniformBufferObject), 1},
             {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0, 1} });
         DSLSunLight.init(this, {
-            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, sizeof(BlinnUniformBufferObject), 1},
-            {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnMatParUniformBufferObject), 1}
+            {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(BlinnUniformBufferObject), 1},
             });
         DSLShopLight.init(this, {
             {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(SpotLightUBO), 1 } }
@@ -1461,11 +1458,8 @@ protected:
         else
             BlinnUbo.eyePos = CamPos;
 
+        BlinnUbo.Power = 100.0;
         DSSunLight.map(currentImage, &BlinnUbo, 0);
-
-        BlinnMatParUniformBufferObject blinnMatParUbo{};
-        blinnMatParUbo.Power = 100.0;
-        DSSunLight.map(currentImage, &blinnMatParUbo, 1);
 
         fillUniformBuffer(0, citySize - 1, CityComponents, ViewPrj, currentImage, vec3(0.0f));
         fillEmissionBuffer(citySize - 1, citySize, CityComponents, ViewPrj, currentImage, vec3(x, y, z), true, interpolatedColor);
