@@ -880,7 +880,7 @@ protected:
             if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS && isInsideCar) {
                 exitCar();
             }
-            if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS && !isInsideCar) {
+            if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS && !isInsideCar && !spectatorMode) {
                 if (distance(CamPos, CarPos) < 2.0f) {
                     enterCar();
                 }
