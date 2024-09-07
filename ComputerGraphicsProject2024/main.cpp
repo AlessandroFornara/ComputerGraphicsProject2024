@@ -816,7 +816,7 @@ protected:
         if (glfwGetKey(window, GLFW_KEY_J) && isInsideCar) {
             exitCar();
         }
-        if (glfwGetKey(window, GLFW_KEY_K) && !isInsideCar) {
+        if (glfwGetKey(window, GLFW_KEY_K) && !isInsideCar && !spectatorMode) {
             if (distance(CamPos, CarPos) < 2.0f) {
                 enterCar();
             }
