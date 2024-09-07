@@ -70,11 +70,6 @@ struct EmissionColorUniformBuffer {
     alignas(16) vec4 color;
 };
 
-struct EmissionVertex {
-    alignas(16) vec3 pos;
-    alignas(16) vec2 UV;
-};
-
 struct BlinnUniformBufferObject {
     alignas(4) float Power;
     alignas(16) vec3 lightDir;
@@ -114,24 +109,27 @@ struct Vertex {
     vec2 UV;
 };
 
+struct EmissionVertex {
+    alignas(16) vec3 pos;
+    alignas(16) vec2 UV;
+};
+
 vector <string> TexturePaths = { "textures/Textures_Apartment_Shop.png", "textures/Lamp.png", "textures/Wall_Shop.png", "textures/ape.jpg", "textures/Textures_City.png" };
 
 vector<Component> Apartment = {
-    //PAVIMENTO
+    
      {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
      {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
      {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
      {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, -1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
      {"models/Apartment/floor_016_Mesh.338.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{199.0f, -1.0f, 197.0f}, {0.5f, 2.0f, 0.5f}, {}, {}},
 
-     //SOFFITTO
      {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
      {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, 3.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
      {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
      {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{204.0f, 3.0f, 202.0f}, {1.0f, 1.0f, 1.0f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
      {"models/Apartment/Walls_009_Plane.003.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{199.0f, 3.0f, 196.0f}, {0.5f, 1.0f, 0.5f}, {{1.0f, 0.0, 0.0}}, {90.0f}},
 
-     //MURI
      {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{206.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
      {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{202.0f, 1.0f, 206.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 0.0f, 1.0f}}, {90.0f}},
      {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{206.0f, -1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
@@ -144,7 +142,6 @@ vector<Component> Apartment = {
      {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{200.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/Walls_116_Plane.057.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.0f, -1.0f, 197.0f}, {1.0f, 1.0f, 0.5f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
 
-     //ACCESSORI
      {"models/Apartment/door_005_Mesh.119.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{198.15f, -1.0f, 198.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/window_003_Mesh.125.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{205.8f, 1.0f, 200.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
      {"models/Apartment/window_003_Mesh.125.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{205.8f, 1.0f, 204.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
@@ -162,33 +159,25 @@ vector<Component> Apartment = {
 };
 
 vector<Component> Shop = {  
-    //MURI
-    //ALTO SINISTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{98.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
-    //ALTO DESTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{106.0f, -1.0f, 104.0f}, {1.0f, 2.0f, 1.0f}, { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 106.0f}, {1.0f, 2.0f, 1.0f}},
-    //BASSO DESTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f}},
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{106.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f},  { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
-    //BASSO SINISTRA
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{98.0f, -1.0f, 100.0f}, {1.0f, 2.0f, 1.0f} , { { 0.0f, 1.0f, 0.0f } }, {90.0f}},
     {"models/Shop/Walls_029_Plane.016.mgcg", WALL_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 98.0f}, {1.0f, 2.0f, 1.0f} },
 
-    //PAVIMENTO
     {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/floor_001_Mesh.640.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, -1.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
 
-    //TETTO
     {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
     {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 98.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
     {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
     {"models/Shop/Walls_036_Plane.019.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 102.0f}, {1.0f, 1.0f, 2.0f}, {{1.0f, 0.0f, 0.0f}}, {90.0f}},
 
-    //ACCESSORI
     {"models/Shop/shop_003_Mesh.4875.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{105.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/shop_003_Mesh.4875.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{103.0f, -1.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/shop_004_Mesh.4923.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 0.0f, 99.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
@@ -197,18 +186,15 @@ vector<Component> Shop = {
     {"models/Shop/window_006_Mesh.654.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{105.7f, 1.0f, 102.0f}, {1.0f, 1.0f, 1.0f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     {"models/Shop/window_006_Mesh.654.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{98.3f, 1.0f, 102.0f}, {1.3f, 1.3f, 1.3f}, {{0.0f, 1.0f, 0.0f}}, {90.0f}},
     
-    //LAMPADE 
     {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{100.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 100.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG, {100.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     {"models/Shop/lamp_026_Mesh.6700.mgcg", APARTMENT_SHOP_TEXTURE, MGCG,{104.0f, 3.0f, 104.0f}, {1.0f, 1.0f, 1.0f}, {}, {}},
     
-    //LAMPADINE
     {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {100.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {104.0f, 2.2f, 100.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {100.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
     {"models/Shop/Sphere.obj", LAMP_TEXTURE, OBJ, {104.0f, 2.2f, 104.0f}, {0.1f, 0.1f, 0.1f}, {}, {}},
-    
 };
 
 vector<Component> CityComponents = {
