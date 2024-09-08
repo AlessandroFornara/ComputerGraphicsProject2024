@@ -437,7 +437,7 @@ protected:
 
         //first elements are "normal" components, the second ones are light (emission components)
         
-        //Texures vector
+        //Textures vector
         int i = 0;
         for (; i < TexturePaths.size(); i++) {
             Texture tempTexture; 
@@ -733,13 +733,15 @@ protected:
         @param deltaT: time difference since last update
     */
     void handleCarMovement(vec3 m, vec3 r, float deltaT) {
-        float rotAngleCar, carCurrAngle = CityComponents[0].angle[0];
+        float rotAngleCar;
+        float carCurrAngle = CityComponents[0].angle[0];
         
         moveSpeed = accelerateCar(moveSpeed, m.z);
         m.z = -m.z;
         vec3 tmpCarPos = CarPos - moveSpeed * m.z * vec3(sin(radians(carCurrAngle)), 0, cos(radians(carCurrAngle))) * deltaT;
         rotAngleCar = -m.x;
 
+        //to maintain consistency during reverse turns
         if (m.z < 0.0f)
             rotAngleCar = -rotAngleCar;
 
@@ -926,9 +928,10 @@ protected:
     }
 
     /*
-        It handles the acceleration of the car, the speed increases up to a certain limit
+        It handles the acceleration of the car, the speed increases up to a certain limit,
+        when there's a change of direction (acceleration -> retro or vice-versa) the speed restarts from the minimum value.
         @param speed: actual speed
-        @param acc: acceleration ratio
+        @param acc: acceleration ratio, 0 if the player is stationary, +/- 1 if he's moving
     */
     float accelerateCar(float speed, float acc) {
         float speed2;
@@ -940,19 +943,15 @@ protected:
             }
             acc = -acc;
         }
-        else if(acc>0) {
-            if (!goAhead) {
-                goAhead = true;
-                inverse = true;
-            }
+        else if(acc>0 && !goAhead) {
+            goAhead = true;
+            inverse = true;
         }
         if (acc != 0) {
             if (!inverse) {
                 speed2 = speed + acc * 0.12f;
                 if (speed2 >= MAX_CAR_SPEED)
                     speed2 = MAX_CAR_SPEED;
-                else if(speed2 < CAR_SPEED)
-                    speed2 = CAR_SPEED;
             }
             else {
                 speed2 = CAR_SPEED;
@@ -1018,7 +1017,6 @@ protected:
                 return MakeViewProjectionLookAt(CamPos, CarPos, vec3(0, 1, 0), CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
             else
                 return MakeViewProjectionLookInDirection(CamPos, CamYaw, CamPitch, CamRoll, radians(90.0f), Ar, 0.1f, 500.0f);
-            
         }
         else {
             mat4 ViewMatrix = rotate(mat4(1.0), -CamBeta, vec3(1, 0, 0)) * rotate(mat4(1.0), -CamAlpha, vec3(0, 1, 0)) * translate(mat4(1.0), -CamPos);
