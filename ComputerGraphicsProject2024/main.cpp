@@ -435,7 +435,7 @@ protected:
         PipEmission.init(this, &VDemission, "shaders/Emission/generalEmissionVert.spv", "shaders/Emission/generalEmissionFrag.spv", { &DSLemission });
         PipApartment.init(this, &VDWorld, "shaders/Apartment/ApartmentVert.spv", "shaders/Apartment/ApartmentFrag.spv", { &DSLApartmentLight, &DSLMatricesAndTextures });
 
-        //first elements are "normal" components,the second ones are light (emission components)
+        //first elements are "normal" components, the second ones are light (emission components)
         
         //Texures vector
         int i = 0;
@@ -657,7 +657,7 @@ protected:
 
         HandleUserInputs(CamPos, cameraAngle, state, connected);
 
-        mat4 ViewPrj = updateViewMatrix();
+        mat4 ViewPrj = updateViewProjectionMatrix();
 
         if (currentScene == CITY) {
             buildCity(currentImage, ViewPrj, deltaT);
@@ -784,7 +784,7 @@ protected:
         @param cameraPosition: camera position
         @param cameraAngle: camera angle
         @param connected: indicates if the player is using a joystick
-        @param state: handles joystick's buttons 
+        @param state: current state of the joystick's buttons 
     */
     void HandleUserInputs(vec3 cameraPosition, float cameraAngle, GLFWgamepadstate state, int connected) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -916,6 +916,9 @@ protected:
         }
     }
 
+    /*
+        Resets all booleans associated to axonometric projections
+    */
     void resetParallelProjections() {
         isometricViewCar = false;
         dimetricViewCar = false;
@@ -981,7 +984,7 @@ protected:
     }
 
     /*
-        It enters the player in the car    
+        It allows the player to enter in the car    
     */
     void enterCar() {
         isInsideCar = true;
@@ -991,7 +994,7 @@ protected:
     }
 
     /*
-        It exits the player from the car 
+        It allows the player to exit from the car 
     */
     void exitCar() {
         isInsideCar = false;
@@ -1001,9 +1004,9 @@ protected:
     }
 
     /*
-        It updates the view matrix according to the user movements 
+        It updates the view-projection matrix according to the user movements and the desired 
     */
-    mat4 updateViewMatrix() {
+    mat4 updateViewProjectionMatrix() {
         if (isInsideCar) {
             if (isometricViewCar)
                 return makeViewProjectionIsometric(CamPos, 20.0f, Ar, -500.0f, 500.0f);
@@ -1026,10 +1029,10 @@ protected:
     }
 
     /*
-        It defines the view projection matrix with isometric
+        It updates the view-projection matrix with isometric projection
         @param Pos: camera position
         @param halfWidth: half width
-        param Ar: aspect ratio
+        @param Ar: aspect ratio
         @param nearPlane: near plane
         @param farPlane: far plane
     */
@@ -1045,6 +1048,14 @@ protected:
         return M * Mv;
     }
 
+    /*
+        It updates the view-projection matrix with dimetric projection
+        @param Pos: camera position
+        @param halfWidth: half width
+        @param Ar: aspect ratio
+        @param nearPlane: near plane
+        @param farPlane: far plane
+    */
     mat4 makeViewProjectionDimetric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
         mat4 M = mat4(1.0f/halfWidth,0,0,0, 0,-Ar/halfWidth,0,0, 0,0,1.0f/(nearPlane - farPlane),0, 0,0,nearPlane/(nearPlane - farPlane),1.0f) *
             rotate(mat4(1.0f), radians(20.0f), vec3(1.0f, 0.0f, 0.0f)) *
@@ -1057,6 +1068,14 @@ protected:
         return M * Mv;
     }
 
+    /*
+        It updates the view-projection matrix with trimetric projection
+        @param Pos: camera position
+        @param halfWidth: half width
+        @param Ar: aspect ratio
+        @param nearPlane: near plane
+        @param farPlane: far plane
+    */
     mat4 makeViewProjectionTrimetric(vec3 Pos, float halfWidth, float Ar, float nearPlane, float farPlane) {
         mat4 M = mat4(1.0f / halfWidth, 0, 0, 0, 0, -Ar / halfWidth, 0, 0, 0, 0, 1.0f / (nearPlane - farPlane), 0, 0, 0, nearPlane / (nearPlane - farPlane), 1.0f) *
             rotate(mat4(1.0f), radians(30.0f), vec3(1.0f, 0.0f, 0.0f)) *
@@ -1069,7 +1088,7 @@ protected:
         return M * Mv;
     }
     /*
-        It defines the view projection matrix with look at and perspective
+        It updates the view projection-matrix with "look at" direction and perspective
         @param Pos: camera position
         @param target: target on the screen (the object that "follow" the camera)
         @param Up: vertical distance from the target
@@ -1091,7 +1110,7 @@ protected:
     }
 
     /*
-        It defines the view - projection matrx with look in direction and perspective
+        It updates the view-projection matrix with "look in" direction and perspective
         @param Pos: position of the camera
         @param Yaw: rotation on axis y
         @param Pitch: rotation on axis z
@@ -1149,10 +1168,9 @@ protected:
     }
 
     /*
-        This method is called when the player click "k", it checks if he click on something clickable. 
-        It switch x-z coordinates where necessary.
-        @param cameraPosition: camera position
-        @param cameraAngle: camera angle
+        This method is called when the player presses the "K" key. It checks if the player clicks on something clickable
+        @param cameraPosition: position of the camera
+        @param cameraAngle: angle of the camera
     */
     void checkDoors(vec3 cameraPosition, float cameraAngle) {
         //Check porta negozio 
@@ -1170,7 +1188,7 @@ protected:
     }
 
     /*
-        This method allows you to enter by setting the correct scene 
+        This method allows the player to enter the apartment or shop by setting the correct scene 
         @param ty: scene
         @param cor: coordinates of the interior of buildings 
     */
@@ -1182,7 +1200,7 @@ protected:
     }
 
     /*
-        This method exit from apartment or shop
+        This method allows the player to exit from apartment or shop
         @param c: city's position
     */
     void exit(vec3 c) {
@@ -1191,7 +1209,10 @@ protected:
         RebuildPipeline();
     }
 
-
+    /*
+        Computes the height based on the camera's x and z coordinates.
+        @param cam: the camera position
+    */
     float computeHeight(vec3 cam) {
         if(cam.z >= -11.57 && cam.z <= 3.46) {
             if (cam.x <= -7.25159 && cam.x >= -7.60898)
@@ -1207,15 +1228,15 @@ protected:
     }
 
     /*
-        Method for interacting with objects. Each time the "k" button is pressed, the method checks the camera’s position and angle to see if the player can interact. 
-        The object with which you want to interact must be placed along the x-axis, otherwise it is necessary to invert the coordinates. 
+        Method for interacting with objects. Each time the "K" button is pressed, the method checks the camera’s position and angle to see if the player can interact. 
+        The object with which the player wants to interact must be placed along the x-axis, otherwise it is necessary to invert the coordinates. 
         The method defines an angle within which the object is clickable based on its distance from it. 
         @param camera position: camera position
         @param camera angle: camera angle
         @param x1: left end point object
         @param x2: right end point object
-        @param z: deep object
-        @param switchView: true if z of the object is lower than camera
+        @param z: depth of the object
+        @param switchView: true if z of the object is lower than the z of the camera
     */
     bool checkSingleDoor(vec3 cameraPosition, float cameraAngle, float x1, float x2, float z, bool switchView) {
         float Zmax, Zmin;
@@ -1253,7 +1274,7 @@ protected:
         return false;
     }
 
-    /* This method print the coordinates
+    /* This method prints the coordinates
         @param camAngle: camera's angle
     */
     void printCordinates(float camAngle) {
@@ -1272,13 +1293,12 @@ protected:
     }
 
     /*
-        This method places every object in the world, generalizing the function of positioning an object
-        @param start: initial index of light components
-        @param end: final index of light components
-        @param vec: list of component
-        @param ViewPrj: view projection matrix
+        This method places every object in the world
+        @param start: initial index of the component vector
+        @param end: final index of the component vector
+        @param vec: vector of components
+        @param ViewPrj: view-projection matrix
         @param currentImage: scene shown 
-        @param traslation: translation of the luminous object if necessary
     */
     void fillUniformBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation) {
         MatricesUniformBufferObject ubo{};
@@ -1299,15 +1319,15 @@ protected:
 
     /*
         General method for building the lights in the various environments. 
-        It is possible to change the color of the light emitted and also the position of the bulbs/ sun.
+        It is possible to change the color of the light emitted and also the position of the bulbs / sun.
         @param start: initial index of light components
         @param end: final index of light components
-        @param vec: list of component
+        @param vec: vector of component
         @param ViewPrj: view projection matrix
         @param currentImage: scene shown 
         @param traslation: translation of the luminous object if necessary
         @param flag: Signal if the light color has changed 
-        @param colorLught: new light color
+        @param colorLight: new light color
     */
     void fillEmissionBuffer(int start, int end, vector<Component> vec, mat4 ViewPrj, int currentImage, vec3 traslation, bool flag, vec4 colorLight) {
         EmissionUniformBufferObject eubo{};
@@ -1334,9 +1354,9 @@ protected:
     }
 
     /*
-     Builds the apartment. 
+        Builds the apartment. 
         Creates one light via the emission pipeline, 
-        while the lighting is given by Oner-nayar and phong  
+        while the lighting is given by a point light, Oner-nayar and phong models 
         @param currentImage: current scene
         @param ViewPrj: view projection matrix
     */
@@ -1361,7 +1381,7 @@ protected:
     /*
         Builds the shop. 
         Creates the four lights via the emission pipeline, 
-        while the lighting is given by spot light and lambert  
+        while the lighting is given by four spot lights, lambert and phong models 
         @param currentImage: current scene
         @param ViewPrj: view projection matrix
     */
@@ -1387,8 +1407,9 @@ protected:
     }
 
     /*
-        Builds the main city and the sun. 
-        It uses two pipelines, one for the sun’s emission and one for the main components exploiting lambert and blinn. 
+        Builds the city and the sun. 
+        Creates the sun via the emission pipeline
+        while the lighting is given by direction light, lambert and blinn models. 
         @param currentImage: current scene 
         @param ViewPrj: view projection matrix
         @param deltaT: time difference from last update
