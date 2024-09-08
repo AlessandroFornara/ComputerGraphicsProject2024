@@ -364,7 +364,7 @@ protected:
     bool goAhead = false;
 
     const float CAR_SPEED = 1.0f;
-    const float MAX_CAR_SPEED = 15.0f;
+    const float MAX_CAR_SPEED = 10.0f;
     const float ROT_SPEED = radians(120.0f);
     const float WALK_SPEED = 2.5f;
     const float SUN_ROT_SPEED = 3.3333f;
