@@ -1421,9 +1421,9 @@ protected:
 
         float x, y, z;
         float r = 100.0f;
-        x = 26.5852f + r * cos(radians(sunAng)) * cos(radians(45.0f)); // Inclinazione di 45 gradi per simulare un percorso ellittico
-        y = r * sin(radians(sunAng)) * sin(radians(45.0f)); // La componente y varia tra -r/2 e r/2
-        z = -35.3748f + r * cos(radians(sunAng)) * sin(radians(45.0f)); // Inclinazione di 45 gradi per simulare un percorso ellittico
+        x = 26.5852f + r * cos(radians(sunAng)) * cos(radians(45.0f)); 
+        y = r * sin(radians(sunAng)) * sin(radians(45.0f)); 
+        z = -35.3748f + r * cos(radians(sunAng)) * sin(radians(45.0f)); 
         BlinnUbo.lightDir = vec3(x, y, z);
 
         vec4 dawnColor = vec4(1.0f, 0.5f, 0.0f, 1.0f); // Alba
