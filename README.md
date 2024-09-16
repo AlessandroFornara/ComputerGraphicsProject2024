@@ -30,7 +30,7 @@ interact with some buildings (a shop and an apartment), and drive a car.
 You can find the full specification [here](https://github.com/AlessandroFornara/ComputerGraphicsProject2024/tree/master/Specs).
 
 ## Controls:
-- Press H (Keyboard) / START (Gamepad) to see the command list"
+- Press <kbd>H</kbd> (Keyboard) / <kbd>START</kbd> (Gamepad) to see the command list
 #### Keyboard:
 - Press <kbd>SHIFT</kbd> to run. 
 - Press <kbd>SPACE</kbd> to jump. 
