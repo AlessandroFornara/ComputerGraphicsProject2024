@@ -1,4 +1,4 @@
-# [Computer Graphics](https://www4.ceda.polimi.it/manifesti/manifesti/controller/ManifestoPublic.do?EVN_DETTAGLIO_RIGA_MANIFESTO=evento&aa=2024&k_cf=225&k_corso_la=481&k_indir=T2A&codDescr=090958&lang=IT&semestre=2&idGruppo=4935&idRiga=308193) Project 2023-2024, Course Final Project
+# [Computer Graphics](https://www4.ceda.polimi.it/manifesti/manifesti/controller/ManifestoPublic.do?EVN_DETTAGLIO_RIGA_MANIFESTO=evento&aa=2024&k_cf=225&k_corso_la=481&k_indir=T2A&codDescr=090958&lang=IT&semestre=2&idGruppo=4935&idRiga=308193) Project 2023-2024
 
 This project is the final test of "Computer Graphics", course of "Computer Science Engineering" held at Politecnico di Milano (2023/2024).
 
